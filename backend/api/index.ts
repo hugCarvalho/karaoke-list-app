@@ -6,6 +6,7 @@ import rateLimit from "express-rate-limit";
 import helmet from "helmet";
 import hpp from "hpp";
 import { APP_ORIGIN } from "../src/constants/env";
+import authRoutes from "../src/routes/auth.routes";
 
 const limiter = rateLimit({
   max: 1000,
@@ -34,6 +35,9 @@ app.use(express.urlencoded({ extended: true }))
 app.use(express.json({limit: "10kb"}), sanitize(), hpp())
 app.use(cookieParser())
 app.use("/", limiter)
+
+// auth routes
+app.use("/auth", authRoutes)
 
 app.get('/', (req: Request, res: Response) => {
   res.send('Hello, TypeScript Node.js Backend!');
