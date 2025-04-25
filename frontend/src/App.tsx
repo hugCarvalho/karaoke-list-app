@@ -3,6 +3,7 @@ import AppContainer from "./components/AppContainer";
 import ForgotPassword from "./pages/ForgotPassword";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
+import ResetPassword from "./pages/ResetPassword";
 import VerifyEmail from "./pages/VerifyEmail";
 
 function App() {
@@ -14,7 +15,7 @@ function App() {
       <Route path="/register" element={<Register />} />
       <Route path="/email/verify/:code" element={<VerifyEmail />} />
       <Route path="/password/forgot" element={<ForgotPassword />} />
-      {/* <Route path="/password/reset" element={<ResetPassword />} /> */}
+      <Route path="/password/reset" element={<ResetPassword />} />
     </Routes>
   );
 }
