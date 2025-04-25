@@ -1,4 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
+import { getSessions, Session } from "../api/api";
 
 export const SESSIONS = "sessions";
 
