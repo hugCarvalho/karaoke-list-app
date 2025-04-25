@@ -10,6 +10,7 @@ import { APP_ORIGIN } from "../src/constants/env";
 import authenticate from "../src/middleware/authenticate";
 import errorHandler from "../src/middleware/errorHandler";
 import authRoutes from "../src/routes/auth.routes";
+import sessionRoutes from "../src/routes/session.route";
 import userRoutes from "../src/routes/user.route";
 
 const limiter = rateLimit({
@@ -44,6 +45,7 @@ app.use("/auth", authRoutes)
 
 // protected routes
 app.use("/user", authenticate, userRoutes)
+app.use("/sessions", authenticate, sessionRoutes)
 
 // error handler
 app.use(errorHandler)
