@@ -1,7 +1,6 @@
 import jwt, { SignOptions, VerifyOptions } from "jsonwebtoken";
-import { JWT_REFRESH_SECRET, JWT_SECRET } from "../constants/env";
-// import { SessionDocument } from "../models/session.model";
 import Audience from "../constants/audience";
+import { JWT_REFRESH_SECRET, JWT_SECRET } from "../constants/env";
 import { SessionDocument } from "../models/session.model";
 import { UserDocument } from "../models/user.model";
 
@@ -32,7 +31,7 @@ export const refreshTokenSignOptions: SignOptionsAndSecret = {
   secret: JWT_REFRESH_SECRET,
 }
 
-export const signToken = ( payload: AccessTokenPayload | RefreshTokenPayload, options?: SignOptionsAndSecret) => {
+export const signToken = (payload: AccessTokenPayload | RefreshTokenPayload, options?: SignOptionsAndSecret) => {
   const { secret, ...signOpts } = options || accessTokenSignOptions
 
   return jwt.sign(payload, secret, {
@@ -41,7 +40,7 @@ export const signToken = ( payload: AccessTokenPayload | RefreshTokenPayload, op
   })
 }
 
-export const verifyToken = <TPayload extends object = AccessTokenPayload>(token: string, options?: VerifyOptions & {secret?: string}) => {
+export const verifyToken = <TPayload extends object = AccessTokenPayload>(token: string, options?: VerifyOptions & { secret?: string }) => {
   const { secret = JWT_SECRET, ...verifyOpts } = options || {}
 
   try {

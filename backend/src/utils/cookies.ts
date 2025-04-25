@@ -9,7 +9,7 @@ const defaults: CookieOptions = {
   httpOnly: true,
   secure: secure,
   sameSite: NODE_ENV !== "development" ? "none" : "lax", // 'none' in production, 'lax' in development
-  domain: undefined, // Domain for production
+  domain: NODE_ENV !== "development" ? ".onrender.com" : undefined, // Domain for production
   path: "/", // Default path for accessToken
 };
 
