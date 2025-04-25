@@ -10,6 +10,9 @@
     "skipLibCheck": true,
     "noEmitOnError": false,
     "moduleResolution": "node",
+    "typeRoots": [
+      "./node_modules/@types"
+    ]
     // "types": [
     //   "node"
     // ]
