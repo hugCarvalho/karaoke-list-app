@@ -10,9 +10,9 @@
     "skipLibCheck": true,
     "noEmitOnError": false,
     "moduleResolution": "node",
-    "types": [
-      "node"
-    ]
+    // "types": [
+    //   "node"
+    // ]
   },
   "include": [
     "src/**/*",
