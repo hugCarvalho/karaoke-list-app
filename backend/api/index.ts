@@ -55,7 +55,7 @@ async function startServer() {
 
   const port = process.env.PORT || 8080;
 
-  app.get("/", (req, res) => {
+  app.get("/healthz", (req, res) => {
     res.status(200).json({ status: "healthy" });
   });
 

@@ -16,6 +16,18 @@ export const login = async (data: { email: string, password: string }) => {
 }
 export const logout = async () => API.get("/auth/logout");
 
+export const verifyEmail = async (verificationCode: string) => {
+  console.log("VERIFY", verificationCode)
+  return API.get(`/auth/email/verify/${verificationCode}`);
+}
+export const sendPasswordResetEmail = async (email: string) =>
+  API.post("/auth/password/forgot", { email });
+export const resetPassword = async ({ verificationCode, password }: { verificationCode: string, password: string }) => {
+  console.log("VER", verificationCode)
+  console.log("PASS", password)
+  API.post("/auth/password/reset", { verificationCode, password });
+}
+
 export const getUser = async (): Promise<User> => {
   return await API.get("/user") as User;
 };
