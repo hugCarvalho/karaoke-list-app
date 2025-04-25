@@ -8,6 +8,15 @@ export interface User {
   updatedAt: Date | number;
 }
 
+export interface Session {
+  _id: string
+  // userId: string,
+  isCurrent: boolean
+  userAgent: string
+  createdAt: Date
+  // expiresAt: Date
+}
+
 export const signup = async (data: { email: string, password: string, confirmPassword: string }) => {
   return API.post("/auth/register", data)
 }
@@ -27,7 +36,9 @@ export const resetPassword = async ({ verificationCode, password }: { verificati
   console.log("PASS", password)
   API.post("/auth/password/reset", { verificationCode, password });
 }
-
 export const getUser = async (): Promise<User> => {
   return await API.get("/user") as User;
 };
+export const getSessions = async () => API.get("/sessions");
+
+export const deleteSession = async (id: string) => API.delete(`/sessions/${id}`);
