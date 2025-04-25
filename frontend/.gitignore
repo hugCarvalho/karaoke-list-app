@@ -1,0 +1,51 @@
+# Node.js
+node_modules/
+yarn.lock
+pnpm-lock.yaml
+
+# Cache
+temp/
+tmp/
+.cache/
+dist/.vite/ # Vite 5 cache
+
+# Build output
+dist/
+build/
+out/
+vite-dist/
+
+# Logs
+logs/
+*.log
+*.log*
+debug.log*
+
+# Environment files
+.env
+.env.local
+.env.*
+!/.env.example
+
+# Editor/IDE/OS
+.vscode/
+!.vscode/extensions.json
+.idea/
+.DS_Store
+Thumbs.db
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# TypeScript output
+/tsconfig.tsbuildinfo
+
+# Dependencies
+/cypress/screenshots/
+/cypress/videos/
+/playwright-report/
+
+# Yalc
+.yalc
