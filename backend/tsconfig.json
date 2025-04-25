@@ -12,10 +12,10 @@
     "moduleResolution": "node",
     "typeRoots": [
       "./node_modules/@types"
+    ],
+    "types": [
+      "node"
     ]
-    // "types": [
-    //   "node"
-    // ]
   },
   "include": [
     "src/**/*",
