@@ -1,4 +1,5 @@
 import API from "../config/apiClient";
+import { Song } from "../config/interfaces";
 
 export interface User {
   _id: string;
@@ -42,3 +43,15 @@ export const getUser = async (): Promise<User> => {
 export const getSessions = async () => API.get("/sessions");
 
 export const deleteSession = async (id: string) => API.delete(`/sessions/${id}`);
+
+export const getSongsList = async (): Promise<Song[]> => API.get("/list");
+export const addSong = async (data: Song) => {
+  console.log("first", data)
+  API.post("/list/add", data)
+};
+export const updateSong = async (data: { songId: string, value: boolean, type: "blacklisted" | "fav" | "inNextEventList" }) => {
+  API.patch("/list/update", data)
+};
+export const deleteSong = async (data: { songId: string }) => {
+  API.delete(`/list/delete/${data.songId}`)
+};
