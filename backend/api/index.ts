@@ -1,4 +1,5 @@
 import cookieParser from "cookie-parser";
+import cors from "cors";
 import "dotenv/config";
 import express from 'express';
 import sanitize from "express-mongo-sanitize";
@@ -21,18 +22,25 @@ const limiter = rateLimit({
 })
 const app = express();
 
-app.use((req, res, next) => {
-  res.setHeader('Access-Control-Allow-Origin', APP_ORIGIN);
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, Cookie'); // include 'Cookie' if using cookies for credentials
-  res.setHeader('Access-Control-Allow-Credentials', 'true'); // Enable sending credentials
+// app.use((req, res, next) => {
+//   res.setHeader('Access-Control-Allow-Origin', APP_ORIGIN);
+//   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+//   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, Cookie'); // include 'Cookie' if using cookies for credentials
+//   res.setHeader('Access-Control-Allow-Credentials', 'true'); // Enable sending credentials
 
-  if (req.method === 'OPTIONS') {
-    return res.sendStatus(204); // Respond to preflight requests
-  }
+//   if (req.method === 'OPTIONS') {
+//     return res.sendStatus(204); // Respond to preflight requests
+//   }
 
-  next();
-});
+//   next();
+// });
+
+app.use(cors({
+  origin: APP_ORIGIN, // Allow requests from your frontend's origin
+  methods: ['GET', 'POST', 'OPTIONS', 'PUT', 'PATCH', 'DELETE'], // Specify allowed HTTP methods
+  allowedHeaders: ['Content-Type', 'Authorization', 'Cookie'], // Specify allowed request headers
+  credentials: true, // Enable sending credentials (cookies, authorization headers)
+}));
 
 // middleware
 app.use(helmet())
