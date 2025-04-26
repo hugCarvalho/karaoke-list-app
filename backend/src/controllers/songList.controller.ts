@@ -6,14 +6,18 @@ import appAssert from "../utils/appAssert";
 import catchErrors from "../utils/catchErrors";
 
 export const addSongHandler = catchErrors(async (req, res) => {
+  console.log("WORKING")
   const user = await UserModel.findById(req.userId)
+  // const user = await UserModel.findById("67f8d8545570dd53d1d42284")
   appAssert(user, NOT_FOUND, "User not found")
   return res.status(OK).json(user.omitPassword())
 })
 
 export const addOrUpdateSongHandler = catchErrors(async (req, res) => {
+  console.log("FRONTEND-REQUEST!!!!!!!", req.body);
   try {
-    const user = await UserModel.findById(req.userId);
+    // const user = await UserModel.findById(req.userId);
+    const user = await UserModel.findById("67f8d8545570dd53d1d42284");
 
     if (!user) {
       return res.status(NOT_FOUND).json({ success: false, message: 'User not found.' });
@@ -51,6 +55,8 @@ export const getSongListHandler = catchErrors(async (req, res) => {
 
 export const updateSongHandler = catchErrors(async (req, res) => {
   const { songId, value, type } = req.body as { songId: string, value: boolean, type: "blacklisted" | "fav" | "nextEvent" };
+  // const userId = req.user._id;
+  console.log('songId', songId, value, type)
   if (!songId || typeof value !== 'boolean') {
     return res.status(400).json({
       status: 400,
@@ -60,7 +66,9 @@ export const updateSongHandler = catchErrors(async (req, res) => {
   }
 
   let key = `songs.$.${type}`;
+  console.log('key', key)
   const updatedList = await List.findOneAndUpdate(
+    // { userId: userId, 'songs.songId': songId },
     { 'songs.songId': songId },
     { $set: { [key]: value } },
     { new: true }
@@ -83,6 +91,7 @@ export const updateSongHandler = catchErrors(async (req, res) => {
 });
 
 export const deleteSongHandler = catchErrors(async (req, res) => {
+  console.log("FRONTEND-REQUEST!!!!!!!", req.params.songId, req.userId);
   const songId = req.params.songId;
   const userId = req.userId;
   appAssert(songId, BAD_REQUEST, "SongId not found");
