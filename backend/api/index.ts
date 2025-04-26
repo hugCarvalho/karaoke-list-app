@@ -9,7 +9,7 @@ import connectToDatabase from "../src/config/db";
 import { APP_ORIGIN } from "../src/constants/env";
 import authenticate from "../src/middleware/authenticate";
 import errorHandler from "../src/middleware/errorHandler";
-import authRoutes from "../src/routes/auth.routes";
+import authRoutes from "../src/routes/auth.route";
 import listRoutes from "../src/routes/list.route";
 import sessionRoutes from "../src/routes/session.route";
 import userRoutes from "../src/routes/user.route";
