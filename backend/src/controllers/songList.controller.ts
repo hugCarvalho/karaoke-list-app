@@ -6,9 +6,7 @@ import appAssert from "../utils/appAssert";
 import catchErrors from "../utils/catchErrors";
 
 export const addSongHandler = catchErrors(async (req, res) => {
-  console.log("WORKING")
   const user = await UserModel.findById(req.userId)
-  // const user = await UserModel.findById("67f8d8545570dd53d1d42284")
   appAssert(user, NOT_FOUND, "User not found")
   return res.status(OK).json(user.omitPassword())
 })
@@ -16,8 +14,7 @@ export const addSongHandler = catchErrors(async (req, res) => {
 export const addOrUpdateSongHandler = catchErrors(async (req, res) => {
   console.log("FRONTEND-REQUEST!!!!!!!", req.body);
   try {
-    // const user = await UserModel.findById(req.userId);
-    const user = await UserModel.findById("67f8d8545570dd53d1d42284");
+    const user = await UserModel.findById(req.userId);
 
     if (!user) {
       return res.status(NOT_FOUND).json({ success: false, message: 'User not found.' });

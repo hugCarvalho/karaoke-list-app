@@ -1,6 +1,7 @@
 import { Box, Center, Spinner } from "@chakra-ui/react";
 import { Navigate, Outlet } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
+import NavButtonGroup from "./NavButtonGroup";
 import UserMenu from "./UserMenu";
 
 const AppContainer = () => {
@@ -12,6 +13,7 @@ const AppContainer = () => {
     </Center>
   ) : user ? (
     <Box display={"flex"} flexDirection={"column"} flex={1}>
+      <NavButtonGroup />
       <UserMenu />
       <Outlet />
     </Box>

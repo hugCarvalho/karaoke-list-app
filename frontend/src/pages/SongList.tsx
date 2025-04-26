@@ -112,9 +112,9 @@ const SongList = () => {
               </Th>
               <Th fontSize={isMobile ? "sm" : "md"}>Fav</Th>
               <Th fontSize={isMobile ? "sm" : "md"}>Next</Th>
-              <Th fontSize={isMobile ? "sm" : "md"}>Black...</Th>
+              <Th fontSize={isMobile ? "sm" : "md"}>Blacklist</Th>
               <Th fontSize={isMobile ? "sm" : "md"}>Plays</Th>
-              <Th fontSize={isMobile ? "sm" : "md"}>Delete</Th> {/* Added Delete Column */}
+              <Th fontSize={isMobile ? "sm" : "md"}>Delete</Th>
             </Tr>
           </Thead>
           <Tbody>
