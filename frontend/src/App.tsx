@@ -1,5 +1,8 @@
-import { Route, Routes } from "react-router-dom";
+import { Center, Spinner } from "@chakra-ui/react";
+import { useEffect, useState } from "react";
+import { Navigate, Route, Routes, useNavigate } from "react-router-dom";
 import AppContainer from "./components/AppContainer";
+import { TokenRefreshClient } from "./config/apiClient";
 import Blacklist from "./pages/Blacklist";
 import Favourites from "./pages/Favourites";
 import ForgotPassword from "./pages/ForgotPassword";
@@ -15,24 +18,54 @@ import SongsSang from "./pages/SongsSang";
 import VerifyEmail from "./pages/VerifyEmail";
 
 function App() {
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        await TokenRefreshClient.get('/auth/refresh');
+        setIsAuthenticated(true);
+      } catch (error) {
+        setIsAuthenticated(false);
+      }
+    };
+
+    checkAuth();
+  }, [navigate]);
+
+  if (isAuthenticated === null) {
+    return <Center w="100vw" h="90vh" flexDir="column">
+      <Spinner mb={4} />
+    </Center>
+  }
 
   return (
     <Routes>
-      <Route path="/" element={<AppContainer />}>
-        <Route index element={<Home />} />
-        <Route path="profile" element={<Profile />} />
-        <Route path="settings" element={<Settings />} />
-        <Route path="favourites" element={<Favourites />} />
-        <Route path="blacklist" element={<Blacklist />} />
-        <Route path="next-event-list" element={<NextEventList />} />
-        <Route path="songs-sang" element={<SongsSang />} />
-        <Route path="list" element={<SongList />} />
-      </Route>
-      <Route path="/login" element={<Login />} />
-      <Route path="/register" element={<Register />} />
-      <Route path="/email/verify/:code" element={<VerifyEmail />} />
-      <Route path="/password/forgot" element={<ForgotPassword />} />
-      <Route path="/password/reset" element={<ResetPassword />} />
+      {isAuthenticated ?
+        (
+          <Route path="/" element={<AppContainer />}>
+            <Route index element={<Home />} />
+            <Route path="profile" element={<Profile />} />
+            <Route path="settings" element={<Settings />} />
+            <Route path="favourites" element={<Favourites />} />
+            <Route path="blacklist" element={<Blacklist />} />
+            <Route path="next-event-list" element={<NextEventList />} />
+            <Route path="songs-sang" element={<SongsSang />} />
+            <Route path="list" element={<SongList />} />
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Route>
+        ) :
+        (
+          <>
+            <Route path="/" element={<Navigate to="/login" replace />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/email/verify/:code" element={<VerifyEmail />} />
+            <Route path="/password/forgot" element={<ForgotPassword />} />
+            <Route path="/password/reset" element={<ResetPassword />} />
+          </>
+        )}
     </Routes>
   );
 }

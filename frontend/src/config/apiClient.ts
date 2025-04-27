@@ -10,7 +10,7 @@ const options = {
 
 // create a separate client for refreshing the access token
 // to avoid infinite loops with the error interceptor
-const TokenRefreshClient = axios.create(options);
+export const TokenRefreshClient = axios.create(options);
 TokenRefreshClient.interceptors.response.use((response) => response.data);
 
 const API = axios.create(options);
@@ -20,7 +20,6 @@ API.interceptors.response.use(
   async (error) => {
     const { config, response } = error;
     const { status, data } = response || {};
-
     // try to refresh the access token behind the scenes
     if (status === UNAUTHORIZED && data?.errorCode === "InvalidAccessToken") {
       try {

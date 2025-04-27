@@ -1,30 +1,16 @@
-import { Box, Center, Spinner } from "@chakra-ui/react";
-import { Navigate, Outlet } from "react-router-dom";
-import { useAuth } from "../hooks/useAuth";
+import { Box } from "@chakra-ui/react";
+import { Outlet } from "react-router-dom";
 import NavButtonGroup from "./NavButtonGroup";
 import UserMenu from "./UserMenu";
 
 const AppContainer = () => {
-  const { user, isLoading } = useAuth();
 
-  return isLoading ? (
-    <Center w="100vw" h="90vh" flexDir="column">
-      <Spinner mb={4} />
-    </Center>
-  ) : user ? (
+  return (
     <Box display={"flex"} flexDirection={"column"} flex={1}>
       <NavButtonGroup />
       <UserMenu />
       <Outlet />
     </Box>
-  ) : (
-    <Navigate
-      to="/login"
-      replace
-      state={{
-        redirectUrl: window.location.pathname,
-      }}
-    />
   );
 };
 export default AppContainer;
