@@ -22,7 +22,6 @@ const NextEvent = () => {
   });
 
   const sortedSongs = useMemo(() => {
-    console.log('%c NextEventList.tsx - line: 35 - HERE!!! LOOKING FOR ME? !!!', 'color: black; background-color: pink;')
     if (!Boolean(songs)) {
       return []
     }

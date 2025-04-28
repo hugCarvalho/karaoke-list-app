@@ -60,8 +60,6 @@ export const createAccount = async (data: CreateAccountParams) => {
     userId,
     sessionId: session._id,
   })
-  console.log("accessToken", accessToken)
-  console.log("refreshToken", refreshToken)
   return {
     user: user.omitPassword(),
     accessToken,
@@ -209,7 +207,6 @@ export const sendPasswordResetEmail = async (email: string) => {
       emailId: data.id,
     }
   } catch (error: any) {
-    console.log("SendPasswordResetError:", error.message)
     return {}
   }
 }

@@ -27,14 +27,11 @@ export const login = async (data: { email: string, password: string }) => {
 export const logout = async () => API.get("/auth/logout");
 
 export const verifyEmail = async (verificationCode: string) => {
-  console.log("VERIFY", verificationCode)
   return API.get(`/auth/email/verify/${verificationCode}`);
 }
 export const sendPasswordResetEmail = async (email: string) =>
   API.post("/auth/password/forgot", { email });
 export const resetPassword = async ({ verificationCode, password }: { verificationCode: string, password: string }) => {
-  console.log("VER", verificationCode)
-  console.log("PASS", password)
   API.post("/auth/password/reset", { verificationCode, password });
 }
 export const getUser = async (): Promise<User> => {
@@ -46,7 +43,6 @@ export const deleteSession = async (id: string) => API.delete(`/sessions/${id}`)
 
 export const getSongsList = async (): Promise<Song[]> => API.get("/list");
 export const addSong = async (data: Song) => {
-  console.log("first", data)
   API.post("/list/add", data)
 };
 export const updateSong = async (data: { songId: string, value: boolean, type: "blacklisted" | "fav" | "inNextEventList" }) => {

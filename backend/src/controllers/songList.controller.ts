@@ -12,7 +12,6 @@ export const addSongHandler = catchErrors(async (req, res) => {
 })
 
 export const addOrUpdateSongHandler = catchErrors(async (req, res) => {
-  console.log("FRONTEND-REQUEST!!!!!!!", req.body);
   try {
     const user = await UserModel.findById(req.userId);
 
@@ -88,7 +87,6 @@ export const updateSongHandler = catchErrors(async (req, res) => {
 });
 
 export const deleteSongHandler = catchErrors(async (req, res) => {
-  console.log("FRONTEND-REQUEST!!!!!!!", req.params.songId, req.userId);
   const songId = req.params.songId;
   const userId = req.userId;
   appAssert(songId, BAD_REQUEST, "SongId not found");

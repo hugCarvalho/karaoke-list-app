@@ -12,7 +12,6 @@ export const registerHandler = catchErrors(async (req, res) => {
     ...req.body,
     userAgent: req.headers["user-agent"],
   })
-  console.log("REQUEST", request)
   const { user, accessToken, refreshToken } = await createAccount(request as CreateAccountParams)
   return setAuthCookies({ res, accessToken, refreshToken })
     .status(CREATED)
