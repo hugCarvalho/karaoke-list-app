@@ -27,6 +27,7 @@ const NavButtons = () => {
       zIndex={100}
       width={"100%"}
       justify={"center"}
+      background={"black"}
     >
       <ButtonGroup isAttached variant="outline" >
         {buttons.map((button) => (

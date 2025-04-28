@@ -9,7 +9,6 @@ import ForgotPassword from "./pages/ForgotPassword";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import NextEventList from "./pages/NextEventList";
-import Profile from "./pages/Profile";
 import Register from "./pages/Register";
 import ResetPassword from "./pages/ResetPassword";
 import Settings from "./pages/Settings";
@@ -36,7 +35,7 @@ function App() {
 
   if (isAuthenticated === null) {
     return <Center w="100vw" h="90vh" flexDir="column">
-      <Spinner mb={4} />
+      <Spinner />
     </Center>
   }
 
@@ -46,7 +45,7 @@ function App() {
         (
           <Route path="/" element={<AppContainer />}>
             <Route index element={<Home />} />
-            <Route path="profile" element={<Profile />} />
+            {/* <Route path="profile" element={<Profile />} /> */}
             <Route path="settings" element={<Settings />} />
             <Route path="favourites" element={<Favourites />} />
             <Route path="blacklist" element={<Blacklist />} />

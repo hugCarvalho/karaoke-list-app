@@ -1,6 +1,6 @@
 import { Avatar, Menu, MenuButton, MenuItem, MenuList } from "@chakra-ui/react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { MouseEventHandler } from "react"; // Import React and MouseEventHandler
+import { MouseEventHandler } from "react";
 import { useNavigate } from "react-router-dom";
 import { logout } from "../api/api";
 
@@ -26,7 +26,7 @@ const UserMenu = () => {
         <Avatar src="#" />
       </MenuButton>
       <MenuList>
-        <MenuItem onClick={() => navigate("/")}>Profile</MenuItem>
+        {/* <MenuItem onClick={() => navigate("/")}>Profile</MenuItem> */}
         <MenuItem onClick={() => navigate("/settings")}>Settings</MenuItem>
         <MenuItem onClick={handleSignOut}>Logout</MenuItem>
       </MenuList>
