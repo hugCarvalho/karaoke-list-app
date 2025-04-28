@@ -1,19 +1,5 @@
 import { InfoOutlineIcon } from "@chakra-ui/icons";
-import {
-  Button,
-  Center,
-  Checkbox,
-  Flex,
-  FormControl,
-  FormErrorMessage,
-  FormLabel,
-  Heading,
-  IconButton,
-  Input,
-  Tooltip,
-  useMediaQuery,
-  useToast,
-} from "@chakra-ui/react";
+import { Button, Center, Checkbox, Flex, FormControl, FormErrorMessage, FormLabel, Heading, IconButton, Input, Tooltip, useToast } from "@chakra-ui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
@@ -23,6 +9,7 @@ import { addSong } from "../api/api";
 import PageWrapper from "../components/PageWrapper";
 import queryClient from "../config/queryClient";
 import { QUERIES } from "../constants/queries";
+import { formatToGermanDate } from "../utils/date";
 
 const schema = z.object({
   title: z.string().min(1, "Song is required."),
@@ -59,27 +46,12 @@ const SongsSang = () => {
     },
   });
 
-  const [isMobile] = useMediaQuery("(max-width: 768px)");
   const toast = useToast();
-
   const fav = watch("fav");
   const blacklisted = watch("blacklisted");
   const inNextEventList = watch("inNextEventList");
 
-  const getGermanDate = (): Date => {
-    return new Date();
-  };
-
-  const formatToGermanDate = (date: Date): string => {
-    const formatter = new Intl.DateTimeFormat("de-DE", {
-      year: "numeric",
-      month: "2-digit",
-      day: "2-digit",
-    });
-    return formatter.format(date);
-  };
-
-  const { mutate: addSongMutation, isPending, isError } = useMutation({
+  const { mutate: addSongMutation, isPending } = useMutation({
     mutationFn: addSong,
     onSuccess: () => {
       toast({
@@ -104,12 +76,11 @@ const SongsSang = () => {
   });
 
   const onSubmit = (data: FormData) => {
-    console.log("FRONTEND-REQUEST", data);
     const eventData = {
       location: data.location,
       eventDate: data.eventDate
     }
-    const songData = { songId: uuid.v4(), events: [eventData], ...data }; // eventDate is already in data
+    const songData = { songId: uuid.v4(), events: [eventData], ...data };
     addSongMutation(songData);
   };
 
@@ -151,7 +122,7 @@ const SongsSang = () => {
       </Center>
 
       <form onSubmit={handleSubmit(onSubmit)} noValidate>
-        <Flex direction={isMobile ? "column" : "row"} gap={4} mb={4}>
+        <Flex direction={{ base: "column", md: "row" }} gap={4} mb={4}>
           <FormControl isInvalid={!!errors.title} isRequired>
             <FormLabel>Song</FormLabel>
             <Input {...register("title")} />
@@ -169,7 +140,7 @@ const SongsSang = () => {
           </FormControl>
         </Flex>
 
-        <Flex direction={isMobile ? "column" : "row"} gap={4} mb={4}>
+        <Flex direction={{ base: "column", md: "row" }} gap={4} mb={4}>
           <FormControl isInvalid={!!errors.location}>
             <FormLabel>Location</FormLabel>
             <Input {...register("location")} placeholder="Location" />
@@ -180,11 +151,11 @@ const SongsSang = () => {
 
           <FormControl>
             <FormLabel>Event Date</FormLabel>
-            <Input value={formatToGermanDate(getGermanDate())} isDisabled />
+            <Input value={formatToGermanDate(new Date())} isDisabled />
           </FormControl>
         </Flex>
 
-        <Flex direction={isMobile ? "column" : "row"} gap={4} mb={4}>
+        <Flex direction={{ base: "column", md: "row" }} gap={4} mb={4}>
           <Checkbox isChecked={fav} {...register("fav")} onChange={handleFavChange}>
             Fav
           </Checkbox>
