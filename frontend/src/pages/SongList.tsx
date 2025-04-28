@@ -1,23 +1,11 @@
-import { DeleteIcon, TriangleDownIcon, TriangleUpIcon } from "@chakra-ui/icons"; // Import DeleteIcon
-import {
-  Box,
-  Center,
-  Checkbox,
-  IconButton,
-  Table,
-  Tbody,
-  Td,
-  Text,
-  Th,
-  Thead,
-  Tr,
-  useMediaQuery
-} from "@chakra-ui/react";
+import { DeleteIcon, TriangleDownIcon, TriangleUpIcon } from "@chakra-ui/icons";
+import { Center, Checkbox, IconButton, Tbody, Td, Text, Th, Thead, Tr, useMediaQuery } from "@chakra-ui/react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
 import { deleteSong, getSongsList, updateSong } from "../api/api";
 import PageWrapper from "../components/PageWrapper";
 import TableSpinner from "../components/TableSpinner";
+import TableWrapper from "../components/TableWrapper";
 import { ACTIONS } from "../config/actions";
 import { Song } from "../config/interfaces";
 import { QUERIES } from "../constants/queries";
@@ -47,7 +35,7 @@ const SongList = () => {
     },
   });
 
-  const { mutate: deleteSongMutation, isPending: isDeletePending } = useMutation({ // Add deleteSong mutation
+  const { mutate: deleteSongMutation, isPending: isDeletePending } = useMutation({
     mutationFn: deleteSong,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [QUERIES.SONGS_LIST] });
@@ -86,79 +74,77 @@ const SongList = () => {
 
   return (
     <PageWrapper>
-      <Box overflowX="auto" p={isMobile ? 0 : 4}>
-        <Table variant="simple" size={isMobile ? "sm" : "md"}>
-          <Thead>
-            <Tr>
-              <Th fontSize={isMobile ? "sm" : "md"}>
-                Song
-                <IconButton
-                  aria-label="Sort by Song"
-                  icon={sortConfig.key === "title" && sortConfig.direction !== "ascending" ? <TriangleUpIcon /> : <TriangleDownIcon />}
-                  onClick={() => requestSort("title")}
-                  size="xs"
-                  variant="ghost"
+      <TableWrapper>
+        <Thead>
+          <Tr>
+            <Th fontSize={isMobile ? "sm" : "md"}>
+              Song
+              <IconButton
+                aria-label="Sort by Song"
+                icon={sortConfig.key === "title" && sortConfig.direction !== "ascending" ? <TriangleUpIcon /> : <TriangleDownIcon />}
+                onClick={() => requestSort("title")}
+                size="xs"
+                variant="ghost"
+              />
+            </Th>
+            <Th fontSize={isMobile ? "sm" : "md"}>
+              Artist
+              <IconButton
+                aria-label="Sort by Artist"
+                icon={sortConfig.key === "artist" && sortConfig.direction !== "ascending" ? <TriangleUpIcon /> : <TriangleDownIcon />}
+                onClick={() => requestSort("artist")}
+                size="xs"
+                variant="ghost"
+              />
+            </Th>
+            <Th fontSize={isMobile ? "sm" : "md"}>Fav</Th>
+            <Th fontSize={isMobile ? "sm" : "md"}>Next</Th>
+            <Th fontSize={isMobile ? "sm" : "md"}>Blacklist</Th>
+            <Th fontSize={isMobile ? "sm" : "md"}>Plays</Th>
+            <Th fontSize={isMobile ? "sm" : "md"}>Delete</Th>
+          </Tr>
+        </Thead>
+        <Tbody>
+          {sortedSongs.map((song) => (
+            <Tr key={song.songId}>
+              <Td fontSize={isMobile ? "sm" : "md"}>{song.title}</Td>
+              <Td fontSize={isMobile ? "sm" : "md"}>{song.artist}</Td>
+              <Td textAlign="center">
+                <Checkbox
+                  isChecked={song.fav}
+                  size={isMobile ? "sm" : "md"}
+                  onChange={() => handleCheckboxChange(song.songId, song.fav, "fav")}
                 />
-              </Th>
-              <Th fontSize={isMobile ? "sm" : "md"}>
-                Artist
-                <IconButton
-                  aria-label="Sort by Artist"
-                  icon={sortConfig.key === "artist" && sortConfig.direction !== "ascending" ? <TriangleUpIcon /> : <TriangleDownIcon />}
-                  onClick={() => requestSort("artist")}
-                  size="xs"
-                  variant="ghost"
+              </Td>
+              <Td textAlign="center">
+                <Checkbox
+                  isChecked={song.inNextEventList}
+                  size={isMobile ? "sm" : "md"}
+                  onChange={() => handleCheckboxChange(song.songId, song.inNextEventList, "inNextEventList")}
                 />
-              </Th>
-              <Th fontSize={isMobile ? "sm" : "md"}>Fav</Th>
-              <Th fontSize={isMobile ? "sm" : "md"}>Next</Th>
-              <Th fontSize={isMobile ? "sm" : "md"}>Blacklist</Th>
-              <Th fontSize={isMobile ? "sm" : "md"}>Plays</Th>
-              <Th fontSize={isMobile ? "sm" : "md"}>Delete</Th>
+              </Td>
+              <Td textAlign="center">
+                <Checkbox
+                  isChecked={song.blacklisted}
+                  onChange={() => handleCheckboxChange(song.songId, song.blacklisted, "blacklisted")}
+                  size={isMobile ? "sm" : "md"}
+                />
+              </Td>
+              <Td fontSize={isMobile ? "sm" : "md"}>{song.plays}</Td>
+              <Td textAlign="center">
+                <IconButton
+                  icon={<DeleteIcon />}
+                  size={isMobile ? "sm" : "md"}
+                  variant="ghost"
+                  onClick={() => handleDelete(song.songId)}
+                  isLoading={isDeletePending} // Show loading state
+                  aria-label={"delete button"} />
+              </Td>
             </Tr>
-          </Thead>
-          <Tbody>
-            {sortedSongs.map((song) => (
-              <Tr key={song.songId}>
-                <Td fontSize={isMobile ? "sm" : "md"}>{song.title}</Td>
-                <Td fontSize={isMobile ? "sm" : "md"}>{song.artist}</Td>
-                <Td textAlign="center">
-                  <Checkbox
-                    isChecked={song.fav}
-                    size={isMobile ? "sm" : "md"}
-                    onChange={() => handleCheckboxChange(song.songId, song.fav, "fav")}
-                  />
-                </Td>
-                <Td textAlign="center">
-                  <Checkbox
-                    isChecked={song.inNextEventList}
-                    size={isMobile ? "sm" : "md"}
-                    onChange={() => handleCheckboxChange(song.songId, song.inNextEventList, "inNextEventList")}
-                  />
-                </Td>
-                <Td textAlign="center">
-                  <Checkbox
-                    isChecked={song.blacklisted}
-                    onChange={() => handleCheckboxChange(song.songId, song.blacklisted, "blacklisted")}
-                    size={isMobile ? "sm" : "md"}
-                  />
-                </Td>
-                <Td fontSize={isMobile ? "sm" : "md"}>{song.plays}</Td>
-                <Td textAlign="center">
-                  <IconButton
-                    icon={<DeleteIcon />}
-                    size={isMobile ? "sm" : "md"}
-                    variant="ghost"
-                    onClick={() => handleDelete(song.songId)}
-                    isLoading={isDeletePending} // Show loading state
-                    aria-label={"delete button"} />
-                </Td>
-              </Tr>
-            ))}
-            {isLoading && <TableSpinner />}
-          </Tbody>
-        </Table>
-      </Box>
+          ))}
+          {isLoading && <TableSpinner />}
+        </Tbody>
+      </TableWrapper>
     </PageWrapper>
   );
 };

@@ -1,51 +1,41 @@
 import { InfoOutlineIcon } from "@chakra-ui/icons";
-import { Button, Center, Checkbox, Flex, FormControl, FormErrorMessage, FormLabel, Heading, IconButton, Input, Tooltip, useToast } from "@chakra-ui/react";
+import { Button, Center, Flex, FormControl, FormErrorMessage, FormLabel, Heading, IconButton, Input, Tooltip, useToast } from "@chakra-ui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
-import { useForm } from "react-hook-form";
+import { useForm, UseFormRegister } from "react-hook-form";
 import * as uuid from "uuid";
 import * as z from "zod";
 import { addSong } from "../api/api";
+import CheckboxGroup from "../components/CheckboxGroup";
 import PageWrapper from "../components/PageWrapper";
 import queryClient from "../config/queryClient";
 import { QUERIES } from "../constants/queries";
 import { formatToGermanDate } from "../utils/date";
+import { BaseSongFormData, baseSongFormSchema } from "./AddSong";
 
-const schema = z.object({
-  title: z.string().min(1, "Song is required."),
-  artist: z.string().min(1, "Artist is required."),
-  fav: z.boolean(),
-  blacklisted: z.boolean(),
-  inNextEventList: z.boolean(),
+const songsSangFormSchema = baseSongFormSchema.extend({
   location: z.string(),
   eventDate: z.date(),
-  plays: z.number(),
 });
 
-type FormData = z.infer<typeof schema>;
+export type SongsSangFormData = z.infer<typeof songsSangFormSchema>;
+
+const defaultValues = {
+  title: "",
+  artist: "",
+  fav: false,
+  blacklisted: false,
+  inNextEventList: false,
+  location: "Monster Ronson",
+  eventDate: new Date(),
+  plays: 1
+}
 
 const SongsSang = () => {
-  const {
-    register,
-    handleSubmit,
-    watch,
-    reset,
-    setValue,
-    formState: { errors },
-  } = useForm<FormData>({
-    resolver: zodResolver(schema),
-    defaultValues: {
-      title: "",
-      artist: "",
-      fav: false,
-      blacklisted: false,
-      inNextEventList: false,
-      location: "",
-      eventDate: new Date(),
-      plays: 1,
-    },
+  const { register, handleSubmit, watch, reset, setValue, formState: { errors } } = useForm<SongsSangFormData>({
+    resolver: zodResolver(songsSangFormSchema),
+    defaultValues,
   });
-
   const toast = useToast();
   const fav = watch("fav");
   const blacklisted = watch("blacklisted");
@@ -75,35 +65,13 @@ const SongsSang = () => {
     },
   });
 
-  const onSubmit = (data: FormData) => {
+  const onSubmit = (data: SongsSangFormData) => {
     const eventData = {
       location: data.location,
       eventDate: data.eventDate
     }
     const songData = { songId: uuid.v4(), events: [eventData], ...data };
     addSongMutation(songData);
-  };
-
-  const handleBlacklistChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setValue("blacklisted", e.target.checked, { shouldValidate: false });
-    if (e.target.checked) {
-      setValue("fav", false);
-      setValue("inNextEventList", false);
-    }
-  };
-
-  const handleFavChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setValue("fav", e.target.checked, { shouldValidate: false });
-    if (e.target.checked) {
-      setValue("blacklisted", false, { shouldValidate: false });
-    }
-  };
-
-  const handleInNextEventChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setValue("inNextEventList", e.target.checked, { shouldValidate: false });
-    if (e.target.checked) {
-      setValue("blacklisted", false, { shouldValidate: false });
-    }
   };
 
   return (
@@ -155,17 +123,13 @@ const SongsSang = () => {
           </FormControl>
         </Flex>
 
-        <Flex direction={{ base: "column", md: "row" }} gap={4} mb={4}>
-          <Checkbox isChecked={fav} {...register("fav")} onChange={handleFavChange}>
-            Fav
-          </Checkbox>
-          <Checkbox isChecked={inNextEventList} {...register("inNextEventList")} onChange={handleInNextEventChange}>
-            Next
-          </Checkbox>
-          <Checkbox isChecked={blacklisted} {...register("blacklisted")} onChange={handleBlacklistChange}>
-            Blacklist
-          </Checkbox>
-        </Flex>
+        <CheckboxGroup
+          register={register as UseFormRegister<SongsSangFormData | BaseSongFormData>}
+          fav={fav}
+          blacklisted={blacklisted}
+          inNextEventList={inNextEventList}
+          setValue={setValue as UseFormRegister<SongsSangFormData>}
+        />
 
         <Button type="submit" colorScheme="blue" isLoading={isPending}>
           Save

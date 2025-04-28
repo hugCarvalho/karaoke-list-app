@@ -1,30 +1,17 @@
 import { InfoOutlineIcon } from "@chakra-ui/icons";
-import {
-  Button,
-  Center,
-  Checkbox,
-  Flex,
-  FormControl,
-  FormErrorMessage,
-  FormLabel,
-  Heading,
-  IconButton,
-  Input,
-  Tooltip,
-  useMediaQuery,
-  useToast
-} from "@chakra-ui/react";
+import { Button, Center, Flex, FormControl, FormErrorMessage, FormLabel, Heading, IconButton, Input, Tooltip, useToast } from "@chakra-ui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import * as uuid from "uuid";
 import * as z from "zod";
 import { addSong } from "../api/api";
+import CheckboxGroup from "../components/CheckboxGroup";
 import PageWrapper from "../components/PageWrapper";
 import queryClient from "../config/queryClient";
 import { QUERIES } from "../constants/queries";
 
-const schema = z.object({
+export const baseSongFormSchema = z.object({
   artist: z.string().min(1, "Artist is required."),
   title: z.string().min(1, "Artist is required."),
   fav: z.boolean(),
@@ -33,31 +20,28 @@ const schema = z.object({
   plays: z.number(),
 });
 
-type FormData = z.infer<typeof schema>;
+export type BaseSongFormData = z.infer<typeof baseSongFormSchema>;
 
-const Home = () => {
-  const [isMobile] = useMediaQuery("(max-width: 768px)");
-  const toast = useToast();
-  const {
-    register,
-    handleSubmit,
-    watch,
-    reset,
-    setValue,
-    formState: { errors },
-  } = useForm<FormData>({
-    resolver: zodResolver(schema),
-    defaultValues: {
-      title: "",
-      artist: "",
-      fav: false,
-      blacklisted: false,
-      inNextEventList: false,
-      plays: 0
-    },
+const defaultValues = {
+  title: "",
+  artist: "",
+  fav: false,
+  blacklisted: false,
+  inNextEventList: false,
+  plays: 0
+}
+
+const AddSong = () => {
+  const { register, handleSubmit, watch, reset, setValue, formState: { errors } } = useForm<BaseSongFormData>({
+    resolver: zodResolver(baseSongFormSchema),
+    defaultValues,
   });
+  const toast = useToast();
+  const fav = watch("fav");
+  const blacklisted = watch("blacklisted");
+  const inNextEventList = watch("inNextEventList");
 
-  const { mutate: addSongMutation, isPending, isError } = useMutation({
+  const { mutate: addSongMutation, isPending } = useMutation({
     mutationFn: addSong,
     onSuccess: () => {
       toast({
@@ -81,40 +65,13 @@ const Home = () => {
     },
   });
 
-  const fav = watch("fav");
-  const blacklisted = watch("blacklisted");
-  const inNextEventList = watch("inNextEventList");
-
-  const onSubmit = (data: FormData) => {
-    console.log("FRONTEND-REQUEST", data);
+  const onSubmit = (data: BaseSongFormData) => {
     const eventData = {
       location: "",
       eventDate: null
     }
-    const songData = { songId: uuid.v4(), events: [eventData], ...data }; // eventDate is already in data
+    const songData = { songId: uuid.v4(), events: [eventData], ...data };
     addSongMutation(songData);
-  }
-
-  const handleBlacklistChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setValue("blacklisted", e.target.checked, { shouldValidate: false });
-    if (e.target.checked) {
-      setValue("fav", false);
-      setValue("inNextEventList", false);
-    }
-  }
-
-  const handleFavChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setValue("fav", e.target.checked, { shouldValidate: false });
-    if (e.target.checked) {
-      setValue("blacklisted", false, { shouldValidate: false });
-    }
-  }
-
-  const handleNextEventChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setValue("inNextEventList", e.target.checked, { shouldValidate: false });
-    if (e.target.checked) {
-      setValue("blacklisted", false, { shouldValidate: false });
-    }
   }
 
   return (
@@ -133,7 +90,7 @@ const Home = () => {
       </Center>
 
       <form onSubmit={handleSubmit(onSubmit)} noValidate>
-        <Flex direction={isMobile ? "column" : "row"} gap={4} mb={4}>
+        <Flex direction={{ base: "column", md: "row" }} gap={4} mb={4}>
           <FormControl isInvalid={!!errors.title} isRequired>
             <FormLabel>Song</FormLabel>
             <Input {...register("title")} />
@@ -151,18 +108,13 @@ const Home = () => {
           </FormControl>
         </Flex>
 
-
-        <Flex direction={isMobile ? "column" : "row"} gap={4} mb={4}>
-          <Checkbox isChecked={fav} {...register("fav")} onChange={handleFavChange}>
-            Fav
-          </Checkbox>
-          <Checkbox isChecked={inNextEventList} {...register("inNextEventList")} onChange={handleNextEventChange}>
-            Next
-          </Checkbox>
-          <Checkbox isChecked={blacklisted} {...register("blacklisted")} onChange={handleBlacklistChange}>
-            Blacklist
-          </Checkbox>
-        </Flex>
+        <CheckboxGroup
+          register={register}
+          fav={fav}
+          blacklisted={blacklisted}
+          inNextEventList={inNextEventList}
+          setValue={setValue}
+        />
 
         <Button type="submit" colorScheme="blue" isLoading={isPending}>
           Save
@@ -173,4 +125,4 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default AddSong;
