@@ -35,6 +35,7 @@ function App() {
 
   if (isAuthenticated === null) {
     return <Center w="100vw" h="90vh" flexDir="column">
+      <p>Because of Renders free tier, initial app render is extremely slow...</p>
       <Spinner />
     </Center>
   }

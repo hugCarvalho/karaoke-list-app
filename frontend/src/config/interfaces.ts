@@ -3,7 +3,7 @@ type EventData = {
   eventDate: Date | null
 }
 
-export type Song = {
+export interface Song {
   songId: string,
   title: string,
   artist: string,
@@ -19,4 +19,9 @@ export interface Data {
   userId: string,
   createdAt: string,
   updatedAt: string,
+}
+
+export interface Artist {
+  name: string,
+  songs: string[],
 }

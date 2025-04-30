@@ -43,11 +43,14 @@ export const deleteSession = async (id: string) => API.delete(`/sessions/${id}`)
 
 export const getSongsList = async (): Promise<Song[]> => API.get("/list");
 export const addSong = async (data: Song) => {
-  API.post("/list/add", data)
+  return API.post("/list/add", data)
 };
 export const updateSong = async (data: { songId: string, value: boolean, type: "blacklisted" | "fav" | "inNextEventList" }) => {
-  API.patch("/list/update", data)
+  return API.patch("/list/update", data)
 };
 export const deleteSong = async (data: { songId: string }) => {
-  API.delete(`/list/delete/${data.songId}`)
+  return API.delete(`/list/delete/${data.songId}`)
+};
+export const getArtistsDb = async () => {
+  return API.get("/list/artists")
 };
