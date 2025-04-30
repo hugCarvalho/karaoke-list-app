@@ -2,16 +2,16 @@ import { InfoOutlineIcon } from "@chakra-ui/icons";
 import { Button, Center, Flex, FormControl, FormErrorMessage, FormLabel, Heading, IconButton, Input, Tooltip, useToast } from "@chakra-ui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
-import { useForm, UseFormRegister } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import * as uuid from "uuid";
 import * as z from "zod";
 import { addSong } from "../api/api";
 import CheckboxGroup from "../components/CheckboxGroup";
 import PageWrapper from "../components/PageWrapper";
+import { baseSongFormSchema } from "../config/formInterfaces";
 import queryClient from "../config/queryClient";
 import { QUERIES } from "../constants/queries";
 import { formatToGermanDate } from "../utils/date";
-import { BaseSongFormData, baseSongFormSchema } from "./AddSong";
 
 const songsSangFormSchema = baseSongFormSchema.extend({
   location: z.string(),
@@ -124,11 +124,11 @@ const SongsSang = () => {
         </Flex>
 
         <CheckboxGroup
-          register={register as UseFormRegister<SongsSangFormData | BaseSongFormData>}
+          register={register}
           fav={fav}
           blacklisted={blacklisted}
           inNextEventList={inNextEventList}
-          setValue={setValue as UseFormRegister<SongsSangFormData>}
+          setValue={setValue}
         />
 
         <Button type="submit" colorScheme="blue" isLoading={isPending}>
