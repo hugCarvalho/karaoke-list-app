@@ -1,4 +1,4 @@
-## Karaoke List App 🎤
+## Karaoke List App
 📆 Created in 2025.
 
 🛠 Fullstack app built with **React**, **Typescript**, **Node.js**, **MongoDb** and **Chakra UI**.

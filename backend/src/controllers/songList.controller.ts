@@ -1,17 +1,15 @@
 // @ts-nocheck
 import { BAD_REQUEST, INTERNAL_SERVER_ERROR, NOT_FOUND, OK } from "../constants/http";
+import ArtistdbModel from "../models/artistdb.model";
 import List from "../models/song.model";
 import UserModel from "../models/user.model";
 import appAssert from "../utils/appAssert";
 import catchErrors from "../utils/catchErrors";
 
-export const addSongHandler = catchErrors(async (req, res) => {
-  const user = await UserModel.findById(req.userId)
-  appAssert(user, NOT_FOUND, "User not found")
-  return res.status(OK).json(user.omitPassword())
-})
-
 export const addOrUpdateSongHandler = catchErrors(async (req, res) => {
+  const artistName = req.body.artist
+  const title = req.body.title
+
   try {
     const user = await UserModel.findById(req.userId);
 
@@ -19,6 +17,7 @@ export const addOrUpdateSongHandler = catchErrors(async (req, res) => {
       return res.status(NOT_FOUND).json({ success: false, message: 'User not found.' });
     }
 
+    // Update the userlists collection
     let list = await List.findOne({ userId: user._id });
 
     if (!list) {
@@ -29,8 +28,21 @@ export const addOrUpdateSongHandler = catchErrors(async (req, res) => {
     }
 
     list.songs.push(req.body);
-
     await list.save();
+
+    // Update the artists collection
+    let artist = await ArtistdbModel.findOne({ name: artistName });
+
+    if (!artist) {
+      artist = new ArtistdbModel({
+        name: artistName,
+        songs: [title],
+      });
+      await artist.save();
+    } else {
+      // $addToSet Adds the song to the artist's songs array avoiding duplicates
+      await ArtistdbModel.updateOne({ _id: artist._id }, { $addToSet: { songs: title } });
+    }
 
     return res.status(OK).json({ success: true, message: 'Song added/updated successfully.' });
   } catch (error: any) {
@@ -99,4 +111,10 @@ export const deleteSongHandler = catchErrors(async (req, res) => {
   appAssert(deleted, NOT_FOUND, "Song not found");
 
   return res.status(OK).json({ message: "Song removed" });
+});
+
+
+export const getArtistsListHandler = catchErrors(async (req, res) => {
+  const artists = await ArtistdbModel.find({});
+  return res.status(OK).json({ success: true, data: artists });
 });
