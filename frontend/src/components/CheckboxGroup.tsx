@@ -1,7 +1,6 @@
 import { Checkbox, Flex } from "@chakra-ui/react";
 import React from "react";
 import { UseFormRegister, UseFormSetValue } from "react-hook-form";
-import { BaseSongFormData } from "../pages/AddSong";
 import { SongsSangFormData } from "../pages/SongsSang";
 
 type CheckboxGroupProps = {
@@ -9,10 +8,11 @@ type CheckboxGroupProps = {
   fav: boolean;
   blacklisted: boolean;
   inNextEventList: boolean;
+  duet: boolean
   setValue: UseFormSetValue<SongsSangFormData | BaseSongFormData>;
 }
 
-const CheckboxGroup = ({ register, fav, blacklisted, inNextEventList, setValue }: CheckboxGroupProps) => {
+const CheckboxGroup = ({ register, duet, fav, blacklisted, inNextEventList, setValue }: CheckboxGroupProps) => {
   const handleBlacklistChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setValue("blacklisted", e.target.checked, { shouldValidate: false });
     if (e.target.checked) {
@@ -34,6 +34,9 @@ const CheckboxGroup = ({ register, fav, blacklisted, inNextEventList, setValue }
       setValue("blacklisted", false, { shouldValidate: false });
     }
   };
+  const handleDuetChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setValue("duet", e.target.checked, { shouldValidate: false });
+  };
 
   return (
     <Flex direction={{ base: "column", md: "row" }} gap={4} mb={4}>
@@ -53,6 +56,13 @@ const CheckboxGroup = ({ register, fav, blacklisted, inNextEventList, setValue }
         onChange={handleBlacklistChange}
       >
         Blacklist
+      </Checkbox>
+      <Checkbox
+        isChecked={duet}
+        {...register("duet")}
+        onChange={handleDuetChange}
+      >
+        Duet
       </Checkbox>
     </Flex>
   );

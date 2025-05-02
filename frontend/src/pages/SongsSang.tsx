@@ -20,6 +20,7 @@ const defaultValues = {
   artist: "",
   fav: false,
   blacklisted: false,
+  duet: false,
   inNextEventList: false,
   location: "Monster Ronson",
   eventDate: new Date(),
@@ -34,6 +35,7 @@ const SongsSang = () => {
   const toast = useToast();
   const fav = watch("fav");
   const blacklisted = watch("blacklisted");
+  const duet = watch("duet");
   const inNextEventList = watch("inNextEventList");
 
   //Select Options
@@ -184,6 +186,7 @@ const SongsSang = () => {
         </Flex>
 
         <CheckboxGroup
+          duet={duet}
           register={register}
           fav={fav}
           blacklisted={blacklisted}
