@@ -10,6 +10,7 @@ export interface Song {
   fav: boolean,
   blacklisted: boolean,
   inNextEventList: boolean,
+  duet: boolean
   events: EventData[],
   plays: number,
 }

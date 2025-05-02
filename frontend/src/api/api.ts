@@ -1,4 +1,5 @@
 import API from "../config/apiClient";
+import { CheckboxGroup } from "../config/formInterfaces";
 import { Song } from "../config/interfaces";
 
 export interface User {
@@ -45,7 +46,7 @@ export const getSongsList = async (): Promise<Song[]> => API.get("/list");
 export const addSong = async (data: Song) => {
   return API.post("/list/add", data)
 };
-export const updateSong = async (data: { songId: string, value: boolean, type: "blacklisted" | "fav" | "inNextEventList" }) => {
+export const updateSong = async (data: { songId: string, value: boolean, type: CheckboxGroup }) => {
   return API.patch("/list/update", data)
 };
 export const deleteSong = async (data: { songId: string }) => {
@@ -53,4 +54,8 @@ export const deleteSong = async (data: { songId: string }) => {
 };
 export const getArtistsDb = async () => {
   return API.get("/list/artists")
+};
+export const updatePlayCount = async (data: { songId: string }) => {
+  console.log("updatePlayCount", data)
+  return API.patch(`/list/update/songs/update-play/${data.songId}`)
 };

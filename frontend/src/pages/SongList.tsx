@@ -7,6 +7,7 @@ import PageWrapper from "../components/PageWrapper";
 import TableSpinner from "../components/TableSpinner";
 import TableWrapper from "../components/TableWrapper";
 import { ACTIONS } from "../config/actions";
+import { CheckboxGroup } from "../config/formInterfaces";
 import { Song } from "../config/interfaces";
 import { QUERIES } from "../constants/queries";
 
@@ -55,7 +56,7 @@ const SongList = () => {
     setSortConfig({ key, direction });
   };
 
-  const handleCheckboxChange = (songId: string, value: boolean, type: "blacklisted" | "fav" | "inNextEventList") => {
+  const handleCheckboxChange = (songId: string, value: boolean, type: CheckboxGroup) => {
     updateBlacklistedMutation({ songId, value: !value, type });
   };
 
@@ -99,6 +100,7 @@ const SongList = () => {
             </Th>
             <Th fontSize={isMobile ? "sm" : "md"}>Fav</Th>
             <Th fontSize={isMobile ? "sm" : "md"}>Next</Th>
+            <Th fontSize={isMobile ? "sm" : "md"}>Duet</Th>
             <Th fontSize={isMobile ? "sm" : "md"}>Blacklist</Th>
             <Th fontSize={isMobile ? "sm" : "md"}>Plays</Th>
             <Th fontSize={isMobile ? "sm" : "md"}>Delete</Th>
@@ -121,6 +123,13 @@ const SongList = () => {
                   isChecked={song.inNextEventList}
                   size={isMobile ? "sm" : "md"}
                   onChange={() => handleCheckboxChange(song.songId, song.inNextEventList, "inNextEventList")}
+                />
+              </Td>
+              <Td textAlign="center">
+                <Checkbox
+                  isChecked={song.duet}
+                  onChange={() => handleCheckboxChange(song.songId, song.duet, "duet")}
+                  size={isMobile ? "sm" : "md"}
                 />
               </Td>
               <Td textAlign="center">
