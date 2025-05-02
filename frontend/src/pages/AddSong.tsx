@@ -9,7 +9,7 @@ import * as uuid from "uuid";
 import { addSong, getArtistsDb } from "../api/api";
 import CheckboxGroup from "../components/CheckboxGroup";
 import PageWrapper from "../components/PageWrapper";
-import { BaseSongFormData, baseSongFormSchema } from "../config/formInterfaces";
+import { BaseSongFormData, baseSongFormSchema, Option } from "../config/formInterfaces";
 import { Artist } from "../config/interfaces";
 import queryClient from "../config/queryClient";
 import { QUERIES } from "../constants/queries";
@@ -21,11 +21,6 @@ const defaultValues = {
   blacklisted: false,
   inNextEventList: false,
   plays: 0
-}
-
-type Option = {
-  readonly label: string;
-  readonly value: string;
 }
 
 const AddSong = () => {

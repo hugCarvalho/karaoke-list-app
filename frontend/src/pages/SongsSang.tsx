@@ -1,24 +1,19 @@
 import { InfoOutlineIcon } from "@chakra-ui/icons";
 import { Button, Center, Flex, FormControl, FormErrorMessage, FormLabel, Heading, IconButton, Input, Tooltip, useToast } from "@chakra-ui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
+import CreatableSelect from "react-select/creatable";
 import * as uuid from "uuid";
-import * as z from "zod";
-import { addSong } from "../api/api";
+import { addSong, getArtistsDb } from "../api/api";
 import CheckboxGroup from "../components/CheckboxGroup";
 import PageWrapper from "../components/PageWrapper";
-import { baseSongFormSchema } from "../config/formInterfaces";
+import { Option, SongsSangFormData, songsSangFormSchema } from "../config/formInterfaces";
+import { Artist } from "../config/interfaces";
 import queryClient from "../config/queryClient";
 import { QUERIES } from "../constants/queries";
 import { formatToGermanDate } from "../utils/date";
-
-const songsSangFormSchema = baseSongFormSchema.extend({
-  location: z.string(),
-  eventDate: z.date(),
-});
-
-export type SongsSangFormData = z.infer<typeof songsSangFormSchema>;
 
 const defaultValues = {
   title: "",
@@ -40,6 +35,32 @@ const SongsSang = () => {
   const fav = watch("fav");
   const blacklisted = watch("blacklisted");
   const inNextEventList = watch("inNextEventList");
+
+  //Select Options
+  const [artistOptions, setArtistOptions] = useState<Option[]>([]);
+  const [songOptions, setSongOptions] = useState<Option[]>([]);
+  const [artistOptionValue, setArtistOptionValue] = useState<Option | null>();
+  const [songOptionValue, setSongOptionValue] = useState<Option | null>();
+
+  const { data: artistsDb, isLoading, isError, error } = useQuery({
+    queryKey: [QUERIES.GET_ARTISTS_DB],
+    queryFn: getArtistsDb,
+  });
+
+  useEffect(() => {
+    if (artistsDb?.data) {
+      const artist = artistsDb.data.map((artist: Artist) => {
+        return { value: artist.name, label: artist.name }
+      }) ?? []
+      const songs = artistsDb.data.reduce((acc: Artist[], artist: Artist) => {
+        const songLabels = artist.songs.map(song => ({ value: song, label: song }));
+        return [...acc, ...songLabels];
+      }, []) ?? []
+      setArtistOptions(artist)
+      setSongOptions(songs)
+    }
+  }, [artistsDb])
+
 
   const { mutate: addSongMutation, isPending } = useMutation({
     mutationFn: addSong,
@@ -91,19 +112,58 @@ const SongsSang = () => {
 
       <form onSubmit={handleSubmit(onSubmit)} noValidate>
         <Flex direction={{ base: "column", md: "row" }} gap={4} mb={4}>
-          <FormControl isInvalid={!!errors.title} isRequired>
-            <FormLabel>Song</FormLabel>
-            <Input {...register("title")} />
-            {errors.title && (
-              <FormErrorMessage>{errors.title.message}</FormErrorMessage>
-            )}
-          </FormControl>
-
           <FormControl isInvalid={!!errors.artist} isRequired>
-            <FormLabel>Artist</FormLabel>
-            <Input {...register("artist")} />
+            <FormLabel htmlFor="artist">Artist</FormLabel>
+            <CreatableSelect
+              placeholder="Type or select an artist"
+              isClearable
+              options={artistOptions}
+              value={artistOptionValue}
+              onCreateOption={(e) => {
+                setArtistOptions(state => [...state, { value: e, label: e }])
+                setArtistOptionValue({ value: e, label: e })
+                setValue("artist", e)
+              }}
+              onChange={(option) => {
+                setValue("artist", option?.value || "")
+                setArtistOptionValue(option)
+              }}
+              styles={{
+                option: (base, state) => ({
+                  ...base,
+                  color: state.isSelected ? 'inherit' : 'gray',
+                }),
+              }}
+            />
             {errors.artist && (
               <FormErrorMessage>{errors.artist.message}</FormErrorMessage>
+            )}
+          </FormControl>
+          <FormControl isInvalid={!!errors.title} isRequired>
+            <FormLabel htmlFor="title">Song</FormLabel>
+            <CreatableSelect
+              placeholder="Type or select a song"
+              isClearable
+              options={songOptions}
+              value={songOptionValue}
+              onCreateOption={(e) => {
+                setSongOptions(state => [...state, { value: e, label: e }])
+                setSongOptionValue({ value: e, label: e })
+                setValue("title", e)
+              }}
+              onChange={(option) => {
+                setValue("title", option?.value || "")
+                setSongOptionValue(option)
+              }}
+              styles={{
+                option: (base, state) => ({
+                  ...base,
+                  color: state.isSelected ? 'inherit' : 'gray',
+                }),
+              }}
+            />
+            {errors.title && (
+              <FormErrorMessage>{errors.title.message}</FormErrorMessage>
             )}
           </FormControl>
         </Flex>

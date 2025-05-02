@@ -8,5 +8,16 @@ export const baseSongFormSchema = z.object({
   inNextEventList: z.boolean(),
   plays: z.number(),
 });
-
 export type BaseSongFormData = z.infer<typeof baseSongFormSchema>;
+
+export const songsSangFormSchema = baseSongFormSchema.extend({
+  location: z.string(),
+  eventDate: z.date(),
+});
+
+export type SongsSangFormData = z.infer<typeof songsSangFormSchema>;
+
+export type Option = {
+  readonly label: string;
+  readonly value: string;
+}
