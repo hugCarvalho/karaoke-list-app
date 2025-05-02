@@ -25,3 +25,7 @@ export type Option = {
   readonly value: string;
 }
 
+export type SortConfig = {
+  key: "title" | "artist" | "plays"
+  direction: "ascending" | "descending"
+};

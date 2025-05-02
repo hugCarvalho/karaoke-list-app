@@ -118,3 +118,24 @@ export const getArtistsListHandler = catchErrors(async (req, res) => {
   const artists = await ArtistdbModel.find({});
   return res.status(OK).json({ success: true, data: artists });
 });
+
+export const updateSongPlayCountHandler = catchErrors(async (req, res) => {
+  const songId = req.params.songId;
+  const userId = req.userId;
+
+  if (!songId) {
+    return res.status(BAD_REQUEST).json({ success: false, message: 'Invalid request. songId is required.' });
+  }
+
+  const updatedList = await List.findOneAndUpdate(
+    { userId: userId, 'songs.songId': songId },
+    { $inc: { 'songs.$.plays': 1 } },
+    { new: true }
+  );
+
+  if (!updatedList) {
+    return res.status(NOT_FOUND).json({ success: false, message: 'Song not found.' });
+  }
+
+  return res.status(OK).json({ success: true, message: 'Song updated successfully.' });
+});

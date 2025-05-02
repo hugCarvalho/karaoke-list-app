@@ -7,14 +7,9 @@ import PageWrapper from "../components/PageWrapper";
 import TableSpinner from "../components/TableSpinner";
 import TableWrapper from "../components/TableWrapper";
 import { ACTIONS } from "../config/actions";
-import { CheckboxGroup } from "../config/formInterfaces";
+import { CheckboxGroup, SortConfig } from "../config/formInterfaces";
 import { Song } from "../config/interfaces";
 import { QUERIES } from "../constants/queries";
-
-export type SortConfig = {
-  key: "title" | "artist";
-  direction: "ascending" | "descending";
-};
 
 //TODO: do optimistic updates for
 
@@ -48,7 +43,7 @@ const SongList = () => {
     return ACTIONS.sortList(sortConfig, data);
   }, [data, sortConfig]);
 
-  const requestSort = (key: "title" | "artist") => {
+  const requestSort = (key: SortConfig["key"]) => {
     let direction = "ascending" as SortConfig["direction"];
     if (sortConfig.key === key && sortConfig.direction === "ascending") {
       direction = "descending";

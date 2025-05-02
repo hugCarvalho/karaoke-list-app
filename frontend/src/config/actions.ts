@@ -1,4 +1,4 @@
-import { SortConfig } from "../pages/SongList";
+import { SortConfig } from "./formInterfaces";
 import { Song } from "./interfaces";
 
 export const ACTIONS = {

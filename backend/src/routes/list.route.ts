@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { addOrUpdateSongHandler, deleteSongHandler, getArtistsListHandler, getSongListHandler, updateSongHandler } from "../controllers/songList.controller";
+import { addOrUpdateSongHandler, deleteSongHandler, getArtistsListHandler, getSongListHandler, updateSongHandler, updateSongPlayCountHandler } from "../controllers/songList.controller";
 
 const listRoutes = Router()
 
@@ -9,4 +9,5 @@ listRoutes.get("/artists", getArtistsListHandler)
 listRoutes.post("/add", addOrUpdateSongHandler)
 listRoutes.patch("/update", updateSongHandler)
 listRoutes.delete("/delete/:songId", deleteSongHandler)
+listRoutes.patch("/update/songs/update-play/:songId", updateSongPlayCountHandler)
 export default listRoutes

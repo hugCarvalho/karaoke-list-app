@@ -7,9 +7,9 @@ import PageWrapper from "../components/PageWrapper";
 import TableSpinner from "../components/TableSpinner";
 import TableWrapper from "../components/TableWrapper";
 import { ACTIONS } from "../config/actions";
+import { SortConfig } from "../config/formInterfaces";
 import { Song } from "../config/interfaces";
 import { QUERIES } from "../constants/queries";
-import { SortConfig } from "./SongList";
 
 //todo: HAVE BACKEND TO return only blacklisted songs
 
@@ -31,7 +31,7 @@ const Blacklist = () => {
     return ACTIONS.sortList(sortConfig, blacklistedSongs);
   }, [sortConfig, songs]);
 
-  const requestSort = (key: "artist" | "title") => {
+  const requestSort = (key: SortConfig["key"]) => {
     let direction: "ascending" | "descending" = "ascending";
     if (sortConfig.key === key && sortConfig.direction === "ascending") {
       direction = "descending";

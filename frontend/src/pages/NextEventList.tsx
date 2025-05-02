@@ -7,10 +7,10 @@ import PageWrapper from "../components/PageWrapper";
 import TableSpinner from "../components/TableSpinner";
 import TableWrapper from "../components/TableWrapper";
 import { ACTIONS } from "../config/actions";
+import { SortConfig } from "../config/formInterfaces";
 import { Song } from "../config/interfaces";
 import queryClient from "../config/queryClient";
 import { QUERIES } from "../constants/queries";
-import { SortConfig } from "./SongList";
 
 const NextEvent = () => {
   const [sortConfig, setSortConfig] = useState<SortConfig>({ key: "artist", direction: "ascending" });
@@ -52,7 +52,7 @@ const NextEvent = () => {
     return ACTIONS.sortList(sortConfig, nextSongs);
   }, [sortConfig, songs]);
 
-  const requestSort = (key: "artist" | "title") => {
+  const requestSort = (key: SortConfig["key"]) => {
     let direction: "ascending" | "descending" = "ascending";
     if (sortConfig.key === key && sortConfig.direction === "ascending") {
       direction = "descending";
@@ -97,7 +97,16 @@ const NextEvent = () => {
                 variant="ghost"
               />
             </Th>
-            <Th fontSize={isMobile ? "sm" : "md"}>Plays</Th>
+            <Th fontSize={isMobile ? "sm" : "md"}>
+              Plays
+              <IconButton
+                aria-label="Sort by play count"
+                icon={sortConfig.key === "plays" && sortConfig.direction === "ascending" ? <TriangleUpIcon /> : <TriangleDownIcon />}
+                onClick={() => requestSort("plays")}
+                size="xs"
+                variant="ghost"
+              />
+            </Th>
             <Th fontSize={isMobile ? "sm" : "md"}>Add Play</Th>
           </Tr>
         </Thead>
