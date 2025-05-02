@@ -12,6 +12,7 @@ const songSchema = new mongoose.Schema({
   fav: { type: Boolean, default: false },
   blacklisted: { type: Boolean, default: false },
   inNextEventList: { type: Boolean, default: false },
+  duet: { type: Boolean, default: false },
   events: [eventDataSchema],
   plays: { type: Number, default: 1 },
 });
