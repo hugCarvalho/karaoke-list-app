@@ -1,23 +1,6 @@
 import API from "../config/apiClient";
 import { CheckboxGroup } from "../config/formInterfaces";
-import { Song } from "../config/interfaces";
-
-export interface User {
-  _id: string;
-  email: string;
-  verified: boolean;
-  createdAt: Date | number;
-  updatedAt: Date | number;
-}
-
-export interface Session {
-  _id: string
-  // userId: string,
-  isCurrent: boolean
-  userAgent: string
-  createdAt: Date
-  // expiresAt: Date
-}
+import { Song, User } from "../config/interfaces";
 
 export const signup = async (data: { email: string, password: string, confirmPassword: string }) => {
   return API.post("/auth/register", data)

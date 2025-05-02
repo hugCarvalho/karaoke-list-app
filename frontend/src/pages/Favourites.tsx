@@ -1,8 +1,8 @@
 import { TriangleDownIcon, TriangleUpIcon } from "@chakra-ui/icons";
-import { Box, IconButton, Tbody, Td, Text, Th, Thead, Tr } from "@chakra-ui/react";
-import { useQuery } from "@tanstack/react-query";
+import { Box, Button, IconButton, Tbody, Td, Text, Th, Thead, Tr, useToast } from "@chakra-ui/react";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
-import { getSongsList } from "../api/api";
+import { getSongsList, updatePlayCount } from "../api/api";
 import PageWrapper from "../components/PageWrapper";
 import TableSpinner from "../components/TableSpinner";
 import TableWrapper from "../components/TableWrapper";
@@ -13,10 +13,36 @@ import { SortConfig } from "./SongList";
 
 const Favourites = () => {
   const [sortConfig, setSortConfig] = useState<SortConfig>({ key: "artist", direction: "ascending" });
+  const toast = useToast();
+  const queryClient = useQueryClient();
+
   const { data: songs, isLoading, isError, error, isFetchedAfterMount, isFetching, isSuccess } = useQuery<Song[]>({
     queryKey: [QUERIES.SONGS_LIST],
     queryFn: getSongsList,
     initialData: []
+  });
+
+  const { mutate: addSongMutation, isPending } = useMutation({
+    mutationFn: updatePlayCount,
+    onSuccess: () => {
+      toast({
+        title: "Song updated.",
+        description: "The song has been updated.",
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+      });
+      queryClient.invalidateQueries({ queryKey: [QUERIES.SONGS_LIST] })
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Error updating song.",
+        description: error?.message || "An error occurred while updating the song.",
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+      });
+    },
   });
 
   const sortedSongs = useMemo(() => {
@@ -73,6 +99,7 @@ const Favourites = () => {
               />
             </Th>
             <Th fontSize={{ base: "sm", md: "md" }}>Plays</Th>
+            <Th fontSize={{ base: "sm", md: "md" }}>Add play</Th>
           </Tr>
         </Thead>
         <Tbody>
@@ -81,6 +108,14 @@ const Favourites = () => {
               <Td fontSize={{ base: "sm", md: "md" }}>{song.title}</Td>
               <Td fontSize={{ base: "sm", md: "md" }}>{song.artist}</Td>
               <Td fontSize={{ base: "sm", md: "md" }}>{song.plays}</Td>
+              <Td fontSize={{ base: "sm", md: "md" }}>
+                <Button
+                  size={{ base: "xs", md: "sm" }}
+                  onClick={() => addSongMutation(song)}
+                >
+                  Add
+                </Button>
+              </Td>
             </Tr>
           ))}
           {isLoading && <TableSpinner />}

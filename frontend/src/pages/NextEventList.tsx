@@ -1,31 +1,54 @@
 import { TriangleDownIcon, TriangleUpIcon } from "@chakra-ui/icons";
-import { Box, IconButton, Tbody, Td, Text, Th, Thead, Tr, useMediaQuery } from "@chakra-ui/react";
-import { useQuery } from "@tanstack/react-query";
+import { Box, Button, IconButton, Tbody, Td, Text, Th, Thead, Tr, useMediaQuery, useToast } from "@chakra-ui/react";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
-import { getSongsList } from "../api/api";
+import { getSongsList, updatePlayCount } from "../api/api";
 import PageWrapper from "../components/PageWrapper";
 import TableSpinner from "../components/TableSpinner";
 import TableWrapper from "../components/TableWrapper";
 import { ACTIONS } from "../config/actions";
 import { Song } from "../config/interfaces";
+import queryClient from "../config/queryClient";
 import { QUERIES } from "../constants/queries";
 import { SortConfig } from "./SongList";
 
 const NextEvent = () => {
   const [sortConfig, setSortConfig] = useState<SortConfig>({ key: "artist", direction: "ascending" });
   const [isMobile] = useMediaQuery("(max-width: 768px)");
+  const toast = useToast();
 
   const { data: songs, isLoading, isError, error } = useQuery<Song[]>({
     queryKey: [QUERIES.SONGS_LIST],
     queryFn: getSongsList,
     initialData: []
   });
-
+  const { mutate: addSongMutation, isPending } = useMutation({
+    mutationFn: updatePlayCount,
+    onSuccess: () => {
+      toast({
+        title: "Song updated.",
+        description: "The song has been updated.",
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+      });
+      queryClient.invalidateQueries({ queryKey: [QUERIES.SONGS_LIST] })
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Error updating song.",
+        description: error?.message || "An error occurred while updating the song.",
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+      });
+    },
+  });
   const sortedSongs = useMemo(() => {
     if (!Boolean(songs)) {
       return []
     }
-    const nextSongs = songs.filter((song) => song.fav);
+    const nextSongs = songs.filter((song) => song.inNextEventList);
     return ACTIONS.sortList(sortConfig, nextSongs);
   }, [sortConfig, songs]);
 
@@ -75,6 +98,7 @@ const NextEvent = () => {
               />
             </Th>
             <Th fontSize={isMobile ? "sm" : "md"}>Plays</Th>
+            <Th fontSize={isMobile ? "sm" : "md"}>Add Play</Th>
           </Tr>
         </Thead>
         <Tbody>
@@ -83,6 +107,14 @@ const NextEvent = () => {
               <Td fontSize={isMobile ? "sm" : "md"}>{song.title}</Td>
               <Td fontSize={isMobile ? "sm" : "md"}>{song.artist}</Td>
               <Td fontSize={isMobile ? "sm" : "md"}>{song.plays}</Td>
+              <Td fontSize={{ base: "sm", md: "md" }}>
+                <Button
+                  size={{ base: "xs", md: "sm" }}
+                  onClick={() => addSongMutation(song)}
+                >
+                  Add
+                </Button>
+              </Td>
             </Tr>
           ))}
           {isLoading && <TableSpinner />}
@@ -93,3 +125,4 @@ const NextEvent = () => {
 };
 
 export default NextEvent;
+
