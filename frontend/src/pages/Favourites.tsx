@@ -1,29 +1,28 @@
-import { TriangleDownIcon, TriangleUpIcon } from "@chakra-ui/icons";
-import { Box, Button, IconButton, Tbody, Td, Text, Th, Thead, Tr, useToast } from "@chakra-ui/react";
+import { Box, Text, useToast } from "@chakra-ui/react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
 import { getSongsList, updatePlayCount } from "../api/api";
 import PageWrapper from "../components/PageWrapper";
-import TableSpinner from "../components/TableSpinner";
+import { TableBody } from "../components/table/TableBody";
+import { TableHeader } from "../components/table/TableHeader";
 import TableWrapper from "../components/TableWrapper";
 import { ACTIONS } from "../config/actions";
 import { SortConfig } from "../config/formInterfaces";
 import { Song } from "../config/interfaces";
 import { QUERIES } from "../constants/queries";
-import { formatToGermanDate } from "../utils/date";
 
 const Favourites = () => {
   const [sortConfig, setSortConfig] = useState<SortConfig>({ key: "artist", direction: "ascending" });
   const toast = useToast();
   const queryClient = useQueryClient();
 
-  const { data: songs, isLoading, isError, error, isFetchedAfterMount, isFetching, isSuccess } = useQuery<Song[]>({
+  const { data: songs, isLoading } = useQuery<Song[]>({
     queryKey: [QUERIES.SONGS_LIST],
     queryFn: getSongsList,
     initialData: []
   });
 
-  const { mutate: addSongMutation, isPending } = useMutation({
+  const { mutate: addSongMutation } = useMutation({
     mutationFn: updatePlayCount,
     onSuccess: () => {
       toast({
@@ -33,7 +32,7 @@ const Favourites = () => {
         duration: 3000,
         isClosable: true,
       });
-      queryClient.invalidateQueries({ queryKey: [QUERIES.SONGS_LIST] })
+      queryClient.invalidateQueries({ queryKey: [QUERIES.SONGS_LIST] });
     },
     onError: (error: any) => {
       toast({
@@ -48,7 +47,7 @@ const Favourites = () => {
 
   const sortedSongs = useMemo(() => {
     if (!Boolean(songs)) {
-      return []
+      return [];
     }
     const favs = songs.filter((song) => song.fav);
     return ACTIONS.sortList(sortConfig, favs);
@@ -77,63 +76,12 @@ const Favourites = () => {
   return (
     <PageWrapper>
       <TableWrapper>
-        <Thead>
-          <Tr>
-            <Th fontSize={{ base: "sm", md: "md" }}>
-              Song
-              <IconButton
-                aria-label="Sort by Song"
-                icon={sortConfig.key === "title" && sortConfig.direction !== "ascending" ? <TriangleUpIcon /> : <TriangleDownIcon />}
-                onClick={() => requestSort("title")}
-                size="xs"
-                variant="ghost"
-              />
-            </Th>
-            <Th fontSize={{ base: "sm", md: "md" }}>
-              Artist
-              <IconButton
-                aria-label="Sort by Artist"
-                icon={sortConfig.key === "artist" && sortConfig.direction !== "ascending" ? <TriangleUpIcon /> : <TriangleDownIcon />}
-                onClick={() => requestSort("artist")}
-                size="xs"
-                variant="ghost"
-              />
-            </Th>
-            <Th fontSize={{ base: "sm", md: "md" }}>
-              Plays
-              <IconButton
-                aria-label="Sort by play count"
-                icon={sortConfig.key === "plays" && sortConfig.direction === "ascending" ? <TriangleUpIcon /> : <TriangleDownIcon />}
-                onClick={() => requestSort("plays")}
-                size="xs"
-                variant="ghost"
-              />
-            </Th>
-            <Th fontSize={{ base: "sm", md: "md" }}>Add play</Th>
-            <Th fontSize={{ base: "sm", md: "md" }}>Last sang</Th>
-          </Tr>
-        </Thead>
-        <Tbody>
-          {!isLoading && sortedSongs.map((song) => {
-            return <Tr key={song.songId}>
-              <Td fontSize={{ base: "sm", md: "md" }}>{song.title}</Td>
-              <Td fontSize={{ base: "sm", md: "md" }}>{song.artist}</Td>
-              <Td fontSize={{ base: "sm", md: "md" }}>{song.plays}</Td>
-              <Td fontSize={{ base: "sm", md: "md" }}>
-                <Button
-                  size={{ base: "xs", md: "sm" }}
-                  onClick={() => addSongMutation(song)}
-                >
-                  Add
-                </Button>
-              </Td>
-              <Td fontSize={{ base: "sm", md: "md" }}>
-                {formatToGermanDate(song.events.reverse()[0].eventDate)}
-              </Td>
-            </Tr>
-          })}
-          {isLoading && <TableSpinner />}
-        </Tbody>
+        <TableHeader sortConfig={sortConfig} requestSort={requestSort} />
+        <TableBody
+          isLoading={isLoading}
+          sortedSongs={sortedSongs}
+          addSongMutation={addSongMutation}
+        />
       </TableWrapper>
     </PageWrapper>
   );

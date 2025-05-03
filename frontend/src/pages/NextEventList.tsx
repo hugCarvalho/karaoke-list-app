@@ -1,10 +1,10 @@
-import { TriangleDownIcon, TriangleUpIcon } from "@chakra-ui/icons";
-import { Box, Button, IconButton, Tbody, Td, Text, Th, Thead, Tr, useMediaQuery, useToast } from "@chakra-ui/react";
+import { Box, Text, useToast } from "@chakra-ui/react";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
 import { getSongsList, updatePlayCount } from "../api/api";
 import PageWrapper from "../components/PageWrapper";
-import TableSpinner from "../components/TableSpinner";
+import { TableBody } from "../components/table/TableBody";
+import { TableHeader } from "../components/table/TableHeader";
 import TableWrapper from "../components/TableWrapper";
 import { ACTIONS } from "../config/actions";
 import { SortConfig } from "../config/formInterfaces";
@@ -14,7 +14,6 @@ import { QUERIES } from "../constants/queries";
 
 const NextEvent = () => {
   const [sortConfig, setSortConfig] = useState<SortConfig>({ key: "artist", direction: "ascending" });
-  const [isMobile] = useMediaQuery("(max-width: 768px)");
   const toast = useToast();
 
   const { data: songs, isLoading, isError, error } = useQuery<Song[]>({
@@ -75,59 +74,8 @@ const NextEvent = () => {
   return (
     <PageWrapper>
       <TableWrapper>
-        <Thead>
-          <Tr>
-            <Th fontSize={isMobile ? "sm" : "md"}>
-              Song
-              <IconButton
-                aria-label="Sort by Song"
-                icon={sortConfig.key === "title" && sortConfig.direction !== "ascending" ? <TriangleUpIcon /> : <TriangleDownIcon />}
-                onClick={() => requestSort("title")}
-                size="xs"
-                variant="ghost"
-              />
-            </Th>
-            <Th fontSize={isMobile ? "sm" : "md"}>
-              Artist
-              <IconButton
-                aria-label="Sort by Artist"
-                icon={sortConfig.key === "artist" && sortConfig.direction !== "ascending" ? <TriangleUpIcon /> : <TriangleDownIcon />}
-                onClick={() => requestSort("artist")}
-                size="xs"
-                variant="ghost"
-              />
-            </Th>
-            <Th fontSize={isMobile ? "sm" : "md"}>
-              Plays
-              <IconButton
-                aria-label="Sort by play count"
-                icon={sortConfig.key === "plays" && sortConfig.direction === "ascending" ? <TriangleUpIcon /> : <TriangleDownIcon />}
-                onClick={() => requestSort("plays")}
-                size="xs"
-                variant="ghost"
-              />
-            </Th>
-            <Th fontSize={isMobile ? "sm" : "md"}>Add Play</Th>
-          </Tr>
-        </Thead>
-        <Tbody>
-          {!isLoading && sortedSongs.map((song) => (
-            <Tr key={song.songId}>
-              <Td fontSize={isMobile ? "sm" : "md"}>{song.title}</Td>
-              <Td fontSize={isMobile ? "sm" : "md"}>{song.artist}</Td>
-              <Td fontSize={isMobile ? "sm" : "md"}>{song.plays}</Td>
-              <Td fontSize={{ base: "sm", md: "md" }}>
-                <Button
-                  size={{ base: "xs", md: "sm" }}
-                  onClick={() => addSongMutation(song)}
-                >
-                  Add
-                </Button>
-              </Td>
-            </Tr>
-          ))}
-          {isLoading && <TableSpinner />}
-        </Tbody>
+        <TableHeader sortConfig={sortConfig} requestSort={requestSort} />
+        <TableBody isLoading={isLoading} sortedSongs={sortedSongs} addSongMutation={addSongMutation} />
       </TableWrapper>
     </PageWrapper>
   );
