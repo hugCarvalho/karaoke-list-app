@@ -1,8 +1,8 @@
 import { CloseIcon, DeleteIcon, TriangleDownIcon, TriangleUpIcon } from "@chakra-ui/icons";
-import { Center, Checkbox, HStack, IconButton, Input, InputGroup, InputRightElement, Tbody, Td, Text, Th, Thead, Tr, VStack } from "@chakra-ui/react";
+import { Button, Center, Checkbox, HStack, IconButton, Input, InputGroup, InputRightElement, Tbody, Td, Text, Th, Thead, Tr, useToast, VStack } from "@chakra-ui/react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
-import { deleteSong, getSongsList, updateSong } from "../api/api";
+import { deleteSong, getSongsList, updatePlayCount, updateSong } from "../api/api";
 import PageWrapper from "../components/PageWrapper";
 import TableSpinner from "../components/table/TableSpinner";
 import TableWrapper from "../components/table/TableWrapper";
@@ -16,6 +16,7 @@ const thFontSize = { base: "xs", md: "md" };
 
 const SongList = () => {
   const queryClient = useQueryClient();
+  const toast = useToast();
   const [sortConfig, setSortConfig] = useState<SortConfig>({ key: "artist", direction: "ascending" });
   const [songFilterText, setSongFilterText] = useState("");
   const [artistFilterText, setArtistFilterText] = useState("");
@@ -24,6 +25,29 @@ const SongList = () => {
     queryKey: [QUERIES.SONGS_LIST],
     queryFn: getSongsList,
     initialData: [],
+  });
+
+  const { mutate: addSongMutation } = useMutation({
+    mutationFn: updatePlayCount,
+    onSuccess: () => {
+      toast({
+        title: "Song updated.",
+        description: "The song has been updated.",
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+      });
+      queryClient.invalidateQueries({ queryKey: [QUERIES.SONGS_LIST] });
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Error updating song.",
+        description: error?.message || "An error occurred while updating the song.",
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+      });
+    },
   });
 
   const { mutate: updateBlacklistedMutation, isPending: isUpdatePending } = useMutation({
@@ -171,6 +195,8 @@ const SongList = () => {
               <Th fontSize={thFontSize}>Duet</Th>
               <Th fontSize={thFontSize}>Blacklist</Th>
               <Th fontSize={thFontSize}>Plays</Th>
+              <Th fontSize={thFontSize}>Add Play</Th>
+              <Th fontSize={thFontSize}>Last Sang</Th>
               <Th fontSize={thFontSize}>Delete</Th>
             </Tr>
           </Thead>
@@ -208,6 +234,11 @@ const SongList = () => {
                   />
                 </Td>
                 <Td fontSize={thFontSize}>{song.plays}</Td>
+                <Td fontSize={thFontSize}>
+                  <Button size={{ base: "xs", md: "sm" }} onClick={() => addSongMutation(song)}>
+                    Add
+                  </Button>
+                </Td>
                 <Td textAlign="center">
                   <IconButton
                     icon={<DeleteIcon />}

@@ -181,7 +181,7 @@ const SongsSang = () => {
 
           <FormControl>
             <FormLabel>Event Date</FormLabel>
-            <Input value={formatToGermanDate(new Date())} isDisabled />
+            <Input value={formatToGermanDate(new Date().toString())} isDisabled />
           </FormControl>
         </Flex>
 

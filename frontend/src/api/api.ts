@@ -26,6 +26,7 @@ export const getSessions = async () => API.get("/sessions");
 export const deleteSession = async (id: string) => API.delete(`/sessions/${id}`);
 
 export const getSongsList = async (): Promise<Song[]> => API.get("/list");
+
 export const addSong = async (data: Song) => {
   return API.post("/list/add", data)
 };
