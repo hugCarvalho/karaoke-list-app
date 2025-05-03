@@ -5,7 +5,7 @@ import { getSongsList, updatePlayCount } from "../api/api";
 import PageWrapper from "../components/PageWrapper";
 import { TableBody } from "../components/table/TableBody";
 import { TableHeader } from "../components/table/TableHeader";
-import TableWrapper from "../components/TableWrapper";
+import TableWrapper from "../components/table/TableWrapper";
 import { ACTIONS } from "../config/actions";
 import { SortConfig } from "../config/formInterfaces";
 import { Song } from "../config/interfaces";

@@ -1,7 +1,7 @@
 import { Button, Tbody, Td, Tr } from "@chakra-ui/react";
 import { Song } from "../../config/interfaces";
 import { formatToGermanDate } from "../../utils/date";
-import TableSpinner from "../TableSpinner";
+import TableSpinner from "./TableSpinner";
 
 type TableBodyProps = {
   isLoading: boolean;
