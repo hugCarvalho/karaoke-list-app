@@ -9,6 +9,7 @@ import catchErrors from "../utils/catchErrors";
 export const addOrUpdateSongHandler = catchErrors(async (req, res) => {
   const artistName = req.body.artist
   const title = req.body.title
+  console.log("addOrUpdateSongHandler", req.body.songId)
 
   try {
     const user = await UserModel.findById(req.userId);
@@ -25,6 +26,14 @@ export const addOrUpdateSongHandler = catchErrors(async (req, res) => {
         userId: user._id,
         songs: [],
       });
+    }
+
+    const existingSong = list.songs.find(
+      (song) => song.artist === artistName && song.title === title
+    );
+
+    if (Boolean(existingSong)) {
+      return res.status(400).json({ success: false, message: 'Song already exists. Use lists instead' });
     }
 
     list.songs.push(req.body);
