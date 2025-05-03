@@ -122,6 +122,7 @@ export const getArtistsListHandler = catchErrors(async (req, res) => {
 export const updateSongPlayCountHandler = catchErrors(async (req, res) => {
   const songId = req.params.songId;
   const userId = req.userId;
+  const currentDate = new Date();
 
   if (!songId) {
     return res.status(BAD_REQUEST).json({ success: false, message: 'Invalid request. songId is required.' });
@@ -129,7 +130,16 @@ export const updateSongPlayCountHandler = catchErrors(async (req, res) => {
 
   const updatedList = await List.findOneAndUpdate(
     { userId: userId, 'songs.songId': songId },
-    { $inc: { 'songs.$.plays': 1 } },
+    {
+      $inc: { 'songs.$.plays': 1 },
+      $push: {
+        'songs.$.events': {
+          location: 'Monster Ronson', // Hardcoded for now
+          eventDate: currentDate,
+        },
+      },
+    },
+
     { new: true }
   );
 

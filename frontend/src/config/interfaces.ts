@@ -17,7 +17,7 @@ export interface Session {
 
 type EventData = {
   location: string,
-  eventDate: Date | null
+  eventDate: string | null
 }
 
 export interface Song {

@@ -10,6 +10,7 @@ import { ACTIONS } from "../config/actions";
 import { SortConfig } from "../config/formInterfaces";
 import { Song } from "../config/interfaces";
 import { QUERIES } from "../constants/queries";
+import { formatToGermanDate } from "../utils/date";
 
 const Favourites = () => {
   const [sortConfig, setSortConfig] = useState<SortConfig>({ key: "artist", direction: "ascending" });
@@ -109,11 +110,12 @@ const Favourites = () => {
               />
             </Th>
             <Th fontSize={{ base: "sm", md: "md" }}>Add play</Th>
+            <Th fontSize={{ base: "sm", md: "md" }}>Last sang</Th>
           </Tr>
         </Thead>
         <Tbody>
-          {!isLoading && sortedSongs.map((song) => (
-            <Tr key={song.songId}>
+          {!isLoading && sortedSongs.map((song) => {
+            return <Tr key={song.songId}>
               <Td fontSize={{ base: "sm", md: "md" }}>{song.title}</Td>
               <Td fontSize={{ base: "sm", md: "md" }}>{song.artist}</Td>
               <Td fontSize={{ base: "sm", md: "md" }}>{song.plays}</Td>
@@ -125,8 +127,11 @@ const Favourites = () => {
                   Add
                 </Button>
               </Td>
+              <Td fontSize={{ base: "sm", md: "md" }}>
+                {formatToGermanDate(song.events.reverse()[0].eventDate)}
+              </Td>
             </Tr>
-          ))}
+          })}
           {isLoading && <TableSpinner />}
         </Tbody>
       </TableWrapper>

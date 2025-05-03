@@ -1,8 +1,10 @@
-export const formatToGermanDate = (date: Date): string => {
-  const formatter = new Intl.DateTimeFormat("de-DE", {
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
+export const formatToGermanDate = (eventDate: string | null) => {
+  if (!eventDate) return '';
+  const date = new Date(eventDate);
+  const formatter = new Intl.DateTimeFormat('de-DE', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
   });
   return formatter.format(date);
-};
+}
