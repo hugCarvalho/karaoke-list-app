@@ -14,6 +14,7 @@ import ResetPassword from "./pages/ResetPassword";
 import Settings from "./pages/Settings";
 import SongList from "./pages/SongList";
 import SongsSang from "./pages/SongsSang";
+import Statistics from "./pages/Statistics";
 import VerifyEmail from "./pages/VerifyEmail";
 
 function App() {
@@ -53,6 +54,7 @@ function App() {
             <Route path="next-event-list" element={<NextEventList />} />
             <Route path="songs-sang" element={<SongsSang />} />
             <Route path="list" element={<SongList />} />
+            <Route path="statistics" element={<Statistics />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Route>
         ) :

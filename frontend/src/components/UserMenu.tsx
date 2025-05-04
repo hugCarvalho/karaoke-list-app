@@ -28,6 +28,7 @@ const UserMenu = () => {
       <MenuList>
         {/* <MenuItem onClick={() => navigate("/")}>Profile</MenuItem> */}
         <MenuItem onClick={() => navigate("/settings")}>Settings</MenuItem>
+        <MenuItem onClick={() => navigate("/statistics")}>Statistics</MenuItem>
         <MenuItem onClick={handleSignOut}>Logout</MenuItem>
       </MenuList>
     </Menu>
