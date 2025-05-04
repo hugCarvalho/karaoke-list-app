@@ -13,6 +13,7 @@ import { BaseSongFormData, baseSongFormSchema, Option } from "../config/formInte
 import { Artist } from "../config/interfaces";
 import queryClient from "../config/queryClient";
 import { QUERIES } from "../constants/queries";
+import { isDataVerified } from "../services/externalApi";
 
 const defaultValues = {
   title: "",
@@ -40,6 +41,7 @@ const AddSong = () => {
   const [songOptions, setSongOptions] = useState<Option[]>([]);
   const [artistOptionValue, setArtistOptionValue] = useState<Option | null>();
   const [songOptionValue, setSongOptionValue] = useState<Option | null>();
+  const [isVerifying, setIsVerifying] = useState<boolean>(false);
 
   const { data: artistsDb, isLoading, isError, error } = useQuery({
     queryKey: [QUERIES.GET_ARTISTS_DB],
@@ -83,7 +85,25 @@ const AddSong = () => {
     },
   });
 
-  const onSubmit = (data: BaseSongFormData) => {
+  const onSubmit = async (data: BaseSongFormData) => {
+    setIsVerifying(true)
+    try {
+      const res = await isDataVerified(data.title, data.artist)
+      setIsVerifying(false)
+      if (res?.verified === false) {
+        toast({
+          title: "Error verifying song data.",
+          description: error?.message || "Artist and song mismatch or typo present, please check data entered.",
+          status: "error",
+          duration: 5000,
+          isClosable: true,
+        });
+        return
+      }
+    } catch (error) {
+      setIsVerifying(false)
+    }
+
     const eventData = {
       location: "",
       eventDate: null
@@ -174,7 +194,7 @@ const AddSong = () => {
           setValue={setValue}
         />
 
-        <Button type="submit" colorScheme="blue" isLoading={isPending}>
+        <Button type="submit" colorScheme="blue" isLoading={isPending || isVerifying} isDisabled={isPending || isVerifying}>
           Save
         </Button>
       </form>
