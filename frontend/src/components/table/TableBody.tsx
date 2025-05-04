@@ -16,7 +16,7 @@ export const TableBody = ({ isLoading, sortedSongs, addSongMutation }: TableBody
   return (
     <Tbody>
       {!isLoading && sortedSongs.map((song) => {
-        const lastEvent = song.events.slice(-1)[0];
+        const lastEvent = song.events.reverse()[0];
         const lastSangDate = lastEvent ? lastEvent.eventDate : null;
 
         return (

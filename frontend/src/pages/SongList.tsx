@@ -10,6 +10,7 @@ import { ACTIONS } from "../config/actions";
 import { CheckboxGroup, SortConfig } from "../config/formInterfaces";
 import { Song } from "../config/interfaces";
 import { QUERIES } from "../constants/queries";
+import { formatToGermanDate } from "../utils/date";
 
 const checkBoxSize = { base: "sm", md: "md" };
 const thFontSize = { base: "xs", md: "md" };
@@ -201,8 +202,11 @@ const SongList = () => {
             </Tr>
           </Thead>
           <Tbody>
-            {sortedSongs.map((song) => (
-              <Tr key={song.songId}>
+            {sortedSongs.map((song) => {
+              const lastEvent = song.events.reverse()[0];
+              const lastSangDate = lastEvent ? lastEvent.eventDate : null;
+
+              return <Tr key={song.songId}>
                 <Td fontSize={thFontSize}>{song.title}</Td>
                 <Td fontSize={thFontSize}>{song.artist}</Td>
                 <Td textAlign="center">
@@ -239,6 +243,9 @@ const SongList = () => {
                     Add
                   </Button>
                 </Td>
+                <Td fontSize={thFontSize}>
+                  {lastSangDate ? formatToGermanDate(lastSangDate) : "-"}
+                </Td>
                 <Td textAlign="center">
                   <IconButton
                     icon={<DeleteIcon />}
@@ -250,7 +257,7 @@ const SongList = () => {
                   />
                 </Td>
               </Tr>
-            ))}
+            })}
             {isLoading && <TableSpinner />}
           </Tbody>
         </TableWrapper>
