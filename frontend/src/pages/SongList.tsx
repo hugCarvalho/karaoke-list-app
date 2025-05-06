@@ -119,38 +119,45 @@ const SongList = () => {
         <HStack spacing={4}>
           <InputGroup>
             <Input
-              placeholder="Filter by song name"
-              value={songFilterText}
-              onChange={(e) => setSongFilterText(e.target.value)}
+              placeholder="Filter by artist"
+              value={artistFilterText}
+              onChange={(e) => setArtistFilterText(e.target.value)}
               size="md"
+              bg="gray.100"
+              _placeholder={{ color: 'gray.500' }}
+              color={"blackAlpha.800"}
             />
-            {songFilterText && (
+            {artistFilterText && (
               <InputRightElement>
                 <IconButton
-                  aria-label="Clear song filter"
-                  icon={<CloseIcon />}
+                  aria-label="Clear artist filter"
+                  icon={<CloseIcon color={"blackAlpha.800"} />}
                   size="sm"
-                  onClick={handleClearSongFilter}
-                  variant="ghost"
+                  onClick={handleClearArtistFilter}
+                  variant={"ghost"}
                 />
               </InputRightElement>
             )}
           </InputGroup>
           <InputGroup>
             <Input
-              placeholder="Filter by artist"
-              value={artistFilterText}
-              onChange={(e) => setArtistFilterText(e.target.value)}
+              placeholder="Filter by song name"
+              value={songFilterText}
+              onChange={(e) => setSongFilterText(e.target.value)}
               size="md"
+              bg="gray.100"
+              _placeholder={{ color: 'gray.500' }}
+              color={"blackAlpha.800"}
             />
-            {artistFilterText && (
+            {songFilterText && (
               <InputRightElement>
                 <IconButton
-                  aria-label="Clear artist filter"
-                  icon={<DeleteIcon />}
+                  aria-label="Clear song filter"
+                  icon={<CloseIcon color={"blackAlpha.800"} />}
                   size="sm"
-                  onClick={handleClearArtistFilter}
-                  variant="ghost"
+                  onClick={handleClearSongFilter}
+                  variant={"ghost"}
+
                 />
               </InputRightElement>
             )}
