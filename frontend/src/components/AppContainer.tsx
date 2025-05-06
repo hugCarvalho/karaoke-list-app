@@ -1,6 +1,6 @@
 import { Box } from "@chakra-ui/react";
 import { Outlet } from "react-router-dom";
-import NavButtonGroup from "./NavButtonGroup";
+import NavButtonGroup from "./buttonGroups/NavButtonGroup";
 import UserMenu from "./UserMenu";
 
 const AppContainer = () => {

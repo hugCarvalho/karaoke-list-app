@@ -13,10 +13,10 @@ const NavButtons = () => {
 
   const buttons = [
     { label: "Add", path: "/", icon: "➕" },
-    { label: "Sang", path: "/songs-sang", icon: "🎤" },
     { label: "List", path: "/list", icon: "📜" },
     { label: "Fav", path: "/favourites", icon: "⭐" },
     { label: "Blacklist", path: "/blacklist", icon: "🚫" },
+    { label: "Duet", path: "/duet", icon: "🎤" },
     { label: "Next", path: "/next-event-list", icon: "⏭️" },
   ];
 
@@ -35,8 +35,8 @@ const NavButtons = () => {
             key={button.path}
             onClick={() => navigate(button.path)}
             isActive={location.pathname === button.path}
-            px={isMobile ? 2 : 4}
-            py={isMobile ? 1 : 2}
+            px={{ base: 2, md: 4 }}
+            py={{ base: 1, md: 2 }}
           >
             {isMobile ? button.label : `${button.label} ${button.icon}`}
           </Button>

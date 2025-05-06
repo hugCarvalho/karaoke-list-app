@@ -7,6 +7,7 @@ import { useForm } from "react-hook-form";
 import CreatableSelect from "react-select/creatable";
 import * as uuid from "uuid";
 import { addSong, getArtistsDb } from "../api/api";
+import { AddToggleButtonGroup } from "../components/buttonGroups/AddToggleButtonGroup";
 import CheckboxGroup from "../components/CheckboxGroup";
 import PageWrapper from "../components/PageWrapper";
 import { BaseSongFormData, baseSongFormSchema, Option } from "../config/formInterfaces";
@@ -114,6 +115,7 @@ const AddSong = () => {
 
   return (
     <PageWrapper>
+      <Center><AddToggleButtonGroup /></Center>
       <Center mb={4}>
         <Heading size="lg">Add songs</Heading>
         <Tooltip label="Add songs to your list">
