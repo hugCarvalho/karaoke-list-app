@@ -8,7 +8,7 @@ import CreatableSelect from "react-select/creatable";
 import * as uuid from "uuid";
 import { addSong, getArtistsDb } from "../api/api";
 import { AddToggleButtonGroup } from "../components/buttonGroups/AddToggleButtonGroup";
-import CheckboxGroup from "../components/CheckboxGroup";
+import CheckboxGroup from "../components/buttonGroups/CheckboxGroup";
 import PageWrapper from "../components/PageWrapper";
 import { BaseSongFormData, baseSongFormSchema, Option } from "../config/formInterfaces";
 import { Artist } from "../config/interfaces";

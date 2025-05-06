@@ -205,10 +205,11 @@ const SongList = () => {
             {sortedSongs.map((song) => {
               const lastEvent = song.events.reverse()[0];
               const lastSangDate = lastEvent ? lastEvent.eventDate : null;
+              const typeColor = song.blacklisted ? "red" : song.fav ? "lime" : song.inNextEventList ? "blue.300" : undefined;
 
               return <Tr key={song.songId}>
-                <Td fontSize={thFontSize}>{song.title}</Td>
-                <Td fontSize={thFontSize}>{song.artist}</Td>
+                <Td fontSize={thFontSize} color={typeColor} >{song.title}</Td>
+                <Td fontSize={thFontSize} color={typeColor} >{song.artist}</Td>
                 <Td textAlign="center">
                   <Checkbox
                     isChecked={song.fav}
