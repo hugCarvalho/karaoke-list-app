@@ -157,16 +157,15 @@ const SongList = () => {
                   size="sm"
                   onClick={handleClearSongFilter}
                   variant={"ghost"}
-
                 />
               </InputRightElement>
             )}
           </InputGroup>
         </HStack>
-        <TableWrapper >
-          <Thead>
+        <TableWrapper>
+          <Thead >
             <Tr>
-              <Th fontSize={thFontSize} textAlign="center">
+              <Th fontSize={thFontSize} textAlign="center" minWidth={120}>
                 Song
                 <IconButton
                   aria-label="Sort by Song"
@@ -182,7 +181,7 @@ const SongList = () => {
                   variant="ghost"
                 />
               </Th>
-              <Th fontSize={thFontSize}>
+              <Th fontSize={thFontSize} minWidth={100}>
                 Artist
                 <IconButton
                   aria-label="Sort by Artist"
@@ -198,20 +197,20 @@ const SongList = () => {
                   variant="ghost"
                 />
               </Th>
-              <Th fontSize={thFontSize}>Fav</Th>
-              <Th fontSize={thFontSize}>Next</Th>
-              <Th fontSize={thFontSize}>Duet</Th>
-              <Th fontSize={thFontSize}>Blacklist</Th>
-              <Th fontSize={thFontSize}>Plays</Th>
-              <Th fontSize={thFontSize}>Add Play</Th>
-              <Th fontSize={thFontSize}>Last Sang</Th>
-              <Th fontSize={thFontSize}>Delete</Th>
+              <Th fontSize={thFontSize} minW={{ base: "15%", md: "auto" }}>Fav</Th>
+              <Th fontSize={thFontSize} minW={{ base: "15%", md: "auto" }}>Next</Th>
+              <Th fontSize={thFontSize} minW={{ base: "15%", md: "auto" }}>Duet</Th>
+              <Th fontSize={thFontSize} minW={{ base: "15%", md: "auto" }}>Blacklist</Th>
+              <Th fontSize={thFontSize} minW={{ base: "15%", md: "auto" }}>Plays</Th>
+              <Th fontSize={thFontSize} minW={{ base: "20%", md: "auto" }}>Add Play</Th>
+              <Th fontSize={thFontSize} minW={{ base: "25%", md: "auto" }}>Last Sang</Th>
+              <Th fontSize={thFontSize} textAlign="center" minW={{ base: "15%", md: "auto" }}>Delete</Th>
             </Tr>
           </Thead>
           <Tbody>
             {sortedSongs.map((song) => {
               const lastEvent = song.events.reverse()[0];
-              const lastSangDate = lastEvent ? lastEvent.eventDate : null;
+              const lastSangDate = lastEvent ? formatToGermanDate(lastEvent.eventDate) : "-";
               const typeColor = song.blacklisted ? "red" : song.fav ? "lime" : song.inNextEventList ? "blue.300" : undefined;
 
               return <Tr key={song.songId}>
@@ -251,9 +250,7 @@ const SongList = () => {
                     Add
                   </Button>
                 </Td>
-                <Td fontSize={thFontSize}>
-                  {lastSangDate ? formatToGermanDate(lastSangDate) : "-"}
-                </Td>
+                <Td fontSize={thFontSize}>{lastSangDate}</Td>
                 <Td textAlign="center">
                   <IconButton
                     icon={<DeleteIcon />}

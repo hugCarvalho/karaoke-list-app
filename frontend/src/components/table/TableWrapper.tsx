@@ -4,7 +4,7 @@ import { ReactNode } from "react";
 const TableWrapper = ({ children }: { children: ReactNode }) => {
   return (
     <Box overflowX="auto" p={{ base: 0, md: 4 }}>
-      <Table variant="simple" size={{ base: "sm", md: "md" }}>
+      <Table variant="simple" size={{ base: "xs", md: "sm" }} lineHeight={1.1}>
         {children}
       </Table>
     </Box>
