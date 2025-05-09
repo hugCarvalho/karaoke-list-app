@@ -6,6 +6,9 @@
 ### 💬 Description
  If you ever went to a karaoke place and realised you cannot find or decide upon which songs to sing, this app is for you... Never be blank again! 😉
 
+### 📡 APIs Used
+  - [MusicBrainz](https://musicbrainz.org/doc/MusicBrainz_API)
+
 ### ⚙️ Full Tech Stack
 * Main:
   * React
@@ -42,11 +45,13 @@
     - Send Emails for Account Verification and Password Reset
     - Sessions
   - In-app features
-    - Create lists (all, sang, favs, blacklist, next event)
+    - Create lists (all, sang, favs, duet, blacklist, next event)
     - Add songs to lists
     - Move songs between lists
     - Remove songs from lists
     - Delete songs from list
     - Songs sang history
+    - Creatable Select
+    - Number plays
 
 And more to come...
