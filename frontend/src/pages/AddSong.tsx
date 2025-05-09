@@ -15,6 +15,7 @@ import { Artist } from "../config/interfaces";
 import queryClient from "../config/queryClient";
 import { QUERIES } from "../constants/queries";
 import { isDataVerified } from "../services/externalApi";
+import { capitalizeArtistNames } from "../utils/strings";
 
 const defaultValues = {
   title: "",
@@ -109,7 +110,8 @@ const AddSong = () => {
       location: "",
       eventDate: null
     }
-    const songData = { songId: uuid.v4(), events: [eventData], ...data };
+    const capitlizedArtistName = capitalizeArtistNames(data.artist)
+    const songData = { songId: uuid.v4(), events: [eventData], ...data, artist: capitlizedArtistName };
     addSongMutation(songData);
   }
 
