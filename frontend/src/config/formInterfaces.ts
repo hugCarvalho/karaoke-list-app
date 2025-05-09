@@ -23,6 +23,7 @@ export type CheckboxGroup = "blacklisted" | "fav" | "inNextEventList" | "duet"
 export type Option = {
   readonly label: string;
   readonly value: string;
+  readonly artist?: string;
 }
 
 export type SortConfig = {

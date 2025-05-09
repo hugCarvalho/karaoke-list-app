@@ -56,7 +56,7 @@ const AddSong = () => {
         return { value: artist.name, label: artist.name }
       }) ?? []
       const songs = artistsDb.data.reduce((acc: Artist[], artist: Artist) => {
-        const songLabels = artist.songs.map(song => ({ value: song, label: song }));
+        const songLabels = artist.songs.map(song => ({ value: song, label: song, artist: artist.name }));
         return [...acc, ...songLabels];
       }, []) ?? []
       setArtistOptions(artist)
@@ -115,6 +115,10 @@ const AddSong = () => {
     addSongMutation(songData);
   }
 
+  const filterOptionsByArtist = () => {
+    return songOptions.filter(song => song.artist === artistOptionValue?.value)
+  }
+
   return (
     <PageWrapper>
       <Center><AddToggleButtonGroup /></Center>
@@ -165,7 +169,7 @@ const AddSong = () => {
             <CreatableSelect
               placeholder="Type or select a song"
               isClearable
-              options={songOptions}
+              options={artistOptionValue ? filterOptionsByArtist() : songOptions}
               value={songOptionValue}
               onCreateOption={(e) => {
                 setSongOptions(state => [...state, { value: e, label: e }])
