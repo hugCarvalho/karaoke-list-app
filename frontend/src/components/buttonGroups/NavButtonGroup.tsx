@@ -1,9 +1,4 @@
-import {
-  Button,
-  ButtonGroup,
-  Flex,
-  useMediaQuery,
-} from "@chakra-ui/react";
+import { Button, ButtonGroup, Flex, useMediaQuery, } from "@chakra-ui/react";
 import { useLocation, useNavigate } from "react-router-dom";
 
 const NavButtons = () => {
@@ -14,10 +9,10 @@ const NavButtons = () => {
   const buttons = [
     { label: "Add", path: "/", icon: "➕" },
     { label: "List", path: "/list", icon: "📜" },
-    { label: "Fav", path: "/favourites", icon: "⭐" },
-    { label: "Blacklist", path: "/blacklist", icon: "🚫" },
-    { label: "Duet", path: "/duet", icon: "🎤" },
-    { label: "Next", path: "/next-event-list", icon: "⏭️" },
+    // { label: "Fav", path: "/favourites", icon: "⭐" },
+    // { label: "Blacklist", path: "/blacklist", icon: "🚫" },
+    // { label: "Duet", path: "/duet", icon: "🎤" },
+    // { label: "Next", path: "/next-event-list", icon: "⏭️" },
   ];
 
   return (

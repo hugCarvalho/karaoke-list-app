@@ -1,4 +1,4 @@
-import { Button, HStack } from "@chakra-ui/react";
+import { Button, ButtonGroup } from "@chakra-ui/react";
 import { ListType } from "../../config/types";
 
 type Props = {
@@ -13,75 +13,30 @@ export const ListsToggleGroup = ({ listName, setListName }: Props) => {
   const isDuet = listName === "duet";
   const isNextEvent = listName === "nextEvent";
 
+  const buttons = [
+    { label: "All", path: "", icon: "📜", active: isAll, action: () => setListName(null) },
+    { label: "Fav", path: "", icon: "⭐", active: isFav, action: () => setListName("fav") },
+    { label: "Blacklist", path: "", icon: "🚫", active: isBlacklist, action: () => setListName("blacklist") },
+    { label: "Duet", path: "", icon: "🎤", active: isDuet, action: () => setListName("duet") },
+    { label: "Next", path: "", icon: "⏭️", active: isNextEvent, action: () => setListName("nextEvent") },
+  ]
 
   return (
-    <HStack spacing={0} mb={4}>
-      <Button
-        isActive={isAll}
-        onClick={() => {
-          setListName(null)
-        }}
-        size="sm"
-        variant={isAll ? "solid" : "outline"}
-        colorScheme={isAll ? "blue" : undefined}
-        borderRadius="md"
-        borderRightRadius={0}
-      >
-        All
-      </Button>
-      <Button
-        isActive={isFav}
-        onClick={() => {
-          setListName("fav")
-        }}
-        size="sm"
-        variant={isFav ? "solid" : "outline"}
-        colorScheme={isFav ? "blue" : undefined}
-        borderRadius="md"
-        borderLeftRadius={0}
-        borderRightRadius={0}
-      >
-        Fav
-      </Button>
-      <Button
-        isActive={isBlacklist}
-        onClick={() => {
-          setListName("blacklist")
-        }}
-        size="sm"
-        variant={isBlacklist ? "solid" : "outline"}
-        colorScheme={isBlacklist ? "blue" : undefined}
-        borderLeftRadius={0}
-        borderRightRadius={0}
-      >
-        Blacklist
-      </Button>
-      <Button
-        isActive={isDuet}
-        onClick={() => {
-          setListName("duet")
-        }}
-        size="sm"
-        variant={isDuet ? "solid" : "outline"}
-        colorScheme={isDuet ? "blue" : undefined}
-        borderLeftRadius={0}
-        borderRightRadius={0}
-      >
-        Duet
-      </Button>
-      <Button
-        isActive={isNextEvent}
-        onClick={() => {
-          setListName("nextEvent")
-        }}
-        size="sm"
-        variant={isNextEvent ? "solid" : "outline"}
-        colorScheme={isNextEvent ? "blue" : undefined}
-        borderRadius="md"
-        borderLeftRadius={0}
-      >
-        Next Event
-      </Button>
-    </HStack>
+    <ButtonGroup variant={"outline"} isAttached>
+      {buttons.map((button) => (
+        <Button
+          key={button.path}
+          onClick={button.action}
+          size="sm"
+          variant={button.active ? "solid" : "outline"}
+          colorScheme={button.active ? "blue" : undefined}
+          borderRadius="md"
+          px={{ base: 2, md: 4 }}
+          py={{ base: 1, md: 2 }}
+        >
+          {button.label}
+        </Button>
+      ))}
+    </ButtonGroup>
   );
 };
