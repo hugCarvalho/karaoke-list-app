@@ -3,12 +3,14 @@ import { Button, Center, Checkbox, HStack, IconButton, Input, InputGroup, InputR
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
 import { deleteSong, getSongsList, updatePlayCount, updateSong } from "../api/api";
+import { ListsToggleGroup } from "../components/buttonGroups/ListsToggleGroup";
 import PageWrapper from "../components/PageWrapper";
 import TableSpinner from "../components/table/TableSpinner";
 import TableWrapper from "../components/table/TableWrapper";
 import { ACTIONS } from "../config/actions";
 import { CheckboxGroup, SortConfig } from "../config/formInterfaces";
 import { Song } from "../config/interfaces";
+import { ListType } from "../config/types";
 import { QUERIES } from "../constants/queries";
 import { formatToGermanDate } from "../utils/date";
 
@@ -21,6 +23,7 @@ const SongList = () => {
   const [sortConfig, setSortConfig] = useState<SortConfig>({ key: "artist", direction: "ascending" });
   const [songFilterText, setSongFilterText] = useState("");
   const [artistFilterText, setArtistFilterText] = useState("");
+  const [listName, setListName] = useState<ListType>(null);
 
   const { data, isLoading, isError, error } = useQuery<Song[]>({
     queryKey: [QUERIES.SONGS_LIST],
@@ -67,11 +70,16 @@ const SongList = () => {
 
   const filteredSongs = useMemo(() => {
     if (!data) return [];
-    return data.filter((song) => {
+    let filteredData = data || []
+    if (listName === "fav") filteredData = data.filter((song) => song.fav)
+    if (listName === "blacklist") filteredData = data.filter((song) => song.blacklisted)
+    if (listName === "duet") filteredData = data.filter((song) => song.duet)
+    if (listName === "nextEvent") filteredData = data.filter((song) => song.inNextEventList)
+    return filteredData.filter((song) => {
       return song.title.toLowerCase().includes(songFilterText.toLowerCase()) &&
         song.artist.toLowerCase().includes(artistFilterText.toLowerCase())
     });
-  }, [data, songFilterText, artistFilterText]);
+  }, [data, songFilterText, artistFilterText, listName]);
 
   const sortedSongs = useMemo(() => {
     if (!filteredSongs) return [];
@@ -101,7 +109,7 @@ const SongList = () => {
   const handleClearArtistFilter = () => {
     setArtistFilterText("");
   };
-
+  console.log('%c SongList.tsx - line: 104', 'color: white; background-color: #00cc29', data?.length, isLoading, '<-data?.length, isLoading')
   if (data?.length === 0 && !isLoading)
     return (
       <PageWrapper>
@@ -162,6 +170,9 @@ const SongList = () => {
             )}
           </InputGroup>
         </HStack>
+        <Center mt={2}>
+          <ListsToggleGroup listName={listName} setListName={setListName} />
+        </Center>
         <TableWrapper>
           <Thead >
             <Tr>
