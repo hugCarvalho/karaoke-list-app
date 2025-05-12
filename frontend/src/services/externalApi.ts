@@ -17,8 +17,8 @@ export const isDataVerified = async (songTitle: string, artist: string) => {
   }
 }
 
-export async function getSongsFromBackend(artist: string) {
-  const response = await fetch('http://localhost:4004/songs', {
+export async function getSongsFromOpenAI(artist: string) {
+  const response = await fetch(`${import.meta.env.VITE_API_URL}/songs`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

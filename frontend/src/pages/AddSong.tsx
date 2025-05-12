@@ -14,7 +14,7 @@ import { BaseSongFormData, baseSongFormSchema, Option } from "../config/formInte
 import { Artist } from "../config/interfaces";
 import queryClient from "../config/queryClient";
 import { QUERIES } from "../constants/queries";
-import { getSongsFromBackend, isDataVerified } from "../services/externalApi";
+import { getSongsFromOpenAI, isDataVerified } from "../services/externalApi";
 import { capitalizeArtistNames } from "../utils/strings";
 
 const defaultValues = {
@@ -66,7 +66,7 @@ const AddSong = () => {
 
   const { data: backendSongOptions, isLoading: isOpenAILoading } = useQuery({
     queryKey: ['songs', artistOptionValue?.value],
-    queryFn: () => artistOptionValue?.value ? getSongsFromBackend(artistOptionValue.value) : null,
+    queryFn: () => artistOptionValue?.value ? getSongsFromOpenAI(artistOptionValue.value) : null,
     enabled: !!artistOptionValue?.value,
     staleTime: Infinity,
   });
