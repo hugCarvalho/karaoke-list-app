@@ -6,6 +6,9 @@
 ### 💬 Description
  If you ever went to a karaoke place and realised you cannot find or decide upon which songs to sing, this app is for you... Never be blank again! 😉
 
+### Optimizations Score
+![image](./Lighthouse-values.png)
+
 ### 📡 APIs Used
   - [MusicBrainz](https://musicbrainz.org/doc/MusicBrainz_API)
 
