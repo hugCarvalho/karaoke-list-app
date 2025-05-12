@@ -14,6 +14,7 @@ import { Option, SongsSangFormData, songsSangFormSchema } from "../config/formIn
 import { Artist } from "../config/interfaces";
 import queryClient from "../config/queryClient";
 import { QUERIES } from "../constants/queries";
+import { isDataVerified } from "../services/externalApi";
 import { formatToGermanDate } from "../utils/date";
 
 const defaultValues = {
@@ -28,6 +29,7 @@ const defaultValues = {
   plays: 1
 }
 
+//TODO: maintain 2 diff routes or add options in add songs to deal with adding new songs or sang songs
 const SongsSang = () => {
   const { register, handleSubmit, watch, reset, setValue, formState: { errors } } = useForm<SongsSangFormData>({
     resolver: zodResolver(songsSangFormSchema),
@@ -44,6 +46,8 @@ const SongsSang = () => {
   const [songOptions, setSongOptions] = useState<Option[]>([]);
   const [artistOptionValue, setArtistOptionValue] = useState<Option | null>();
   const [songOptionValue, setSongOptionValue] = useState<Option | null>();
+  const [isVerifying, setIsVerifying] = useState<boolean>(false);
+
 
   const { data: artistsDb, isLoading, isError, error } = useQuery({
     queryKey: [QUERIES.GET_ARTISTS_DB],
@@ -89,7 +93,25 @@ const SongsSang = () => {
     },
   });
 
-  const onSubmit = (data: SongsSangFormData) => {
+  const onSubmit = async (data: SongsSangFormData) => {
+    setIsVerifying(true)
+    try {
+      const res = await isDataVerified(data.title, data.artist)
+      setIsVerifying(false)
+      if (res?.verified === false) {
+        toast({
+          title: "Error verifying song data.",
+          description: error?.message || "Artist and song mismatch or typo present, please check data entered.",
+          status: "error",
+          duration: 5000,
+          isClosable: true,
+        });
+        return
+      }
+    } catch (error) {
+      setIsVerifying(false)
+    }
+
     const eventData = {
       location: data.location,
       eventDate: data.eventDate
@@ -196,7 +218,7 @@ const SongsSang = () => {
           setValue={setValue}
         />
 
-        <Button type="submit" colorScheme="blue" isLoading={isPending}>
+        <Button type="submit" colorScheme="blue" isLoading={isPending || isVerifying} isDisabled={isPending || isVerifying}>
           Save
         </Button>
       </form>
