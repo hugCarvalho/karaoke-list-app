@@ -14,7 +14,7 @@ import { BaseSongFormData, baseSongFormSchema, Option } from "../config/formInte
 import { Artist } from "../config/interfaces";
 import queryClient from "../config/queryClient";
 import { QUERIES } from "../constants/queries";
-import { isDataVerified } from "../services/externalApi";
+import { getSongsFromBackend, isDataVerified } from "../services/externalApi";
 import { capitalizeArtistNames } from "../utils/strings";
 
 const defaultValues = {
@@ -63,6 +63,31 @@ const AddSong = () => {
       setSongOptions(songs)
     }
   }, [artistsDb])
+
+  const { data: backendSongOptions, isLoading: isOpenAILoading } = useQuery({
+    queryKey: ['songs', artistOptionValue?.value],
+    queryFn: () => artistOptionValue?.value ? getSongsFromBackend(artistOptionValue.value) : null,
+    enabled: !!artistOptionValue?.value,
+    staleTime: Infinity,
+  });
+
+  const filterOptionsByArtist = () => {
+    const filteredOptionsByArtist = songOptions.filter(song => song.artist === artistOptionValue?.value)
+    if (backendSongOptions) {
+      const allOptions = [...filteredOptionsByArtist, ...backendSongOptions];
+      const uniqueOptions = [];
+      const seenValues = new Set();
+
+      for (const option of allOptions) {
+        if (!seenValues.has(option.value)) {
+          uniqueOptions.push(option);
+          seenValues.add(option.value);
+        }
+      }
+      return uniqueOptions;
+    }
+    return filteredOptionsByArtist
+  };
 
   const { mutate: addSongMutation, isPending } = useMutation({
     mutationFn: addSong,
@@ -115,10 +140,6 @@ const AddSong = () => {
     addSongMutation(songData);
   }
 
-  const filterOptionsByArtist = () => {
-    return songOptions.filter(song => song.artist === artistOptionValue?.value)
-  }
-
   return (
     <PageWrapper>
       <Center><AddToggleButtonGroup /></Center>
@@ -134,7 +155,6 @@ const AddSong = () => {
           />
         </Tooltip>
       </Center>
-
       <form onSubmit={handleSubmit(onSubmit)} noValidate>
         <Flex direction={{ base: "column", md: "row" }} gap={4} mb={4}>
           <FormControl isInvalid={!!errors.artist} isRequired>
@@ -167,6 +187,7 @@ const AddSong = () => {
           <FormControl isInvalid={!!errors.title} isRequired>
             <FormLabel htmlFor="title">Song</FormLabel>
             <CreatableSelect
+              isLoading={isOpenAILoading}
               placeholder="Type or select a song"
               isClearable
               options={artistOptionValue ? filterOptionsByArtist() : songOptions}

@@ -1,5 +1,5 @@
 
-export async function isDataVerified(songTitle: string, artist: string) {
+export const isDataVerified = async (songTitle: string, artist: string) => {
   const searchUrl = `https://musicbrainz.org/ws/2/recording/?query=recording:"${encodeURIComponent(songTitle)}" AND artist:"${encodeURIComponent(artist)}"&fmt=json`;
 
   try {
@@ -15,4 +15,21 @@ export async function isDataVerified(songTitle: string, artist: string) {
     console.error("Error querying MusicBrainz API:", error);
     return { status: "error", error: error };
   }
+}
+
+export async function getSongsFromBackend(artist: string) {
+  const response = await fetch('http://localhost:4004/songs', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ artist: artist }),
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(errorData.error || 'Failed to fetch songs');
+  }
+  const data = await response.json();
+  return data.songs;
 }
