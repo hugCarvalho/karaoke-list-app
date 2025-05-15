@@ -1,56 +1,60 @@
-import { Box, Button, Link as ChakraLink, Container, Flex, FormControl, FormLabel, Heading, Input, Stack, Text } from "@chakra-ui/react";
+import {
+  Box,
+  Button,
+  Link as ChakraLink,
+  Container,
+  Flex,
+  FormControl,
+  FormLabel,
+  Heading,
+  Input,
+  Stack,
+  Text,
+} from "@chakra-ui/react";
 import { useMutation } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
-import { Link, useNavigate } from "react-router-dom";
-import { signup } from "../api/api";
-import { EMAIL_PATTERN } from "../constants/email";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { login } from "../../api/api";
+import { EMAIL_PATTERN } from "../../constants/email";
 
 type FormData = {
   email: string;
   password: string;
-  confirmPassword: string;
 };
 
-const Register = () => {
+const Login = () => {
+  const location = useLocation();
   const navigate = useNavigate();
+  const redirectUrl = location.state?.redirectUrl || "/";
   const {
     handleSubmit,
     register,
     formState: { isSubmitting, errors, isValid },
-    reset,
-    watch,
-  } = useForm({
-    defaultValues: {
-      email: "",
-      password: "",
-      confirmPassword: "",
-    },
-  });
+  } = useForm({ defaultValues: { email: "", password: "" } });
 
-  const { mutate: createAccount, isPending, isError, error } = useMutation({
-    mutationFn: signup,
+  const { mutate: signIn, isPending, isError } = useMutation({
+    mutationFn: login,
     onSuccess: () => {
-      reset();
-      navigate("/", {
+      navigate(redirectUrl, {
         replace: true,
       });
     },
   });
 
   const onSubmit = async (data: FormData) => {
-    createAccount(data);
+    signIn(data);
   };
 
   return (
     <Flex minH="100vh" align="center" justify="center">
       <Container mx="auto" maxW="md" py={12} px={6} textAlign="center">
-        <Heading fontSize="4xl" mb={6}>
-          Create an account
+        <Heading fontSize="4xl" mb={8}>
+          Sign in to your account
         </Heading>
         <Box rounded="lg" bg="gray.700" boxShadow="lg" p={8}>
           {isError && (
             <Box mb={3} color="red.400">
-              {error?.message || "An error occurred"}
+              Invalid email or password
             </Box>
           )}
           <form onSubmit={handleSubmit(onSubmit)}>
@@ -68,7 +72,7 @@ const Register = () => {
                   })}
                   autoFocus
                 />
-                {errors.email?.message && (
+                {errors.email && (
                   <Text fontSize="sm" color="red.500">
                     {errors.email.message}
                   </Text>
@@ -87,31 +91,24 @@ const Register = () => {
                     },
                   })}
                 />
-                {errors.password?.message && (
+                {errors.password && (
                   <Text fontSize="sm" color="red.500">
                     {errors.password.message}
                   </Text>
                 )}
-                <Text color="text.muted" fontSize="xs" textAlign="left" mt={2}>
-                  - Must be at least 6 characters long.
-                </Text>
               </FormControl>
 
-              <FormControl id="confirmPassword" isInvalid={Boolean(errors.confirmPassword)}>
-                <FormLabel>Confirm Password</FormLabel>
-                <Input
-                  type="password"
-                  {...register("confirmPassword", {
-                    required: "Confirm password is required",
-                    validate: (value) => value === watch("password") || "Passwords do not match", // Corrected line
-                  })}
-                />
-                {errors.confirmPassword?.message && (
-                  <Text fontSize="sm" color="red.500">
-                    {errors.confirmPassword.message}
-                  </Text>
-                )}
-              </FormControl>
+              <ChakraLink
+                as={Link}
+                to="/password/forgot"
+                fontSize="sm"
+                textAlign={{
+                  base: "center",
+                  sm: "right",
+                }}
+              >
+                Forgot password?
+              </ChakraLink>
 
               <Button
                 my={2}
@@ -119,13 +116,13 @@ const Register = () => {
                 isDisabled={!isValid}
                 type="submit"
               >
-                Create Account
+                Sign in
               </Button>
 
               <Text align="center" fontSize="sm" color="text.muted">
-                Already have an account?{" "}
-                <ChakraLink as={Link} to="/login">
-                  Sign in
+                Don&apos;t have an account?{" "}
+                <ChakraLink as={Link} to="/register">
+                  Sign up
                 </ChakraLink>
               </Text>
             </Stack>
@@ -136,4 +133,4 @@ const Register = () => {
   );
 };
 
-export default Register;
+export default Login;

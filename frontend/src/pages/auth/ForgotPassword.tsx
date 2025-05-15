@@ -2,7 +2,7 @@ import { Alert, AlertIcon, Box, Button, Link as ChakraLink, Container, Flex, For
 import { useMutation } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
-import { sendPasswordResetEmail } from "../api/api";
+import { sendPasswordResetEmail } from "../../api/api";
 
 type FormData = {
   email: string;

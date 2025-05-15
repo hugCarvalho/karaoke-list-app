@@ -10,7 +10,7 @@ import {
 } from "@chakra-ui/react";
 import { useQuery } from "@tanstack/react-query";
 import { Link, useParams } from "react-router-dom";
-import { verifyEmail } from "../api/api";
+import { verifyEmail } from "../../api/api";
 
 const VerifyEmail = () => {
   const { code } = useParams();
