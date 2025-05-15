@@ -7,9 +7,10 @@ const eventSongSchema = new mongoose.Schema({
 
 const eventSchema = new mongoose.Schema({
   eventId: { type: String, required: true, unique: true },
-  date: { type: Date, default: null },
+  eventDdate: { type: Date, default: null },
   closed: { type: Boolean, default: false },
   songs: [eventSongSchema],
+  location: { type: String, default: "" },
 });
 
 const eventDataSchema = new mongoose.Schema({

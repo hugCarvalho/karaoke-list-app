@@ -128,6 +128,7 @@ export const getArtistsListHandler = catchErrors(async (req, res) => {
   return res.status(OK).json({ success: true, data: artists });
 });
 
+
 export const updateSongPlayCountHandler = catchErrors(async (req, res) => {
   const songId = req.params.songId;
   const userId = req.userId;
@@ -157,4 +158,41 @@ export const updateSongPlayCountHandler = catchErrors(async (req, res) => {
   }
 
   return res.status(OK).json({ success: true, message: 'Song updated successfully.' });
+});
+
+export const addEventsHandler = catchErrors(async (req, res) => {
+  console.log('addEventsHandler', req.body)
+  const newEvent = req.body;
+  try {
+    const user = await UserModel.findById(req.userId);
+
+    if (!user) {
+      return res.status(NOT_FOUND).json({ success: false, message: 'User not found.' });
+    }
+
+    let list = await List.findOne({ userId: user._id });
+
+    if (!list) {
+      list = new List({
+        userId: user._id,
+        songs: [],
+        events: [], // Initialize events array if it doesn't exist
+      });
+    }
+
+    // const newEvent = {
+    //   id: uuidv4(), // Generate a unique ID for the event (using 'id' as per your schema)
+    //   date: new Date(), // Set the current date
+    //   closed: false,    // Default to false
+    //   songs: [],      // Initialize with an empty array of songs
+    // };
+
+    list.events.push(newEvent);
+    await list.save();
+
+    return res.status(OK).json({ success: true, message: 'New event created successfully.', event: newEvent });
+  } catch (error: any) {
+    console.error('Error creating event:', error);
+    return res.status(INTERNAL_SERVER_ERROR).json({ success: false, message: 'Error creating event.', error: error.message });
+  }
 });

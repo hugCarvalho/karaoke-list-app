@@ -1,6 +1,6 @@
 import API from "../config/apiClient";
 import { CheckboxGroup } from "../config/formInterfaces";
-import { Song, User } from "../config/interfaces";
+import { KaraokeEvents, Song, User } from "../config/interfaces";
 
 export const signup = async (data: { email: string, password: string, confirmPassword: string }) => {
   return API.post("/auth/register", data)
@@ -42,4 +42,8 @@ export const getArtistsDb = async () => {
 export const updatePlayCount = async (data: { songId: string }) => {
   console.log("updatePlayCount", data)
   return API.patch(`/list/update/songs/update-play/${data.songId}`)
+};
+//Events
+export const createEvent = async (data: KaraokeEvents) => {
+  return API.post("/list/add-event", data)
 };

@@ -43,3 +43,11 @@ export interface Artist {
   name: string,
   songs: string[],
 }
+
+export interface KaraokeEvents {
+  eventId: string,
+  eventDate: Date,
+  closed: boolean,
+  songs: [Song] | [],
+  location: string
+}

@@ -7,16 +7,16 @@ import AddSong from "./pages/AddSong";
 import Blacklist from "./pages/Blacklist";
 import Favourites from "./pages/Favourites";
 import NextEventList from "./pages/NextEventList";
-import Settings from "./pages/Settings";
 import SongList from "./pages/SongList";
 import SongsSang from "./pages/SongsSang";
-import Statistics from "./pages/Statistics";
 import ForgotPassword from "./pages/auth/ForgotPassword";
 import Login from "./pages/auth/Login";
 import Register from "./pages/auth/Register";
 import ResetPassword from "./pages/auth/ResetPassword";
 import VerifyEmail from "./pages/auth/VerifyEmail";
 import { EventsHistory } from "./pages/mainNavigation/EventsHistory";
+import Settings from "./pages/profile/Settings";
+import Statistics from "./pages/profile/Statistics";
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
