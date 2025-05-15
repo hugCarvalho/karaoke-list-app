@@ -39,6 +39,9 @@ export const deleteSong = async (data: { songId: string }) => {
 export const getArtistsDb = async () => {
   return API.get("/list/artists")
 };
+export const getEventsList = async (): Promise<KaraokeEvents[]> => {
+  return API.get("/list/events")
+};
 export const updatePlayCount = async (data: { songId: string }) => {
   console.log("updatePlayCount", data)
   return API.patch(`/list/update/songs/update-play/${data.songId}`)

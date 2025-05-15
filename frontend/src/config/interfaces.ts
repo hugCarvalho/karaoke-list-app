@@ -32,11 +32,20 @@ export interface Song {
   plays: number,
 }
 
+type KaraokeEvents = {
+  eventId: string,
+  eventDate: Date,
+  closed: boolean,
+  songs: [Song] | [],
+  location: string
+}
+
 export interface Data {
   songs: Song[],
   userId: string,
   createdAt: string,
   updatedAt: string,
+  events: KaraokeEvents[],
 }
 
 export interface Artist {
@@ -44,10 +53,4 @@ export interface Artist {
   songs: string[],
 }
 
-export interface KaraokeEvents {
-  eventId: string,
-  eventDate: Date,
-  closed: boolean,
-  songs: [Song] | [],
-  location: string
-}
+

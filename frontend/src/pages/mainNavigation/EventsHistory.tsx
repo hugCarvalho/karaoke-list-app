@@ -1,9 +1,10 @@
 import { Button, useToast } from "@chakra-ui/react";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import * as uuid from "uuid";
-import { createEvent } from "../../api/api";
+import { createEvent, getEventsList } from "../../api/api";
 import PageWrapper from "../../components/PageWrapper";
-import { KaraokeEvents } from "../../config/interfaces";
+import { Data, KaraokeEvents } from "../../config/interfaces";
+import { QUERIES } from "../../constants/queries";
 
 const eventData: KaraokeEvents = {
   eventId: uuid.v4(),
@@ -15,6 +16,13 @@ const eventData: KaraokeEvents = {
 
 export const EventsHistory = () => {
   const toast = useToast();
+
+  const { data: eventsList, isLoading } = useQuery<Data["events"]>({
+    queryKey: [QUERIES.GET_EVENTS_LIST],
+    queryFn: getEventsList,
+  });
+
+  const isEventOpen = eventsList?.some((e: KaraokeEvents) => !e.closed) ?? false;
 
   const { mutate: createEventMutation, status } = useMutation({
     mutationFn: createEvent,
@@ -39,16 +47,35 @@ export const EventsHistory = () => {
     },
   });
 
-  console.log('%c EventsHistory.tsx - line: 42', 'color: white; background-color: #00cc29', status, '<-status')
+  console.log('%c EventsHistory.tsx - line: 51', 'color: white; background-color: #f58801;', isEventOpen, '<-isEventOpen')
+  console.log('%c EventsHistory.tsx - line: 49', 'color: white; background-color: #00cc29', eventsList, '<-eventsList')
+
+  //TODO:
+  // 1. Add song to event
+  // 2. display events list
+  // 3. close event
 
   return (
     <PageWrapper>
       EventsHistory
-      <div>
-        <p>You have no events open. Create one? <button>yes</button></p>
-
-      </div>
-      <Button onClick={() => createEventMutation(eventData)}>Create event</Button>
+      {
+        isLoading && <p>Loading...</p>
+      }
+      {
+        !isLoading && isEventOpen && <>
+          <div>
+            <p>{isEventOpen && "You already have an event open."}</p>
+          </div>
+        </>
+      }
+      {
+        !isLoading && !isEventOpen && <>
+          <div>
+            <p>{!isEventOpen && "You have no events open. Create one? <button>yes</button>"}</p>
+            <Button onClick={() => createEventMutation(eventData)}>Create event</Button>
+          </div>
+        </>
+      }
     </PageWrapper>
   )
 }
