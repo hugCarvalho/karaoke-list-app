@@ -1,10 +1,10 @@
 import { Center, Heading } from "@chakra-ui/react";
 import { useQuery } from "@tanstack/react-query";
-import { getSongsList } from "../api/api";
-import PageWrapper from "../components/PageWrapper";
-import MostSangBarChart from "../components/stats/MostSangBarChart";
-import { Song } from "../config/interfaces";
-import { QUERIES } from "../constants/queries";
+import { getSongsList } from "../../api/api";
+import PageWrapper from "../../components/PageWrapper";
+import MostSangBarChart from "../../components/stats/MostSangBarChart";
+import { Song } from "../../config/interfaces";
+import { QUERIES } from "../../constants/queries";
 
 export default function Statistics() {
 
