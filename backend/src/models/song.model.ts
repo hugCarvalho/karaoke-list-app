@@ -1,5 +1,17 @@
 import mongoose from 'mongoose';
 
+const eventSongSchema = new mongoose.Schema({
+  artist: { type: String, required: true },
+  name: { type: String, required: true },
+});
+
+const eventSchema = new mongoose.Schema({
+  eventId: { type: String, required: true, unique: true },
+  date: { type: Date, default: null },
+  closed: { type: Boolean, default: false },
+  songs: [eventSongSchema],
+});
+
 const eventDataSchema = new mongoose.Schema({
   location: { type: String, default: "" },
   eventDate: { type: Date, default: null },
@@ -21,6 +33,7 @@ const listSchema = new mongoose.Schema(
   {
     songs: [songSchema],
     userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+    events: [eventSchema],
   },
   { timestamps: true }
 );

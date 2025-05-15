@@ -16,6 +16,7 @@ import SongList from "./pages/SongList";
 import SongsSang from "./pages/SongsSang";
 import Statistics from "./pages/Statistics";
 import VerifyEmail from "./pages/VerifyEmail";
+import { EventsHistory } from "./pages/mainNavigation/EventsHistory";
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
@@ -55,6 +56,7 @@ function App() {
             <Route path="songs-sang" element={<SongsSang />} />
             <Route path="list" element={<SongList />} />
             <Route path="statistics" element={<Statistics />} />
+            <Route path="history" element={<EventsHistory />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Route>
         ) :
