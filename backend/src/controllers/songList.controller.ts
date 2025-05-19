@@ -6,6 +6,56 @@ import UserModel from "../models/user.model";
 import appAssert from "../utils/appAssert";
 import catchErrors from "../utils/catchErrors";
 
+const updateSongPlayCount = async (userId: string, songId: string) => {
+  const currentDate = Date.now();
+
+  const updatedList = await List.findOneAndUpdate(
+    { userId: userId, 'songs.songId': songId },
+    {
+      $inc: { 'songs.$.plays': 1 },
+      $push: {
+        'songs.$.events': {
+          location: 'Monster Ronson', // Hardcoded for now
+          eventDate: new Date(currentDate),
+        },
+      },
+    },
+    { new: true }
+  );
+
+  if (!updatedList) {
+    throw { status: NOT_FOUND, message: 'Song not found in the list.' };
+  }
+
+  return updatedList;
+};
+
+const updateEventsList = async (userId: string, artistName: string, title: string) => {
+  const list = await List.findOne({ userId: userId });
+
+  if (!list) {
+    throw { status: NOT_FOUND, message: 'List not found.' };
+  }
+
+  if (!list.events || list.events.length === 0) {
+    list.events.push({
+      songs: [{ artist: artistName, name: title }],
+    });
+  } else {
+    const openEventIndex = list.events.findIndex(event => !event.closed);
+
+    if (openEventIndex !== -1) {
+      list.events[openEventIndex].songs.push({ artist: artistName, name: title });
+    } else {
+      const lastEventIndex = list.events.length - 1;
+      list.events[lastEventIndex].songs.push({ artist: artistName, name: title });
+    }
+  }
+
+  await list.save();
+  return list;
+};
+
 export const addOrUpdateSongHandler = catchErrors(async (req, res) => {
   const artistName = req.body.artist
   const title = req.body.title
@@ -65,7 +115,7 @@ export const addOrUpdateSongHandler = catchErrors(async (req, res) => {
 export const addSangSongHandler = catchErrors(async (req, res) => {
   const artistName = req.body.artist
   const title = req.body.title
-  console.log("addOrUpdateSongHandler", req.body.songId)
+  console.log("addOrUpdateSongHandlerFFFFF", req.body.songId)
 
   try {
     const user = await UserModel.findById(req.userId);
@@ -87,7 +137,6 @@ export const addSangSongHandler = catchErrors(async (req, res) => {
     const existingSong = list.songs.find(
       (song) => song.artist === artistName && song.title === title
     );
-    console.log('existingSong', existingSong)
     if (Boolean(existingSong)) {
       if (!list.events || list.events.length === 0) {
         // If the events array is empty, create a new event and add the song
@@ -110,7 +159,7 @@ export const addSangSongHandler = catchErrors(async (req, res) => {
       }
 
       await list.save();
-      updateSongPlayCountHandler(req, res)
+      updateSongPlayCount(user._id, req.body.songId)
     } else {
       list.songs.push(req.body);
       await list.save();
@@ -171,7 +220,7 @@ export const getSongListHandler = catchErrors(async (req, res) => {
 export const updateSongHandler = catchErrors(async (req, res) => {
   const { songId, value, type } = req.body as { songId: string, value: boolean, type: "blacklisted" | "fav" | "nextEvent" };
   // const userId = req.user._id;
-  console.log('songId', songId, value, type)
+  // console.log('songId', songId, value, type)
   if (!songId || typeof value !== 'boolean') {
     return res.status(400).json({
       status: 400,
@@ -181,7 +230,6 @@ export const updateSongHandler = catchErrors(async (req, res) => {
   }
 
   let key = `songs.$.${type}`;
-  console.log('key', key)
   const updatedList = await List.findOneAndUpdate(
     // { userId: userId, 'songs.songId': songId },
     { 'songs.songId': songId },
@@ -225,41 +273,71 @@ export const getArtistsListHandler = catchErrors(async (req, res) => {
   return res.status(OK).json({ success: true, data: artists });
 });
 
-
 export const updateSongPlayCountHandler = catchErrors(async (req, res) => {
   const songId = req.params.songId;
   const userId = req.userId;
-  const currentDate = new Date();
+  const currentDate = Date.now();
+  const artistName = req.body.artist;
+  const title = req.body.title;
 
-  if (!songId) {
-    return res.status(BAD_REQUEST).json({ success: false, message: 'Invalid request. songId is required.' });
+  if (!songId || !artistName || !title) {
+    return res.status(BAD_REQUEST).json({
+      success: false,
+      message: 'Invalid request. songId, artist, and title are required.',
+    });
   }
 
-  const updatedList = await List.findOneAndUpdate(
-    { userId: userId, 'songs.songId': songId },
-    {
-      $inc: { 'songs.$.plays': 1 },
-      $push: {
-        'songs.$.events': {
-          location: 'Monster Ronson', // Hardcoded for now
-          eventDate: currentDate,
-        },
-      },
-    },
+  try {
+    const list = await List.findOne({ userId: userId });
 
-    { new: true }
-  );
+    if (!list) {
+      return res.status(NOT_FOUND).json({ success: false, message: 'List not found.' });
+    }
 
-  if (!updatedList) {
-    return res.status(NOT_FOUND).json({ success: false, message: 'Song not found.' });
+    // Find the song within the list and update play count and events
+    const songToUpdate = list.songs.find(song => song.songId === songId);
+
+    if (songToUpdate) {
+      songToUpdate.plays = (songToUpdate.plays || 0) + 1;
+      songToUpdate.events.push({
+        location: 'Monster Ronson', // Hardcoded for now
+        eventDate: new Date(currentDate),
+      });
+
+      // Add Event to Events List
+      if (!list.events || list.events.length === 0) {
+        list.events.push({
+          songs: [{ artist: artistName, name: title }],
+        });
+      } else {
+        const openEventIndex = list.events.findIndex(event => !event.closed);
+
+        if (openEventIndex !== -1) {
+          list.events[openEventIndex].songs.push({ artist: artistName, name: title });
+        } else {
+          const lastEventIndex = list.events.length - 1;
+          list.events[lastEventIndex].songs.push({ artist: artistName, name: title });
+        }
+      }
+
+      await list.save();
+      return res.status(OK).json({ success: true, message: 'Song updated successfully.' });
+    } else {
+      return res.status(NOT_FOUND).json({ success: false, message: 'Song not found in the list.' });
+    }
+  } catch (error: any) {
+    console.error('Error updating song play count and events:', error);
+    return res.status(INTERNAL_SERVER_ERROR).json({
+      success: false,
+      message: 'Error updating song.',
+      error: error.message,
+    });
   }
-
-  return res.status(OK).json({ success: true, message: 'Song updated successfully.' });
 });
 
 //Events
 export const addEventsHandler = catchErrors(async (req, res) => {
-  console.log('addEventsHandler', req.body)
+  // console.log('addEventsHandler', req.body)
   const newEvent = req.body;
   try {
     const user = await UserModel.findById(req.userId);
@@ -274,16 +352,9 @@ export const addEventsHandler = catchErrors(async (req, res) => {
       list = new List({
         userId: user._id,
         songs: [],
-        events: [], // Initialize events array if it doesn't exist
+        events: [],
       });
     }
-
-    // const newEvent = {
-    //   id: uuidv4(), // Generate a unique ID for the event (using 'id' as per your schema)
-    //   date: new Date(), // Set the current date
-    //   closed: false,    // Default to false
-    //   songs: [],      // Initialize with an empty array of songs
-    // };
 
     list.events.push(newEvent);
     await list.save();
@@ -316,3 +387,4 @@ export const getEventsListHandler = catchErrors(async (req, res) => {
     return res.status(INTERNAL_SERVER_ERROR).json({ success: false, message: 'Error retrieving events.', error: error.message });
   }
 });
+

@@ -1,15 +1,15 @@
 import { Button, useToast } from "@chakra-ui/react";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import * as uuid from "uuid";
+import { Fragment } from "react/jsx-runtime";
 import { createEvent, getEventsList } from "../../api/api";
 import PageWrapper from "../../components/PageWrapper";
-import { Data, KaraokeEvents } from "../../config/interfaces";
+import { Data, EventSongData, KaraokeEvents } from "../../config/interfaces";
 import { QUERIES } from "../../constants/queries";
 
-const eventData: KaraokeEvents = {
-  eventId: uuid.v4(),
+//TODO:
+export const eventData: KaraokeEvents = {
   location: "Monster Ronson",
-  eventDate: new Date(),
+  eventDate: Date.now(),
   songs: [],
   closed: false,
 }
@@ -47,11 +47,9 @@ export const EventsHistory = () => {
     },
   });
 
-  console.log('%c EventsHistory.tsx - line: 51', 'color: white; background-color: #f58801;', isEventOpen, '<-isEventOpen')
   console.log('%c EventsHistory.tsx - line: 49', 'color: white; background-color: #00cc29', eventsList, '<-eventsList')
 
   //TODO:
-  // 1. Add song to event
   // 2. display events list
   // 3. close event
 
@@ -64,10 +62,53 @@ export const EventsHistory = () => {
       {
         !isLoading && isEventOpen && <>
           <div>
-            <p>{isEventOpen && "You already have an event open."}</p>
+            <h1>Active Event</h1>
+            {eventsList?.map((event: KaraokeEvents, index: number) => {
+              if (!event.closed) {
+                return <div key={index}>
+                  <p>Date:{event?.eventDate}</p>
+                  <p>Loc:{event.location}</p>
+                  <div>
+                    {event.songs.map((song: EventSongData, index: number) => {
+                      return <Fragment key={index}>
+                        <p>{song.artist} -
+                          <span >{song.name}</span>
+                        </p>
+                      </Fragment>
+                    })}
+                  </div>
+                </div>
+              }
+            }
+            )}
           </div>
+          <button>Finish event</button>
         </>
       }
+      {/* {
+        !isLoading && eventsList?.length > 0 && <>
+          {eventsList?.map((event: KaraokeEvents, index: number) => {
+            if (event.closed) {
+              <h1>Finished Events</h1>
+              return <div key={index}>
+                <p>Date:{event?.eventDate}</p>
+                <p>Loc:{event.location}</p>
+                <div>
+                  {event.songs.map((song: EventSongData, index: number) => {
+                    return <Fragment key={index}>
+                      <p>{song.artist} -
+                        <span >{song.name}</span>
+                      </p>
+                    </Fragment>
+                  })}
+                </div>
+              </div>
+            }
+          }
+          )}
+
+        </>
+      } */}
       {
         !isLoading && !isEventOpen && <>
           <div>

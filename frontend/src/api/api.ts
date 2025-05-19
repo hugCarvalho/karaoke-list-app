@@ -45,10 +45,13 @@ export const getArtistsDb = async () => {
 export const getEventsList = async (): Promise<KaraokeEvents[]> => {
   return API.get("/list/events")
 };
-export const updatePlayCount = async (data: { songId: string }) => {
-  console.log("updatePlayCount", data)
-  return API.patch(`/list/update/songs/update-play/${data.songId}`)
-};
+export const updatePlayCount = async (data: { songId: string; artist: string; title: string }) => {
+  console.log("updatePlayCount", data);
+  return API.patch(`/list/update/songs/update-play/${data.songId}`, {
+    artist: data.artist,
+    title: data.title,
+  });
+}
 //Events
 export const createEvent = async (data: KaraokeEvents) => {
   return API.post("/list/add-event", data)
