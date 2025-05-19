@@ -30,6 +30,9 @@ export const getSongsList = async (): Promise<Song[]> => API.get("/list");
 export const addSong = async (data: Song) => {
   return API.post("/list/add", data)
 };
+export const addSangSong = async (data: Song) => {
+  return API.post("/list/add-sang-song", data)
+};
 export const updateSong = async (data: { songId: string, value: boolean, type: CheckboxGroup }) => {
   return API.patch("/list/update", data)
 };
