@@ -14,8 +14,9 @@ import { Option, SongsSangFormData, songsSangFormSchema } from "../config/formIn
 import { Artist, Data, KaraokeEvents } from "../config/interfaces";
 import queryClient from "../config/queryClient";
 import { QUERIES } from "../constants/queries";
-import { isDataVerified } from "../services/externalApi";
+import { getSongsFromOpenAI, isDataVerified } from "../services/externalApi";
 import { formatToGermanDate } from "../utils/date";
+import { capitalizeArtistNames } from "../utils/strings";
 import { eventData } from "./mainNavigation/EventsHistory";
 
 const defaultValues = {
@@ -49,13 +50,19 @@ const SongsSang = () => {
   const [songOptionValue, setSongOptionValue] = useState<Option | null>();
   const [isVerifying, setIsVerifying] = useState<boolean>(false);
 
-  const { data: artistsDb, isLoading, isError, error } = useQuery({
+  const { data: artistsDb, error } = useQuery({
     queryKey: [QUERIES.GET_ARTISTS_DB],
     queryFn: getArtistsDb,
   });
   const { data: eventsList, isLoading: isEventsListLoading } = useQuery<Data["events"]>({
     queryKey: [QUERIES.GET_EVENTS_LIST],
     queryFn: getEventsList,
+  });
+  const { data: backendSongOptions, isLoading: isOpenAILoading } = useQuery({
+    queryKey: ['songs', artistOptionValue?.value],
+    queryFn: () => artistOptionValue?.value ? getSongsFromOpenAI(artistOptionValue.value) : null,
+    enabled: !!artistOptionValue?.value,
+    staleTime: Infinity,
   });
   const { mutate: createEventMutation, status } = useMutation({
     mutationFn: createEvent,
@@ -67,7 +74,7 @@ const SongsSang = () => {
         duration: 3000,
         isClosable: true,
       });
-      queryClient.invalidateQueries({ queryKey: [QUERIES.SONGS_LIST] })
+      queryClient.invalidateQueries({ queryKey: [QUERIES.GET_EVENTS_LIST] })
     },
     onError: (error: any) => {
       toast({
@@ -79,7 +86,6 @@ const SongsSang = () => {
       });
     },
   });
-
   const { mutate: addSongMutation, isPending } = useMutation({
     mutationFn: addSangSong,
     onSuccess: () => {
@@ -103,7 +109,6 @@ const SongsSang = () => {
       });
     },
   });
-
 
   useEffect(() => {
     if (artistsDb?.data) {
@@ -142,12 +147,30 @@ const SongsSang = () => {
       location: data.location,
       eventDate: data.eventDate
     }
-    const songData = { songId: uuid.v4(), events: [eventData], ...data };
+    const capitalizedArtistName = capitalizeArtistNames(data.artist)
+    const songData = { songId: uuid.v4(), events: [eventData], ...data, artist: capitalizedArtistName };
     addSongMutation(songData);
   };
 
   const isEventOpen = eventsList?.some((e: KaraokeEvents) => !e.closed) ?? false;
 
+  const filterOptionsByArtist = () => {
+    const filteredOptionsByArtist = songOptions.filter(song => song.artist === artistOptionValue?.value)
+    if (backendSongOptions) {
+      const allOptions = [...filteredOptionsByArtist, ...backendSongOptions];
+      const uniqueOptions = [];
+      const seenValues = new Set();
+
+      for (const option of allOptions) {
+        if (!seenValues.has(option.value)) {
+          uniqueOptions.push(option);
+          seenValues.add(option.value);
+        }
+      }
+      return uniqueOptions;
+    }
+    return filteredOptionsByArtist
+  };
 
   return (
     <PageWrapper>
@@ -168,14 +191,12 @@ const SongsSang = () => {
       {isEventsListLoading ? <Center>
         <Spinner />
       </Center> : <>
-
-
       </>
       }
       {
         !isEventsListLoading && !isEventOpen && <>
           <div>
-            <p>{!isEventsListLoading && "You have no events open. Create one? <button>yes</button>"}</p>
+            <p>{!isEventsListLoading && "You have no events open. Create one?"}</p>
             <Button onClick={() => createEventMutation(eventData)}>Create event</Button>
           </div>
         </>
@@ -213,9 +234,10 @@ const SongsSang = () => {
             <FormControl isInvalid={!!errors.title} isRequired>
               <FormLabel htmlFor="title">Song</FormLabel>
               <CreatableSelect
+                isLoading={isOpenAILoading}
                 placeholder="Type or select a song"
                 isClearable
-                options={songOptions}
+                options={artistOptionValue ? filterOptionsByArtist() : songOptions}
                 value={songOptionValue}
                 onCreateOption={(e) => {
                   setSongOptions(state => [...state, { value: e, label: e }])
@@ -268,8 +290,6 @@ const SongsSang = () => {
           </Button>
         </form>
       }
-
-
     </PageWrapper>
   );
 };

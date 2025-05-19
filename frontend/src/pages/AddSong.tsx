@@ -35,8 +35,8 @@ const AddSong = () => {
   const toast = useToast();
   const fav = watch("fav");
   const blacklisted = watch("blacklisted");
-  const inNextEventList = watch("inNextEventList");
   const duet = watch("duet");
+  const inNextEventList = watch("inNextEventList");
 
   //Select Options
   const [artistOptions, setArtistOptions] = useState<Option[]>([]);
@@ -133,8 +133,8 @@ const AddSong = () => {
       location: "",
       eventDate: null
     }
-    const capitlizedArtistName = capitalizeArtistNames(data.artist)
-    const songData = { songId: uuid.v4(), events: [eventData], ...data, artist: capitlizedArtistName };
+    const capitalizedArtistName = capitalizeArtistNames(data.artist)
+    const songData = { songId: uuid.v4(), events: [eventData], ...data, artist: capitalizedArtistName };
     addSongMutation(songData);
   }
 
@@ -153,8 +153,6 @@ const AddSong = () => {
           />
         </Tooltip>
       </Center>
-
-
 
       <form onSubmit={handleSubmit(onSubmit)} noValidate>
         <Flex direction={{ base: "column", md: "row" }} gap={4} mb={4}>
