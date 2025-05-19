@@ -6,8 +6,8 @@ const eventSongSchema = new mongoose.Schema({
 });
 
 const eventSchema = new mongoose.Schema({
-  eventId: { type: String, required: true, unique: true },
-  eventDdate: { type: Date, default: null },
+  // eventId: { type: String, required: true, unique: true },
+  eventDate: { type: Date, default: null },
   closed: { type: Boolean, default: false },
   songs: [eventSongSchema],
   location: { type: String, default: "" },

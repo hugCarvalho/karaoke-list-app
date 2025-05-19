@@ -53,6 +53,104 @@ export const addOrUpdateSongHandler = catchErrors(async (req, res) => {
       await ArtistdbModel.updateOne({ _id: artist._id }, { $addToSet: { songs: title } });
     }
 
+    await list.save();
+
+    return res.status(OK).json({ success: true, message: 'Song added/updated successfully.' });
+  } catch (error: any) {
+    console.error('Error adding/updating song:', error);
+    return res.status(INTERNAL_SERVER_ERROR).json({ success: false, message: 'Error adding/updating song.', error: error.message });
+  }
+});
+
+export const addSangSongHandler = catchErrors(async (req, res) => {
+  const artistName = req.body.artist
+  const title = req.body.title
+  console.log("addOrUpdateSongHandler", req.body.songId)
+
+  try {
+    const user = await UserModel.findById(req.userId);
+
+    if (!user) {
+      return res.status(NOT_FOUND).json({ success: false, message: 'User not found.' });
+    }
+
+    // Update the userlists collection
+    let list = await List.findOne({ userId: user._id });
+
+    if (!list) {
+      list = new List({
+        userId: user._id,
+        songs: [],
+      });
+    }
+
+    const existingSong = list.songs.find(
+      (song) => song.artist === artistName && song.title === title
+    );
+    console.log('existingSong', existingSong)
+    if (Boolean(existingSong)) {
+      if (!list.events || list.events.length === 0) {
+        // If the events array is empty, create a new event and add the song
+        list.events.push({
+          // eventId: uuidv4(),
+          songs: [{ artist: artistName, name: title }],
+        });
+      } else {
+        // Find an open event
+        const openEventIndex = list.events.findIndex(event => !event.closed);
+
+        if (openEventIndex !== -1) {
+          // Add the song to the open event's songs array
+          list.events[openEventIndex].songs.push({ artist: artistName, name: title });
+        } else {
+          // Add the song to the last event's songs array
+          const lastEventIndex = list.events.length - 1;
+          list.events[lastEventIndex].songs.push({ artist: artistName, name: title });
+        }
+      }
+
+      await list.save();
+      updateSongPlayCountHandler(req, res)
+    } else {
+      list.songs.push(req.body);
+      await list.save();
+
+      // Update the artists collection
+      let artist = await ArtistdbModel.findOne({ name: artistName });
+
+      if (!artist) {
+        artist = new ArtistdbModel({
+          name: artistName,
+          songs: [title],
+        });
+        await artist.save();
+      } else {
+        // $addToSet Adds the song to the artist's songs array avoiding duplicates
+        await ArtistdbModel.updateOne({ _id: artist._id }, { $addToSet: { songs: title } });
+      }
+      //TODO: refactor repeated code
+      if (!list.events || list.events.length === 0) {
+        // If the events array is empty, create a new event and add the song
+        list.events.push({
+          // eventId: uuidv4(),
+          songs: [{ artist: artistName, name: title }],
+        });
+      } else {
+        // Find an open event
+        const openEventIndex = list.events.findIndex(event => !event.closed);
+
+        if (openEventIndex !== -1) {
+          // Add the song to the open event's songs array
+          list.events[openEventIndex].songs.push({ artist: artistName, name: title });
+        } else {
+          // Add the song to the last event's songs array
+          const lastEventIndex = list.events.length - 1;
+          list.events[lastEventIndex].songs.push({ artist: artistName, name: title });
+        }
+      }
+      await list.save();
+    }
+
     return res.status(OK).json({ success: true, message: 'Song added/updated successfully.' });
   } catch (error: any) {
     console.error('Error adding/updating song:', error);
@@ -122,7 +220,6 @@ export const deleteSongHandler = catchErrors(async (req, res) => {
   return res.status(OK).json({ message: "Song removed" });
 });
 
-
 export const getArtistsListHandler = catchErrors(async (req, res) => {
   const artists = await ArtistdbModel.find({});
   return res.status(OK).json({ success: true, data: artists });
@@ -160,6 +257,7 @@ export const updateSongPlayCountHandler = catchErrors(async (req, res) => {
   return res.status(OK).json({ success: true, message: 'Song updated successfully.' });
 });
 
+//Events
 export const addEventsHandler = catchErrors(async (req, res) => {
   console.log('addEventsHandler', req.body)
   const newEvent = req.body;
@@ -194,5 +292,27 @@ export const addEventsHandler = catchErrors(async (req, res) => {
   } catch (error: any) {
     console.error('Error creating event:', error);
     return res.status(INTERNAL_SERVER_ERROR).json({ success: false, message: 'Error creating event.', error: error.message });
+  }
+});
+
+export const getEventsListHandler = catchErrors(async (req, res) => {
+  try {
+    const user = await UserModel.findById(req.userId);
+
+    if (!user) {
+      return res.status(NOT_FOUND).json({ success: false, message: 'User not found.' });
+    }
+
+    const list = await List.findOne({ userId: user._id });
+
+    if (!list) {
+      return res.status(OK).json({ success: true, events: [] }); // User has no list, thus no events
+    }
+
+    return res.status(OK).json(list.events);
+
+  } catch (error: any) {
+    console.error('Error retrieving events:', error);
+    return res.status(INTERNAL_SERVER_ERROR).json({ success: false, message: 'Error retrieving events.', error: error.message });
   }
 });
