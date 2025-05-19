@@ -1,21 +1,22 @@
 import { InfoOutlineIcon } from "@chakra-ui/icons";
-import { Button, Center, Flex, FormControl, FormErrorMessage, FormLabel, Heading, IconButton, Input, Tooltip, useToast } from "@chakra-ui/react";
+import { Button, Center, Flex, FormControl, FormErrorMessage, FormLabel, Heading, IconButton, Input, Spinner, Tooltip, useToast } from "@chakra-ui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import CreatableSelect from "react-select/creatable";
 import * as uuid from "uuid";
-import { addSong, getArtistsDb } from "../api/api";
+import { addSangSong, createEvent, getArtistsDb, getEventsList } from "../api/api";
 import { AddToggleButtonGroup } from "../components/buttonGroups/AddToggleButtonGroup";
 import CheckboxGroup from "../components/buttonGroups/CheckboxGroup";
 import PageWrapper from "../components/PageWrapper";
 import { Option, SongsSangFormData, songsSangFormSchema } from "../config/formInterfaces";
-import { Artist } from "../config/interfaces";
+import { Artist, Data, KaraokeEvents } from "../config/interfaces";
 import queryClient from "../config/queryClient";
 import { QUERIES } from "../constants/queries";
 import { isDataVerified } from "../services/externalApi";
 import { formatToGermanDate } from "../utils/date";
+import { eventData } from "./mainNavigation/EventsHistory";
 
 const defaultValues = {
   title: "",
@@ -48,29 +49,39 @@ const SongsSang = () => {
   const [songOptionValue, setSongOptionValue] = useState<Option | null>();
   const [isVerifying, setIsVerifying] = useState<boolean>(false);
 
-
   const { data: artistsDb, isLoading, isError, error } = useQuery({
     queryKey: [QUERIES.GET_ARTISTS_DB],
     queryFn: getArtistsDb,
   });
-
-  useEffect(() => {
-    if (artistsDb?.data) {
-      const artist = artistsDb.data.map((artist: Artist) => {
-        return { value: artist.name, label: artist.name }
-      }) ?? []
-      const songs = artistsDb.data.reduce((acc: Artist[], artist: Artist) => {
-        const songLabels = artist.songs.map(song => ({ value: song, label: song }));
-        return [...acc, ...songLabels];
-      }, []) ?? []
-      setArtistOptions(artist)
-      setSongOptions(songs)
-    }
-  }, [artistsDb])
-
+  const { data: eventsList, isLoading: isEventsListLoading } = useQuery<Data["events"]>({
+    queryKey: [QUERIES.GET_EVENTS_LIST],
+    queryFn: getEventsList,
+  });
+  const { mutate: createEventMutation, status } = useMutation({
+    mutationFn: createEvent,
+    onSuccess: () => {
+      toast({
+        title: "Event Created.",
+        description: "You can now add songs to your list.",
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+      });
+      queryClient.invalidateQueries({ queryKey: [QUERIES.SONGS_LIST] })
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Error creating event.",
+        description: error?.message || "An error occurred while creating an event.",
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+      });
+    },
+  });
 
   const { mutate: addSongMutation, isPending } = useMutation({
-    mutationFn: addSong,
+    mutationFn: addSangSong,
     onSuccess: () => {
       toast({
         title: "Song Added.",
@@ -92,6 +103,21 @@ const SongsSang = () => {
       });
     },
   });
+
+
+  useEffect(() => {
+    if (artistsDb?.data) {
+      const artist = artistsDb.data.map((artist: Artist) => {
+        return { value: artist.name, label: artist.name }
+      }) ?? []
+      const songs = artistsDb.data.reduce((acc: Artist[], artist: Artist) => {
+        const songLabels = artist.songs.map(song => ({ value: song, label: song }));
+        return [...acc, ...songLabels];
+      }, []) ?? []
+      setArtistOptions(artist)
+      setSongOptions(songs)
+    }
+  }, [artistsDb])
 
   const onSubmit = async (data: SongsSangFormData) => {
     setIsVerifying(true)
@@ -120,6 +146,9 @@ const SongsSang = () => {
     addSongMutation(songData);
   };
 
+  const isEventOpen = eventsList?.some((e: KaraokeEvents) => !e.closed) ?? false;
+
+
   return (
     <PageWrapper>
       <Center><AddToggleButtonGroup /></Center>
@@ -136,92 +165,111 @@ const SongsSang = () => {
         </Tooltip>
       </Center>
 
-      <form onSubmit={handleSubmit(onSubmit)} noValidate>
-        <Flex direction={{ base: "column", md: "row" }} gap={4} mb={4}>
-          <FormControl isInvalid={!!errors.artist} isRequired>
-            <FormLabel htmlFor="artist">Artist</FormLabel>
-            <CreatableSelect
-              placeholder="Type or select an artist"
-              isClearable
-              options={artistOptions}
-              value={artistOptionValue}
-              onCreateOption={(e) => {
-                setArtistOptions(state => [...state, { value: e, label: e }])
-                setArtistOptionValue({ value: e, label: e })
-                setValue("artist", e)
-              }}
-              onChange={(option) => {
-                setValue("artist", option?.value || "")
-                setArtistOptionValue(option)
-              }}
-              styles={{
-                option: (base, state) => ({
-                  ...base,
-                  color: state.isSelected ? 'inherit' : 'gray',
-                }),
-              }}
-            />
-            {errors.artist && (
-              <FormErrorMessage>{errors.artist.message}</FormErrorMessage>
-            )}
-          </FormControl>
-          <FormControl isInvalid={!!errors.title} isRequired>
-            <FormLabel htmlFor="title">Song</FormLabel>
-            <CreatableSelect
-              placeholder="Type or select a song"
-              isClearable
-              options={songOptions}
-              value={songOptionValue}
-              onCreateOption={(e) => {
-                setSongOptions(state => [...state, { value: e, label: e }])
-                setSongOptionValue({ value: e, label: e })
-                setValue("title", e)
-              }}
-              onChange={(option) => {
-                setValue("title", option?.value || "")
-                setSongOptionValue(option)
-              }}
-              styles={{
-                option: (base, state) => ({
-                  ...base,
-                  color: state.isSelected ? 'inherit' : 'gray',
-                }),
-              }}
-            />
-            {errors.title && (
-              <FormErrorMessage>{errors.title.message}</FormErrorMessage>
-            )}
-          </FormControl>
-        </Flex>
+      {isEventsListLoading ? <Center>
+        <Spinner />
+      </Center> : <>
 
-        <Flex direction={{ base: "column", md: "row" }} gap={4} mb={4}>
-          <FormControl isInvalid={!!errors.location}>
-            <FormLabel>Location</FormLabel>
-            <Input {...register("location")} placeholder="Location" />
-            {errors.location && (
-              <FormErrorMessage>{errors.location.message}</FormErrorMessage>
-            )}
-          </FormControl>
 
-          <FormControl>
-            <FormLabel>Event Date</FormLabel>
-            <Input value={formatToGermanDate(new Date().toString())} isDisabled />
-          </FormControl>
-        </Flex>
+      </>
+      }
+      {
+        !isEventsListLoading && !isEventOpen && <>
+          <div>
+            <p>{!isEventsListLoading && "You have no events open. Create one? <button>yes</button>"}</p>
+            <Button onClick={() => createEventMutation(eventData)}>Create event</Button>
+          </div>
+        </>
+      }
+      {
+        !isEventsListLoading && isEventOpen && <form onSubmit={handleSubmit(onSubmit)} noValidate>
+          <Flex direction={{ base: "column", md: "row" }} gap={4} mb={4}>
+            <FormControl isInvalid={!!errors.artist} isRequired>
+              <FormLabel htmlFor="artist">Artist</FormLabel>
+              <CreatableSelect
+                placeholder="Type or select an artist"
+                isClearable
+                options={artistOptions}
+                value={artistOptionValue}
+                onCreateOption={(e) => {
+                  setArtistOptions(state => [...state, { value: e, label: e }])
+                  setArtistOptionValue({ value: e, label: e })
+                  setValue("artist", e)
+                }}
+                onChange={(option) => {
+                  setValue("artist", option?.value || "")
+                  setArtistOptionValue(option)
+                }}
+                styles={{
+                  option: (base, state) => ({
+                    ...base,
+                    color: state.isSelected ? 'inherit' : 'gray',
+                  }),
+                }}
+              />
+              {errors.artist && (
+                <FormErrorMessage>{errors.artist.message}</FormErrorMessage>
+              )}
+            </FormControl>
+            <FormControl isInvalid={!!errors.title} isRequired>
+              <FormLabel htmlFor="title">Song</FormLabel>
+              <CreatableSelect
+                placeholder="Type or select a song"
+                isClearable
+                options={songOptions}
+                value={songOptionValue}
+                onCreateOption={(e) => {
+                  setSongOptions(state => [...state, { value: e, label: e }])
+                  setSongOptionValue({ value: e, label: e })
+                  setValue("title", e)
+                }}
+                onChange={(option) => {
+                  setValue("title", option?.value || "")
+                  setSongOptionValue(option)
+                }}
+                styles={{
+                  option: (base, state) => ({
+                    ...base,
+                    color: state.isSelected ? 'inherit' : 'gray',
+                  }),
+                }}
+              />
+              {errors.title && (
+                <FormErrorMessage>{errors.title.message}</FormErrorMessage>
+              )}
+            </FormControl>
+          </Flex>
 
-        <CheckboxGroup
-          duet={duet}
-          register={register}
-          fav={fav}
-          blacklisted={blacklisted}
-          inNextEventList={inNextEventList}
-          setValue={setValue}
-        />
+          <Flex direction={{ base: "column", md: "row" }} gap={4} mb={4}>
+            <FormControl isInvalid={!!errors.location}>
+              <FormLabel>Location</FormLabel>
+              <Input {...register("location")} placeholder="Location" />
+              {errors.location && (
+                <FormErrorMessage>{errors.location.message}</FormErrorMessage>
+              )}
+            </FormControl>
 
-        <Button type="submit" colorScheme="blue" isLoading={isPending || isVerifying} isDisabled={isPending || isVerifying}>
-          Save
-        </Button>
-      </form>
+            <FormControl>
+              <FormLabel>Event Date</FormLabel>
+              <Input value={formatToGermanDate(new Date().toString())} isDisabled />
+            </FormControl>
+          </Flex>
+
+          <CheckboxGroup
+            duet={duet}
+            register={register}
+            fav={fav}
+            blacklisted={blacklisted}
+            inNextEventList={inNextEventList}
+            setValue={setValue}
+          />
+
+          <Button type="submit" colorScheme="blue" isLoading={isPending || isVerifying} isDisabled={isPending || isVerifying}>
+            Save
+          </Button>
+        </form>
+      }
+
+
     </PageWrapper>
   );
 };
