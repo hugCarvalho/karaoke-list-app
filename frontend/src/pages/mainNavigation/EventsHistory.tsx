@@ -1,9 +1,9 @@
 import { Button, useToast } from "@chakra-ui/react";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { Fragment } from "react/jsx-runtime";
 import { createEvent, getEventsList } from "../../api/api";
+import { EventCard } from "../../components/EventsCard";
 import PageWrapper from "../../components/PageWrapper";
-import { Data, EventSongData, KaraokeEvents } from "../../config/interfaces";
+import { Data, KaraokeEvents } from "../../config/interfaces";
 import { QUERIES } from "../../constants/queries";
 
 //TODO:
@@ -65,19 +65,7 @@ export const EventsHistory = () => {
             <h1>Active Event</h1>
             {eventsList?.map((event: KaraokeEvents, index: number) => {
               if (!event.closed) {
-                return <div key={index}>
-                  <p>Date:{event?.eventDate}</p>
-                  <p>Loc:{event.location}</p>
-                  <div>
-                    {event.songs.map((song: EventSongData, index: number) => {
-                      return <Fragment key={index}>
-                        <p>{song.artist} -
-                          <span >{song.name}</span>
-                        </p>
-                      </Fragment>
-                    })}
-                  </div>
-                </div>
+                return <EventCard key={index} event={event} />
               }
             }
             )}
