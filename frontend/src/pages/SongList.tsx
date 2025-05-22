@@ -109,7 +109,7 @@ const SongList = () => {
   const handleClearArtistFilter = () => {
     setArtistFilterText("");
   };
-  console.log('%c SongList.tsx - line: 104', 'color: white; background-color: #00cc29', data?.length, isLoading, '<-data?.length, isLoading')
+
   if (data?.length === 0 && !isLoading && !isFetching)
     return (
       <PageWrapper>
@@ -223,7 +223,7 @@ const SongList = () => {
               const lastEvent = song.events.reverse()[0];
               const lastSangDate = lastEvent ? formatToGermanDate(lastEvent.eventDate) : "-";
               const typeColor = song.blacklisted ? "red" : song.fav ? "lime" : song.inNextEventList ? "blue.300" : undefined;
-
+              console.log('%c SongList.tsx - line: 226', 'color: white; background-color: #00cc29', "WTF->", song.songId, '<-song.songId')
               return <Tr key={song.songId}>
                 <Td fontSize={thFontSize} color={typeColor} >{song.title}</Td>
                 <Td fontSize={thFontSize} color={typeColor} >{song.artist}</Td>
