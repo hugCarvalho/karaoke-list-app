@@ -25,7 +25,7 @@ const SongList = () => {
   const [artistFilterText, setArtistFilterText] = useState("");
   const [listName, setListName] = useState<ListType>(null);
 
-  const { data, isLoading, isError, error } = useQuery<Song[]>({
+  const { data, isLoading, isFetching, isError, error } = useQuery<Song[]>({
     queryKey: [QUERIES.SONGS_LIST],
     queryFn: getSongsList,
     initialData: [],
@@ -110,7 +110,7 @@ const SongList = () => {
     setArtistFilterText("");
   };
   console.log('%c SongList.tsx - line: 104', 'color: white; background-color: #00cc29', data?.length, isLoading, '<-data?.length, isLoading')
-  if (data?.length === 0 && !isLoading)
+  if (data?.length === 0 && !isLoading && !isFetching)
     return (
       <PageWrapper>
         <Center p={4}>
