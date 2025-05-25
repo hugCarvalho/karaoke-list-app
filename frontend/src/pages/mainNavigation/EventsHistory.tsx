@@ -1,9 +1,10 @@
 import { Button, useToast } from "@chakra-ui/react";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { createEvent, getEventsList } from "../../api/api";
+import { closeEvent, createEvent, getEventsList } from "../../api/api";
 import { EventCard } from "../../components/EventsCard";
 import PageWrapper from "../../components/PageWrapper";
 import { Data, KaraokeEvents } from "../../config/interfaces";
+import queryClient from "../../config/queryClient";
 import { QUERIES } from "../../constants/queries";
 
 //TODO:
@@ -46,12 +47,31 @@ export const EventsHistory = () => {
       });
     },
   });
-
-  console.log('%c EventsHistory.tsx - line: 49', 'color: white; background-color: #00cc29', eventsList, '<-eventsList')
+  const { mutate: closeEventMutation, status: closeEventStatus, isPending: isCloseEventPending } = useMutation({
+    mutationFn: closeEvent,
+    onSuccess: () => {
+      toast({
+        title: "Event Created.",
+        description: "The event has been added to your list.",
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+      });
+      queryClient.invalidateQueries({ queryKey: [QUERIES.GET_EVENTS_LIST] })
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Error adding event.",
+        description: error?.message || "An error occurred while adding the event.",
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+      });
+    },
+  });
 
   //TODO:
   // 2. display events list
-  // 3. close event
 
   return (
     <PageWrapper>
@@ -70,7 +90,13 @@ export const EventsHistory = () => {
             }
             )}
           </div>
-          <button>Finish event</button>
+          <Button type="submit"
+            isLoading={isCloseEventPending}
+            isDisabled={isCloseEventPending}
+            onClick={() => closeEventMutation()}
+          >
+            Close Event
+          </Button>
         </>
       }
       {/* {
@@ -100,7 +126,7 @@ export const EventsHistory = () => {
       {
         !isLoading && !isEventOpen && <>
           <div>
-            <p>{!isEventOpen && "You have no events open. Create one? <button>yes</button>"}</p>
+            <p>{!isEventOpen && "You have no events open. Create one?"}</p>
             <Button onClick={() => createEventMutation(eventData)}>Create event</Button>
           </div>
         </>

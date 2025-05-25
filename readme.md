@@ -1,13 +1,10 @@
 ## Karaoke List App
-📆 Created in 2025.
-
-🛠 Fullstack app built with **React**, **Typescript**, **Node.js**, **MongoDb**, **Chakra UI**, and **Open AI**.
-
-### 💬 Description
- If you ever went to a karaoke place and realised you cannot find or decide upon which songs to sing, this app is for you... Never be blank again! 😉
+🛠 Fullstack app built with **React**, **Typescript**, **Node.js**, **MongoDb**, **Chakra UI**, and **Open AI**. 📆 Created in 2025.
 
 ### Optimizations Score
 ![image](./Lighthouse-values.png)
+### 💬 Description
+ If you ever went to a karaoke place and realised you cannot find or decide upon which songs to sing, this app is for you... Never be blank again! 😉
 
 ### 📡 APIs Used
   - [MusicBrainz](https://musicbrainz.org/doc/MusicBrainz_API)

@@ -56,3 +56,6 @@ export const updatePlayCount = async (data: { songId: string; artist: string; ti
 export const createEvent = async (data: KaraokeEvents) => {
   return API.post("/list/add-event", data)
 };
+export const closeEvent = async () => {
+  return API.post("/list/close-event", null)
+};
