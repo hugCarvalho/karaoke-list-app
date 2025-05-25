@@ -1,7 +1,7 @@
 import { Checkbox, Flex } from "@chakra-ui/react";
 import React from "react";
 import { UseFormRegister, UseFormSetValue } from "react-hook-form";
-import { SongsSangFormData } from "../pages/SongsSang";
+import { SongsSangFormData } from "../../config/formInterfaces";
 
 type CheckboxGroupProps = {
   register: UseFormRegister<SongsSangFormData | BaseSongFormData>; //TODO: change to generic
@@ -9,10 +9,11 @@ type CheckboxGroupProps = {
   blacklisted: boolean;
   inNextEventList: boolean;
   duet: boolean
+  notAvailable: boolean
   setValue: UseFormSetValue<SongsSangFormData | BaseSongFormData>;
 }
 
-const CheckboxGroup = ({ register, duet, fav, blacklisted, inNextEventList, setValue }: CheckboxGroupProps) => {
+const CheckboxGroup = ({ register, duet, fav, blacklisted, inNextEventList, notAvailable, setValue }: CheckboxGroupProps) => {
   const handleBlacklistChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setValue("blacklisted", e.target.checked, { shouldValidate: false });
     if (e.target.checked) {
@@ -37,18 +38,14 @@ const CheckboxGroup = ({ register, duet, fav, blacklisted, inNextEventList, setV
   const handleDuetChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setValue("duet", e.target.checked, { shouldValidate: false });
   };
+  const handleNotAvailableChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setValue("notAvailable", e.target.checked, { shouldValidate: false });
+  };
 
   return (
     <Flex direction={{ base: "column", md: "row" }} gap={4} mb={4}>
       <Checkbox isChecked={fav} {...register("fav")} onChange={handleFavChange}>
         Fav
-      </Checkbox>
-      <Checkbox
-        isChecked={inNextEventList}
-        {...register("inNextEventList")}
-        onChange={handleNextEventChange}
-      >
-        Next
       </Checkbox>
       <Checkbox
         isChecked={blacklisted}
@@ -63,6 +60,20 @@ const CheckboxGroup = ({ register, duet, fav, blacklisted, inNextEventList, setV
         onChange={handleDuetChange}
       >
         Duet
+      </Checkbox>
+      <Checkbox
+        isChecked={notAvailable}
+        {...register("notAvailable")}
+        onChange={handleNotAvailableChange}
+      >
+        N/A
+      </Checkbox>
+      <Checkbox
+        isChecked={inNextEventList}
+        {...register("inNextEventList")}
+        onChange={handleNextEventChange}
+      >
+        Next
       </Checkbox>
     </Flex>
   );

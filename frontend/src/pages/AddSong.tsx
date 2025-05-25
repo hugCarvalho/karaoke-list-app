@@ -24,6 +24,7 @@ const defaultValues = {
   blacklisted: false,
   inNextEventList: false,
   duet: false,
+  notAvailable: false,
   plays: 0
 }
 
@@ -37,6 +38,7 @@ const AddSong = () => {
   const blacklisted = watch("blacklisted");
   const duet = watch("duet");
   const inNextEventList = watch("inNextEventList");
+  const notAvailable = watch("notAvailable");
 
   //Select Options
   const [artistOptions, setArtistOptions] = useState<Option[]>([]);
@@ -219,6 +221,7 @@ const AddSong = () => {
           blacklisted={blacklisted}
           inNextEventList={inNextEventList}
           duet={duet}
+          notAvailable={notAvailable}
           setValue={setValue}
         />
 

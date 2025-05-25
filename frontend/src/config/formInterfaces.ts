@@ -7,6 +7,7 @@ export const baseSongFormSchema = z.object({
   blacklisted: z.boolean(),
   duet: z.boolean(),
   inNextEventList: z.boolean(),
+  notAvailable: z.boolean(),
   plays: z.number(),
 });
 export type BaseSongFormData = z.infer<typeof baseSongFormSchema>;

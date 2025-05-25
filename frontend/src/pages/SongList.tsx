@@ -71,11 +71,14 @@ const SongList = () => {
   const filteredSongs = useMemo(() => {
     if (!data) return [];
     let filteredData = data || []
+    filteredData = data.filter((song) => !song.notAvailable)
     if (listName === "fav") filteredData = data.filter((song) => song.fav)
     if (listName === "blacklist") filteredData = data.filter((song) => song.blacklisted)
     if (listName === "duet") filteredData = data.filter((song) => song.duet)
     if (listName === "nextEvent") filteredData = data.filter((song) => song.inNextEventList)
-    if (listName === "notAvailable") filteredData = data.filter((song) => song.notAvailable)
+    if (listName === "notAvailable") {
+      filteredData = data.filter((song) => song.notAvailable)
+    }
     return filteredData.filter((song) => {
       return song.title.toLowerCase().includes(songFilterText.toLowerCase()) &&
         song.artist.toLowerCase().includes(artistFilterText.toLowerCase())
