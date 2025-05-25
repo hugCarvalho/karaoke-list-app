@@ -26,6 +26,7 @@ const defaultValues = {
   blacklisted: false,
   duet: false,
   inNextEventList: false,
+  notAvailable: false,
   location: "Monster Ronson",
   eventDate: new Date(),
   plays: 1
@@ -42,6 +43,7 @@ const SongsSang = () => {
   const blacklisted = watch("blacklisted");
   const duet = watch("duet");
   const inNextEventList = watch("inNextEventList");
+  const notAvailable = watch("notAvailable");
 
   //Select Options
   const [artistOptions, setArtistOptions] = useState<Option[]>([]);
@@ -304,6 +306,7 @@ const SongsSang = () => {
             fav={fav}
             blacklisted={blacklisted}
             inNextEventList={inNextEventList}
+            notAvailable={notAvailable}
             setValue={setValue}
           />
 

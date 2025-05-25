@@ -1,4 +1,5 @@
-import { Button, useToast } from "@chakra-ui/react";
+import { InfoOutlineIcon } from "@chakra-ui/icons";
+import { Button, Center, Heading, IconButton, Spinner, Text, Tooltip, useToast, VStack } from "@chakra-ui/react";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { closeEvent, createEvent, getEventsList } from "../../api/api";
 import { EventCard } from "../../components/EventsCard";
@@ -7,7 +8,7 @@ import { Data, KaraokeEvents } from "../../config/interfaces";
 import queryClient from "../../config/queryClient";
 import { QUERIES } from "../../constants/queries";
 
-//TODO:
+//TODO: eventDate
 export const eventData: KaraokeEvents = {
   location: "Monster Ronson",
   eventDate: Date.now(),
@@ -35,24 +36,25 @@ export const EventsHistory = () => {
         duration: 3000,
         isClosable: true,
       });
-      // queryClient.invalidateQueries({ queryKey: [QUERIES.SONGS_LIST] })
+      queryClient.invalidateQueries({ queryKey: [QUERIES.GET_EVENTS_LIST] })
     },
     onError: (error: any) => {
       toast({
-        title: "Error adding event.",
-        description: error?.message || "An error occurred while adding the event.",
+        title: "Error creating event.",
+        description: error?.message || "An error occurred while creating the event.",
         status: "error",
         duration: 5000,
         isClosable: true,
       });
     },
   });
+
   const { mutate: closeEventMutation, status: closeEventStatus, isPending: isCloseEventPending } = useMutation({
     mutationFn: closeEvent,
     onSuccess: () => {
       toast({
-        title: "Event Created.",
-        description: "The event has been added to your list.",
+        title: "Event Closed.",
+        description: "The event has been successfully closed.",
         status: "success",
         duration: 3000,
         isClosable: true,
@@ -61,8 +63,8 @@ export const EventsHistory = () => {
     },
     onError: (error: any) => {
       toast({
-        title: "Error adding event.",
-        description: error?.message || "An error occurred while adding the event.",
+        title: "Error closing event.",
+        description: error?.message || "An error occurred while closing the event.",
         status: "error",
         duration: 5000,
         isClosable: true,
@@ -70,54 +72,61 @@ export const EventsHistory = () => {
     },
   });
 
-  //TODO:
-  // 2. display events list
-
   return (
     <PageWrapper>
-      EventsHistory
+      <Center mb={4}>
+        <Heading size="lg">Performances</Heading>
+        <Tooltip label="List of all your performances">
+          <IconButton
+            aria-label="Info"
+            icon={<InfoOutlineIcon />}
+            size="sm"
+            ml={2}
+            variant="ghost"
+          />
+        </Tooltip>
+      </Center>
       {
-        isLoading && <p>Loading...</p>
+        isLoading && <Center py={10}><Spinner size="xl" /></Center>
       }
       {
-        !isLoading && isEventOpen && <>
-          <div>
-            <h1>Active Event</h1>
+        !isLoading && isEventOpen && (
+          <VStack spacing={4} mb={10}>
+            <Heading as="h2" size="md" color={"burlywood"}>Active Event</Heading>
             {eventsList?.map((event: KaraokeEvents, index: number) => {
               if (!event.closed) {
                 return <EventCard key={index} event={event} />
               }
-            }
-            )}
-          </div>
-          <Button
-            isLoading={isCloseEventPending}
-            isDisabled={isCloseEventPending}
-            onClick={() => closeEventMutation()}
-          >
-            Close Event
-          </Button>
-        </>
+              return null
+            })}
+            <Button
+              isLoading={isCloseEventPending}
+              isDisabled={isCloseEventPending}
+              onClick={() => closeEventMutation()}
+              variant={"secondary"}
+            >
+              Close Event
+            </Button>
+          </VStack>
+        )
       }
-      {
-        !isLoading && !isEventOpen && <>
-          <div>
-            <p>{!isEventOpen && "You have no events open. Create one?"}</p>
-            <Button onClick={() => createEventMutation(eventData)}>Create event</Button>
-          </div>
-        </>
-      }
-      {
-        !isLoading && eventsList?.length > 0 && <>
-          <p>Events History</p>
+      {!isLoading && !isEventOpen && (
+        <VStack spacing={4} align="center" mb={8}>
+          <Text fontSize="lg">{!isEventOpen && "You have no events open. Create one?"}</Text>
+          <Button onClick={() => createEventMutation(eventData)} colorScheme="green">Create Event</Button>
+        </VStack>
+      )}
+      {!isLoading && eventsList && eventsList.filter(event => event.closed).length > 0 && (
+        <VStack spacing={2} align="stretch">
+          <Heading as="h3" size="lg" textAlign={"center"}>Events History</Heading>
           {eventsList?.map((event: KaraokeEvents, index: number) => {
             if (event.closed) {
               return <EventCard key={index} event={event} />
             }
-          }
-          )}
-        </>
-      }
+            return null;
+          })}
+        </VStack>
+      )}
     </PageWrapper>
   )
 }
