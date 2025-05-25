@@ -1,7 +1,7 @@
 ## Karaoke List App
 📆 Created in 2025.
 
-🛠 Fullstack app built with **React**, **Typescript**, **Node.js**, **MongoDb** and **Chakra UI**.
+🛠 Fullstack app built with **React**, **Typescript**, **Node.js**, **MongoDb**, **Chakra UI**, and **Open AI**.
 
 ### 💬 Description
  If you ever went to a karaoke place and realised you cannot find or decide upon which songs to sing, this app is for you... Never be blank again! 😉
@@ -24,6 +24,7 @@
   * React Hooks
   * Axios
   * Zod
+  * Open AI
 
 * Other dependencies:
   - cors
