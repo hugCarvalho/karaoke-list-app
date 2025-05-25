@@ -100,6 +100,14 @@ export const EventsHistory = () => {
         </>
       }
       {
+        !isLoading && !isEventOpen && <>
+          <div>
+            <p>{!isEventOpen && "You have no events open. Create one?"}</p>
+            <Button onClick={() => createEventMutation(eventData)}>Create event</Button>
+          </div>
+        </>
+      }
+      {
         !isLoading && eventsList?.length > 0 && <>
           <p>Events History</p>
           {eventsList?.map((event: KaraokeEvents, index: number) => {
@@ -108,14 +116,6 @@ export const EventsHistory = () => {
             }
           }
           )}
-        </>
-      }
-      {
-        !isLoading && !isEventOpen && <>
-          <div>
-            <p>{!isEventOpen && "You have no events open. Create one?"}</p>
-            <Button onClick={() => createEventMutation(eventData)}>Create event</Button>
-          </div>
         </>
       }
     </PageWrapper>

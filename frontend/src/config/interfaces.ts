@@ -26,8 +26,9 @@ export interface Song {
   artist: string,
   fav: boolean,
   blacklisted: boolean,
+  duet: boolean,
   inNextEventList: boolean,
-  duet: boolean
+  notAvailable: boolean,
   events: EventData[],
   plays: number,
 }

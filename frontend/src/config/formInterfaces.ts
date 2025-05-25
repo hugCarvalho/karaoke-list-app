@@ -18,7 +18,7 @@ export const songsSangFormSchema = baseSongFormSchema.extend({
 
 export type SongsSangFormData = z.infer<typeof songsSangFormSchema>;
 
-export type CheckboxGroup = "blacklisted" | "fav" | "inNextEventList" | "duet"
+export type CheckboxGroup = "blacklisted" | "fav" | "inNextEventList" | "duet" | "notAvailable"
 
 export type Option = {
   readonly label: string;

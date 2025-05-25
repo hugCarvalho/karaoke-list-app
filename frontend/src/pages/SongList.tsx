@@ -75,6 +75,7 @@ const SongList = () => {
     if (listName === "blacklist") filteredData = data.filter((song) => song.blacklisted)
     if (listName === "duet") filteredData = data.filter((song) => song.duet)
     if (listName === "nextEvent") filteredData = data.filter((song) => song.inNextEventList)
+    if (listName === "notAvailable") filteredData = data.filter((song) => song.notAvailable)
     return filteredData.filter((song) => {
       return song.title.toLowerCase().includes(songFilterText.toLowerCase()) &&
         song.artist.toLowerCase().includes(artistFilterText.toLowerCase())
@@ -212,18 +213,19 @@ const SongList = () => {
               <Th fontSize={thFontSize} minW={{ base: "15%", md: "auto" }}>Next</Th>
               <Th fontSize={thFontSize} minW={{ base: "15%", md: "auto" }}>Duet</Th>
               <Th fontSize={thFontSize} minW={{ base: "15%", md: "auto" }}>Blacklist</Th>
+              <Th fontSize={thFontSize} minW={{ base: "15%", md: "auto" }}>N/A</Th>
               <Th fontSize={thFontSize} minW={{ base: "15%", md: "auto" }}>Plays</Th>
               <Th fontSize={thFontSize} minW={{ base: "20%", md: "auto" }}>Add Play</Th>
               <Th fontSize={thFontSize} minW={{ base: "25%", md: "auto" }}>Last Sang</Th>
               <Th fontSize={thFontSize} textAlign="center" minW={{ base: "15%", md: "auto" }}>Delete</Th>
             </Tr>
           </Thead>
+
           <Tbody>
             {sortedSongs.map((song) => {
               const lastEvent = song.events.reverse()[0];
               const lastSangDate = lastEvent ? formatToGermanDate(lastEvent.eventDate) : "-";
               const typeColor = song.blacklisted ? "red" : song.fav ? "lime" : song.inNextEventList ? "blue.300" : undefined;
-              console.log('%c SongList.tsx - line: 226', 'color: white; background-color: #00cc29', "WTF->", song.songId, '<-song.songId')
               return <Tr key={song.songId}>
                 <Td fontSize={thFontSize} color={typeColor} >{song.title}</Td>
                 <Td fontSize={thFontSize} color={typeColor} >{song.artist}</Td>
@@ -252,6 +254,13 @@ const SongList = () => {
                   <Checkbox
                     isChecked={song.blacklisted}
                     onChange={() => handleCheckboxChange(song.songId, song.blacklisted, "blacklisted")}
+                    size={checkBoxSize}
+                  />
+                </Td>
+                <Td textAlign="center">
+                  <Checkbox
+                    isChecked={song.notAvailable}
+                    onChange={() => handleCheckboxChange(song.songId, song.notAvailable, "notAvailable")}
                     size={checkBoxSize}
                   />
                 </Td>
