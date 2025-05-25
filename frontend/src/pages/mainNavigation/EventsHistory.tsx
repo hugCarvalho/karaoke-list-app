@@ -90,7 +90,7 @@ export const EventsHistory = () => {
             }
             )}
           </div>
-          <Button type="submit"
+          <Button
             isLoading={isCloseEventPending}
             isDisabled={isCloseEventPending}
             onClick={() => closeEventMutation()}
@@ -99,30 +99,17 @@ export const EventsHistory = () => {
           </Button>
         </>
       }
-      {/* {
+      {
         !isLoading && eventsList?.length > 0 && <>
+          <p>Events History</p>
           {eventsList?.map((event: KaraokeEvents, index: number) => {
             if (event.closed) {
-              <h1>Finished Events</h1>
-              return <div key={index}>
-                <p>Date:{event?.eventDate}</p>
-                <p>Loc:{event.location}</p>
-                <div>
-                  {event.songs.map((song: EventSongData, index: number) => {
-                    return <Fragment key={index}>
-                      <p>{song.artist} -
-                        <span >{song.name}</span>
-                      </p>
-                    </Fragment>
-                  })}
-                </div>
-              </div>
+              return <EventCard key={index} event={event} />
             }
           }
           )}
-
         </>
-      } */}
+      }
       {
         !isLoading && !isEventOpen && <>
           <div>

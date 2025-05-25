@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import CreatableSelect from "react-select/creatable";
 import * as uuid from "uuid";
-import { addSangSong, createEvent, getArtistsDb, getEventsList } from "../api/api";
+import { addSangSong, closeEvent, createEvent, getArtistsDb, getEventsList } from "../api/api";
 import { AddToggleButtonGroup } from "../components/buttonGroups/AddToggleButtonGroup";
 import CheckboxGroup from "../components/buttonGroups/CheckboxGroup";
 import PageWrapper from "../components/PageWrapper";
@@ -109,6 +109,28 @@ const SongsSang = () => {
       });
     },
   });
+  const { mutate: closeEventMutation, status: closeEventStatus, isPending: isCloseEventPending } = useMutation({
+    mutationFn: closeEvent,
+    onSuccess: () => {
+      toast({
+        title: "Event Created.",
+        description: "The event has been added to your list.",
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+      });
+      queryClient.invalidateQueries({ queryKey: [QUERIES.GET_EVENTS_LIST] })
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Error adding event.",
+        description: error?.message || "An error occurred while adding the event.",
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+      });
+    },
+  });
 
   useEffect(() => {
     if (artistsDb?.data) {
@@ -202,7 +224,7 @@ const SongsSang = () => {
         </>
       }
       {
-        !isEventsListLoading && isEventOpen && <form onSubmit={handleSubmit(onSubmit)} noValidate>
+        !isEventsListLoading && isEventOpen && <><form onSubmit={handleSubmit(onSubmit)} noValidate>
           <Flex direction={{ base: "column", md: "row" }} gap={4} mb={4}>
             <FormControl isInvalid={!!errors.artist} isRequired>
               <FormLabel htmlFor="artist">Artist</FormLabel>
@@ -289,6 +311,14 @@ const SongsSang = () => {
             Save
           </Button>
         </form>
+          <Button
+            isLoading={isCloseEventPending}
+            isDisabled={isCloseEventPending}
+            onClick={() => closeEventMutation()}
+          >
+            Close Event
+          </Button>
+        </>
       }
     </PageWrapper>
   );
