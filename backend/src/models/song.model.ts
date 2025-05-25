@@ -24,8 +24,9 @@ const songSchema = new mongoose.Schema({
   artist: { type: String, required: true },
   fav: { type: Boolean, default: false },
   blacklisted: { type: Boolean, default: false },
-  inNextEventList: { type: Boolean, default: false },
   duet: { type: Boolean, default: false },
+  inNextEventList: { type: Boolean, default: false },
+  notAvailable: { type: Boolean, default: false },
   events: [eventDataSchema],
   plays: { type: Number, default: 1 },
 });
