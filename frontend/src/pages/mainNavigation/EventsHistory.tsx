@@ -1,12 +1,13 @@
-import { InfoOutlineIcon } from "@chakra-ui/icons";
-import { Button, Center, Heading, IconButton, Spinner, Text, Tooltip, useToast, VStack } from "@chakra-ui/react";
+import { Button, Center, Heading, Spinner, Text, VStack } from "@chakra-ui/react";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { closeEvent, createEvent, getEventsList } from "../../api/api";
+import Header from "../../components/buttonGroups/Header";
 import { EventCard } from "../../components/EventsCard";
 import PageWrapper from "../../components/PageWrapper";
 import { Data, KaraokeEvents } from "../../config/interfaces";
 import queryClient from "../../config/queryClient";
 import { QUERIES } from "../../constants/queries";
+import useAppToast from "../../hooks/useAppToast";
 
 //TODO: eventDate
 export const eventData: KaraokeEvents = {
@@ -17,111 +18,86 @@ export const eventData: KaraokeEvents = {
 }
 
 export const EventsHistory = () => {
-  const toast = useToast();
+  const { showSuccessToast, showErrorToast } = useAppToast()
 
-  const { data: eventsList, isLoading } = useQuery<Data["events"]>({
+  const { data: eventsList, isLoading, isFetching } = useQuery<Data["events"]>({
     queryKey: [QUERIES.GET_EVENTS_LIST],
     queryFn: getEventsList,
   });
 
   const isEventOpen = eventsList?.some((e: KaraokeEvents) => !e.closed) ?? false;
 
-  const { mutate: createEventMutation, status } = useMutation({
+  const { mutate: createEventMutation, isPending } = useMutation({
     mutationFn: createEvent,
     onSuccess: () => {
-      toast({
-        title: "Event Created.",
-        description: "The event has been added to your list.",
-        status: "success",
-        duration: 3000,
-        isClosable: true,
-      });
+      showSuccessToast("Event Created.", "The event has been added to your list.");
       queryClient.invalidateQueries({ queryKey: [QUERIES.GET_EVENTS_LIST] })
     },
-    onError: (error: any) => {
-      toast({
-        title: "Error creating event.",
-        description: error?.message || "An error occurred while creating the event.",
-        status: "error",
-        duration: 5000,
-        isClosable: true,
-      });
+    onError: (error: Error) => {
+      showErrorToast(
+        "Error creating event.",
+        error?.message || "An unexpected error occurred while creating the event."
+      );
     },
   });
 
-  const { mutate: closeEventMutation, status: closeEventStatus, isPending: isCloseEventPending } = useMutation({
+  const { mutate: closeEventMutation, isPending: isCloseEventPending } = useMutation({
     mutationFn: closeEvent,
     onSuccess: () => {
-      toast({
-        title: "Event Closed.",
-        description: "The event has been successfully closed.",
-        status: "success",
-        duration: 3000,
-        isClosable: true,
-      });
+      showSuccessToast("Event Closed.", "The event has been successfully closed.");
       queryClient.invalidateQueries({ queryKey: [QUERIES.GET_EVENTS_LIST] })
     },
-    onError: (error: any) => {
-      toast({
-        title: "Error closing event.",
-        description: error?.message || "An error occurred while closing the event.",
-        status: "error",
-        duration: 5000,
-        isClosable: true,
-      });
+    onError: (error: Error) => {
+      showErrorToast(
+        "Error closing event.",
+        error?.message || "An unexpected error occurred while closing the event."
+      );
     },
   });
 
   return (
     <PageWrapper>
-      <Center mb={4}>
-        <Heading size="lg">Performances</Heading>
-        <Tooltip label="List of all your performances">
-          <IconButton
-            aria-label="Info"
-            icon={<InfoOutlineIcon />}
-            size="sm"
-            ml={2}
-            variant="ghost"
-          />
-        </Tooltip>
-      </Center>
+      <Header title="Performances" tooltipLabel="List of all your performances" />
       {
-        isLoading && <Center py={10}><Spinner size="xl" /></Center>
+        (isLoading || isFetching) && <Center py={10}><Spinner size="xl" /></Center>
       }
-      {
-        !isLoading && isEventOpen && (
-          <VStack spacing={4} mb={10}>
-            <Heading as="h2" size="md" color={"burlywood"}>Active Event</Heading>
-            {eventsList?.map((event: KaraokeEvents, index: number) => {
-              if (!event.closed) {
-                return <EventCard key={index} event={event} />
-              }
-              return null
-            })}
-            <Button
-              isLoading={isCloseEventPending}
-              isDisabled={isCloseEventPending}
-              onClick={() => closeEventMutation()}
-              variant={"secondary"}
-            >
-              Close Event
-            </Button>
-          </VStack>
-        )
-      }
-      {!isLoading && !isEventOpen && (
+      {!isLoading && !isFetching && isEventOpen && (
+        <VStack spacing={4} mb={10}>
+          <Heading as="h2" size="md" color={"burlywood"}>Active Event</Heading>
+          {eventsList?.map((event: KaraokeEvents) => {
+            if (!event.closed) {
+              return <EventCard key={event._id} event={event} />
+            }
+            return null
+          })}
+          <Button
+            isLoading={isCloseEventPending}
+            isDisabled={isCloseEventPending}
+            onClick={() => closeEventMutation()}
+            variant={"secondary"}
+          >
+            Close Event
+          </Button>
+        </VStack>
+      )}
+      {!isLoading && !isFetching && !isEventOpen && (
         <VStack spacing={4} align="center" mb={8}>
           <Text fontSize="lg">{!isEventOpen && "You have no events open. Create one?"}</Text>
-          <Button onClick={() => createEventMutation(eventData)} colorScheme="green">Create Event</Button>
+          <Button
+            isLoading={isPending}
+            isDisabled={isPending}
+            onClick={() => createEventMutation(eventData)}
+          >
+            Create Event
+          </Button>
         </VStack>
       )}
       {!isLoading && eventsList && eventsList.filter(event => event.closed).length > 0 && (
         <VStack spacing={2} align="stretch">
           <Heading as="h3" size="lg" textAlign={"center"}>Events History</Heading>
-          {eventsList?.map((event: KaraokeEvents, index: number) => {
+          {eventsList?.map((event: KaraokeEvents) => {
             if (event.closed) {
-              return <EventCard key={index} event={event} />
+              return <EventCard key={event._id} event={event} />
             }
             return null;
           })}

@@ -39,7 +39,7 @@ export type EventSongData = {
 }
 
 export type KaraokeEvents = {
-  // eventId: string,
+  _id: string,
   eventDate: Date,
   closed: boolean,
   songs: [EventSongData] | [],
