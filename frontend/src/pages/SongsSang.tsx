@@ -315,9 +315,12 @@ const SongsSang = () => {
           </Button>
         </form>
           <Button
+            w={"100%"}
+            mt={10}
             isLoading={isCloseEventPending}
             isDisabled={isCloseEventPending}
             onClick={() => closeEventMutation()}
+            variant={"secondary"}
           >
             Close Event
           </Button>

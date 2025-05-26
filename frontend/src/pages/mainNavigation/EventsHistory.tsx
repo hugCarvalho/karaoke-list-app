@@ -9,7 +9,7 @@ import queryClient from "../../config/queryClient";
 import { QUERIES } from "../../constants/queries";
 import useAppToast from "../../hooks/useAppToast";
 
-//TODO: eventDate
+//TODO: eventDate && location
 export const eventData: KaraokeEvents = {
   location: "Monster Ronson",
   eventDate: Date.now(),
