@@ -1,13 +1,13 @@
 import { Button, Center, Heading, Spinner, Text, VStack } from "@chakra-ui/react";
-import { useMutation, useQuery } from "@tanstack/react-query";
-import { closeEvent, createEvent, getEventsList } from "../../api/api";
+import { useQuery } from "@tanstack/react-query";
+import { getEventsList } from "../../api/api";
 import PageHeader from "../../components/buttonGroups/Header";
 import { EventCard } from "../../components/EventsCard";
 import PageWrapper from "../../components/PageWrapper";
 import { Data, KaraokeEvents } from "../../config/interfaces";
-import queryClient from "../../config/queryClient";
 import { QUERIES } from "../../constants/queries";
-import useAppToast from "../../hooks/useAppToast";
+import { useCloseEvent } from "../../hooks/useCloseEvent";
+import { useCreateEvent } from "../../hooks/useCreateEvent";
 
 //TODO: eventDate && location
 export const eventData: KaraokeEvents = {
@@ -18,7 +18,8 @@ export const eventData: KaraokeEvents = {
 }
 
 export const EventsHistory = () => {
-  const { showSuccessToast, showErrorToast } = useAppToast()
+  const { mutate: createEventMutation, isPending: isCreateEventPending } = useCreateEvent();
+  const { mutate: closeEventMutation, isPending: isCloseEventPending } = useCloseEvent();
 
   const { data: eventsList, isLoading, isFetching } = useQuery<Data["events"]>({
     queryKey: [QUERIES.GET_EVENTS_LIST],
@@ -26,34 +27,6 @@ export const EventsHistory = () => {
   });
 
   const isEventOpen = eventsList?.some((e: KaraokeEvents) => !e.closed) ?? false;
-
-  const { mutate: createEventMutation, isPending } = useMutation({
-    mutationFn: createEvent,
-    onSuccess: () => {
-      showSuccessToast("Event Created.", "The event has been added to your list.");
-      queryClient.invalidateQueries({ queryKey: [QUERIES.GET_EVENTS_LIST] })
-    },
-    onError: (error: Error) => {
-      showErrorToast(
-        "Error creating event.",
-        error?.message || "An unexpected error occurred while creating the event."
-      );
-    },
-  });
-
-  const { mutate: closeEventMutation, isPending: isCloseEventPending } = useMutation({
-    mutationFn: closeEvent,
-    onSuccess: () => {
-      showSuccessToast("Event Closed.", "The event has been successfully closed.");
-      queryClient.invalidateQueries({ queryKey: [QUERIES.GET_EVENTS_LIST] })
-    },
-    onError: (error: Error) => {
-      showErrorToast(
-        "Error closing event.",
-        error?.message || "An unexpected error occurred while closing the event."
-      );
-    },
-  });
 
   return (
     <PageWrapper>
@@ -84,8 +57,8 @@ export const EventsHistory = () => {
         <VStack spacing={4} align="center" mb={8}>
           <Text fontSize="lg">{!isEventOpen && "You have no events open. Create one?"}</Text>
           <Button
-            isLoading={isPending}
-            isDisabled={isPending}
+            isLoading={isCreateEventPending}
+            isDisabled={isCreateEventPending}
             onClick={() => createEventMutation(eventData)}
           >
             Create Event

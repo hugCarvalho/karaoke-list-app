@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import CreatableSelect from "react-select/creatable";
 import * as uuid from "uuid";
-import { addSangSong, closeEvent, createEvent, getArtistsDb, getEventsList } from "../api/api";
+import { addSangSong, getArtistsDb, getEventsList } from "../api/api";
 import { AddToggleButtonGroup } from "../components/buttonGroups/AddToggleButtonGroup";
 import CheckboxGroup from "../components/buttonGroups/CheckboxGroup";
 import PageHeader from "../components/buttonGroups/Header";
@@ -14,6 +14,8 @@ import { Option, SongsSangFormData, songsSangFormSchema } from "../config/formIn
 import { Artist, Data, KaraokeEvents } from "../config/interfaces";
 import queryClient from "../config/queryClient";
 import { QUERIES } from "../constants/queries";
+import { useCloseEvent } from "../hooks/useCloseEvent";
+import { useCreateEvent } from "../hooks/useCreateEvent";
 import { getSongsFromOpenAI, isDataVerified } from "../services/externalApi";
 import { formatToGermanDate } from "../utils/date";
 import { capitalizeArtistNames } from "../utils/strings";
@@ -34,10 +36,13 @@ const defaultValues = {
 
 //TODO: maintain 2 diff routes or add options in add songs to deal with adding new songs or sang songs
 const SongsSang = () => {
+  const { mutate: createEventMutation, isPending: isCreateEventPending } = useCreateEvent();
+  const { mutate: closeEventMutation, isPending: isCloseEventPending } = useCloseEvent();
   const { register, handleSubmit, watch, reset, setValue, formState: { errors } } = useForm<SongsSangFormData>({
     resolver: zodResolver(songsSangFormSchema),
     defaultValues,
   });
+
   const toast = useToast();
   const fav = watch("fav");
   const blacklisted = watch("blacklisted");
@@ -66,28 +71,6 @@ const SongsSang = () => {
     enabled: !!artistOptionValue?.value,
     staleTime: Infinity,
   });
-  const { mutate: createEventMutation, status } = useMutation({
-    mutationFn: createEvent,
-    onSuccess: () => {
-      toast({
-        title: "Event Created.",
-        description: "You can now add songs to your list.",
-        status: "success",
-        duration: 3000,
-        isClosable: true,
-      });
-      queryClient.invalidateQueries({ queryKey: [QUERIES.GET_EVENTS_LIST] })
-    },
-    onError: (error: any) => {
-      toast({
-        title: "Error creating event.",
-        description: error?.message || "An error occurred while creating an event.",
-        status: "error",
-        duration: 5000,
-        isClosable: true,
-      });
-    },
-  });
   const { mutate: addSongMutation, isPending } = useMutation({
     mutationFn: addSangSong,
     onSuccess: () => {
@@ -105,28 +88,6 @@ const SongsSang = () => {
       toast({
         title: "Error adding song.",
         description: error?.message || "An error occurred while adding the song.",
-        status: "error",
-        duration: 5000,
-        isClosable: true,
-      });
-    },
-  });
-  const { mutate: closeEventMutation, status: closeEventStatus, isPending: isCloseEventPending } = useMutation({
-    mutationFn: closeEvent,
-    onSuccess: () => {
-      toast({
-        title: "Event Created.",
-        description: "The event has been added to your list.",
-        status: "success",
-        duration: 3000,
-        isClosable: true,
-      });
-      queryClient.invalidateQueries({ queryKey: [QUERIES.GET_EVENTS_LIST] })
-    },
-    onError: (error: any) => {
-      toast({
-        title: "Error adding event.",
-        description: error?.message || "An error occurred while adding the event.",
         status: "error",
         duration: 5000,
         isClosable: true,
@@ -202,7 +163,8 @@ const SongsSang = () => {
       <Center mb={4}>
         <PageHeader
           title="Songs Sang"
-          tooltipLabel="Add songs that have you sung. You need to open an event first. They will appear on the history."
+          //TODO: tooltip format
+          tooltipLabel="1- Open an event. 2-Add new songs that have you sung 3-If song already exists, use lists instead 4- This will appear in the history 5- There can be only one event open at the same time."
         />
       </Center>
       {isEventsListLoading ? <Center>
