@@ -4,7 +4,7 @@ import { useMemo, useState } from "react";
 import { getSongsList, updatePlayCount } from "../api/api";
 import PageWrapper from "../components/PageWrapper";
 import { TableBody } from "../components/table/TableBody";
-import { TableHeader } from "../components/table/TableHeader";
+import { TableHead } from "../components/table/TableHeader";
 import TableWrapper from "../components/table/TableWrapper";
 import { ACTIONS } from "../config/actions";
 import { SortConfig } from "../config/formInterfaces";
@@ -76,7 +76,7 @@ const Favourites = () => {
   return (
     <PageWrapper>
       <TableWrapper>
-        <TableHeader sortConfig={sortConfig} requestSort={requestSort} />
+        <TableHead sortConfig={sortConfig} requestSort={requestSort} />
         <TableBody
           isLoading={isLoading}
           sortedSongs={sortedSongs}

@@ -1,10 +1,11 @@
-import { CloseIcon, DeleteIcon, TriangleDownIcon, TriangleUpIcon } from "@chakra-ui/icons";
-import { Button, Center, Checkbox, HStack, IconButton, Input, InputGroup, InputRightElement, Tbody, Td, Text, Th, Thead, Tr, VStack } from "@chakra-ui/react";
+import { CloseIcon, DeleteIcon } from "@chakra-ui/icons";
+import { Button, Center, Checkbox, HStack, IconButton, Input, InputGroup, InputRightElement, Tbody, Td, Text, Tr, VStack } from "@chakra-ui/react";
 import { useQuery } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
 import { getSongsList } from "../api/api";
 import { ListsToggleGroup } from "../components/buttonGroups/ListsToggleGroup";
 import PageWrapper from "../components/PageWrapper";
+import { TableHead } from "../components/table/TableHeader";
 import TableSpinner from "../components/table/TableSpinner";
 import TableWrapper from "../components/table/TableWrapper";
 import { ACTIONS } from "../config/actions";
@@ -146,51 +147,7 @@ const SongList = () => {
           <ListsToggleGroup listName={listName} setListName={setListName} />
         </Center>
         <TableWrapper>
-          <Thead >
-            <Tr>
-              <Th fontSize={thFontSize} textAlign="center" minWidth={120}>
-                Song
-                <IconButton
-                  aria-label="Sort by Song"
-                  icon={
-                    sortConfig.key === "title" && sortConfig.direction !== "ascending" ? (
-                      <TriangleUpIcon />
-                    ) : (
-                      <TriangleDownIcon />
-                    )
-                  }
-                  onClick={() => requestSort("title")}
-                  size="xs"
-                  variant="ghost"
-                />
-              </Th>
-              <Th fontSize={thFontSize} minWidth={100}>
-                Artist
-                <IconButton
-                  aria-label="Sort by Artist"
-                  icon={
-                    sortConfig.key === "artist" && sortConfig.direction !== "ascending" ? (
-                      <TriangleUpIcon />
-                    ) : (
-                      <TriangleDownIcon />
-                    )
-                  }
-                  onClick={() => requestSort("artist")}
-                  size="xs"
-                  variant="ghost"
-                />
-              </Th>
-              <Th fontSize={thFontSize} minW={{ base: "15%", md: "auto" }}>Fav</Th>
-              <Th fontSize={thFontSize} minW={{ base: "15%", md: "auto" }}>Next</Th>
-              <Th fontSize={thFontSize} minW={{ base: "15%", md: "auto" }}>Duet</Th>
-              <Th fontSize={thFontSize} minW={{ base: "15%", md: "auto" }}>Blacklist</Th>
-              <Th fontSize={thFontSize} minW={{ base: "15%", md: "auto" }}>N/A</Th>
-              <Th fontSize={thFontSize} minW={{ base: "15%", md: "auto" }}>Plays</Th>
-              <Th fontSize={thFontSize} minW={{ base: "20%", md: "auto" }}>Add Play</Th>
-              <Th fontSize={thFontSize} minW={{ base: "25%", md: "auto" }}>Last Sang</Th>
-              <Th fontSize={thFontSize} textAlign="center" minW={{ base: "15%", md: "auto" }}>Delete</Th>
-            </Tr>
-          </Thead>
+          <TableHead sortConfig={sortConfig} requestSort={requestSort} thFontSize={thFontSize} />
 
           <Tbody>
             {sortedSongs.map((song) => {

@@ -2,52 +2,59 @@ import { TriangleDownIcon, TriangleUpIcon } from "@chakra-ui/icons";
 import { IconButton, Th, Thead, Tr } from "@chakra-ui/react";
 import { SortConfig } from "../../config/formInterfaces";
 
-type TableHeaderProps = {
+type TableHeadProps = {
   sortConfig: SortConfig;
   requestSort: (key: SortConfig["key"]) => void;
-}
+  thFontSize: { base: string; md: string };
+};
 
-export const TableHeader = ({ sortConfig, requestSort }: TableHeaderProps) => {
-  const thFontSize = { base: "sm", md: "md" };
-  const iconButtonSize = "xs";
-  const iconButtonVariant = "ghost";
-
+export const TableHead = ({ sortConfig, requestSort, thFontSize }: TableHeadProps) => {
   return (
     <Thead>
       <Tr>
-        <Th fontSize={thFontSize}>
+        <Th fontSize={thFontSize} textAlign="center" minWidth={120}>
           Song
           <IconButton
             aria-label="Sort by Song"
-            icon={sortConfig.key === "title" && sortConfig.direction !== "ascending" ? <TriangleUpIcon /> : <TriangleDownIcon />}
+            icon={
+              sortConfig.key === "title" && sortConfig.direction !== "ascending" ? (
+                <TriangleUpIcon />
+              ) : (
+                <TriangleDownIcon />
+              )
+            }
             onClick={() => requestSort("title")}
-            size={iconButtonSize}
-            variant={iconButtonVariant}
+            size="xs"
+            variant="ghost"
           />
         </Th>
-        <Th fontSize={thFontSize}>
+        <Th fontSize={thFontSize} minWidth={100}>
           Artist
           <IconButton
             aria-label="Sort by Artist"
-            icon={sortConfig.key === "artist" && sortConfig.direction !== "ascending" ? <TriangleUpIcon /> : <TriangleDownIcon />}
+            icon={
+              sortConfig.key === "artist" && sortConfig.direction !== "ascending" ? (
+                <TriangleUpIcon />
+              ) : (
+                <TriangleDownIcon />
+              )
+            }
             onClick={() => requestSort("artist")}
-            size={iconButtonSize}
-            variant={iconButtonVariant}
+            size="xs"
+            variant="ghost"
           />
         </Th>
-        <Th fontSize={thFontSize}>
-          Plays
-          <IconButton
-            aria-label="Sort by play count"
-            icon={sortConfig.key === "plays" && sortConfig.direction === "ascending" ? <TriangleUpIcon /> : <TriangleDownIcon />}
-            onClick={() => requestSort("plays")}
-            size={iconButtonSize}
-            variant={iconButtonVariant}
-          />
-        </Th>
-        <Th fontSize={thFontSize}>Add play</Th>
-        <Th fontSize={thFontSize}>Last sang</Th>
+        <Th fontSize={thFontSize} minW={{ base: "15%", md: "auto" }}>Fav</Th>
+        <Th fontSize={thFontSize} minW={{ base: "15%", md: "auto" }}>Next</Th>
+        <Th fontSize={thFontSize} minW={{ base: "15%", md: "auto" }}>Duet</Th>
+        <Th fontSize={thFontSize} minW={{ base: "15%", md: "auto" }}>Blacklist</Th>
+        <Th fontSize={thFontSize} minW={{ base: "15%", md: "auto" }}>N/A</Th>
+        <Th fontSize={thFontSize} minW={{ base: "15%", md: "auto" }}>Plays</Th>
+        <Th fontSize={thFontSize} minW={{ base: "20%", md: "auto" }}>Add Play</Th>
+        <Th fontSize={thFontSize} minW={{ base: "25%", md: "auto" }}>Last Sang</Th>
+        <Th fontSize={thFontSize} textAlign="center" minW={{ base: "15%", md: "auto" }}>Delete</Th>
       </Tr>
     </Thead>
   );
 };
+
