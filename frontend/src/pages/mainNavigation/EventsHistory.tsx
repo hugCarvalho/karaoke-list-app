@@ -1,7 +1,7 @@
 import { Button, Center, Heading, Spinner, Text, VStack } from "@chakra-ui/react";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { closeEvent, createEvent, getEventsList } from "../../api/api";
-import Header from "../../components/buttonGroups/Header";
+import PageHeader from "../../components/buttonGroups/Header";
 import { EventCard } from "../../components/EventsCard";
 import PageWrapper from "../../components/PageWrapper";
 import { Data, KaraokeEvents } from "../../config/interfaces";
@@ -57,7 +57,7 @@ export const EventsHistory = () => {
 
   return (
     <PageWrapper>
-      <Header title="Performances" tooltipLabel="List of all your performances" />
+      <PageHeader title="Performances" tooltipLabel="List of all your performances" />
       {
         (isLoading || isFetching) && <Center py={10}><Spinner size="xl" /></Center>
       }
@@ -100,7 +100,7 @@ export const EventsHistory = () => {
               return <EventCard key={event._id} event={event} />
             }
             return null;
-          })}
+          }).reverse()}
         </VStack>
       )}
     </PageWrapper>

@@ -1,4 +1,4 @@
-import { Button, Center, Flex, FormControl, FormErrorMessage, FormLabel, Input, Spinner, useToast } from "@chakra-ui/react";
+import { Button, Center, Flex, FormControl, FormErrorMessage, FormLabel, HStack, Input, Spinner, useToast } from "@chakra-ui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
@@ -221,7 +221,9 @@ const SongsSang = () => {
       {
         !isEventsListLoading && isEventOpen && <><form onSubmit={handleSubmit(onSubmit)} noValidate>
           <Flex direction={{ base: "column", md: "row" }} gap={4} mb={4}>
+            {/* BTN mobile only */}
             <Button
+              display={{ base: "block", md: "none" }}
               isLoading={isCloseEventPending}
               isDisabled={isCloseEventPending}
               onClick={() => closeEventMutation()}
@@ -311,10 +313,22 @@ const SongsSang = () => {
             setValue={setValue}
           />
 
-
-          <Button w={"100%"} type="submit" colorScheme="blue" isLoading={isPending || isVerifying} isDisabled={isPending || isVerifying}>
-            Save
-          </Button>
+          <HStack>
+            <Button w={"100%"} type="submit" colorScheme="blue" isLoading={isPending || isVerifying} isDisabled={isPending || isVerifying}>
+              Save
+            </Button>
+            {/* BTN mobile only */}
+            <Button
+              w={"20%"}
+              display={{ base: "none", md: "block" }}
+              isLoading={isCloseEventPending}
+              isDisabled={isCloseEventPending}
+              onClick={() => closeEventMutation()}
+              variant={"secondary"}
+            >
+              Close Event
+            </Button>
+          </HStack>
         </form>
 
         </>
