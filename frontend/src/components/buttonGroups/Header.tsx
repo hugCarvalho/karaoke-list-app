@@ -6,7 +6,7 @@ type HeaderProps = {
   tooltipLabel: string;
 };
 
-const Header = ({ title, tooltipLabel }: HeaderProps) => {
+const PageHeader = ({ title, tooltipLabel }: HeaderProps) => {
   return (
     <Center mb={4}>
       <Heading size="lg">{title}</Heading>
@@ -16,7 +16,6 @@ const Header = ({ title, tooltipLabel }: HeaderProps) => {
             aria-label={`Info about ${title}`}
             icon={<InfoOutlineIcon />}
             size="sm"
-            ml={2}
             variant="ghost"
           />
         </Tooltip>
@@ -25,4 +24,4 @@ const Header = ({ title, tooltipLabel }: HeaderProps) => {
   );
 };
 
-export default Header;
+export default PageHeader;
