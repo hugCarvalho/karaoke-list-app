@@ -9,23 +9,14 @@ import { QUERIES } from "../../constants/queries";
 import { useCloseEvent } from "../../hooks/useCloseEvent";
 import { useCreateEvent } from "../../hooks/useCreateEvent";
 
-//TODO: eventDate && location
-export const eventData: KaraokeEvents = {
-  location: "Monster Ronson",
-  eventDate: Date.now(),
-  songs: [],
-  closed: false,
-}
-
+//TODO: location
 export const EventsHistory = () => {
   const { mutate: createEventMutation, isPending: isCreateEventPending } = useCreateEvent();
   const { mutate: closeEventMutation, isPending: isCloseEventPending } = useCloseEvent();
-
   const { data: eventsList, isLoading, isFetching } = useQuery<Data["events"]>({
     queryKey: [QUERIES.GET_EVENTS_LIST],
     queryFn: getEventsList,
   });
-
   const isEventOpen = eventsList?.some((e: KaraokeEvents) => !e.closed) ?? false;
 
   return (
@@ -59,7 +50,7 @@ export const EventsHistory = () => {
           <Button
             isLoading={isCreateEventPending}
             isDisabled={isCreateEventPending}
-            onClick={() => createEventMutation(eventData)}
+            onClick={() => createEventMutation()}
           >
             Create Event
           </Button>

@@ -19,7 +19,6 @@ import { useCreateEvent } from "../hooks/useCreateEvent";
 import { getSongsFromOpenAI, isDataVerified } from "../services/externalApi";
 import { formatToGermanDate } from "../utils/date";
 import { capitalizeArtistNames } from "../utils/strings";
-import { eventData } from "./mainNavigation/EventsHistory";
 
 const defaultValues = {
   title: "",
@@ -176,7 +175,7 @@ const SongsSang = () => {
         !isEventsListLoading && !isEventOpen && <>
           <div>
             <p>{!isEventsListLoading && "You have no events open. Create one?"}</p>
-            <Button onClick={() => createEventMutation(eventData)}>Create event</Button>
+            <Button onClick={() => createEventMutation()}>Create event</Button>
           </div>
         </>
       }

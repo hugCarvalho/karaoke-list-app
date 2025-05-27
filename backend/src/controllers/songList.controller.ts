@@ -337,8 +337,13 @@ export const updateSongPlayCountHandler = catchErrors(async (req, res) => {
 
 //Events
 export const addEventsHandler = catchErrors(async (req, res) => {
-  // console.log('addEventsHandler', req.body)
-  const newEvent = req.body;
+  const newEvent = {
+    location: "Monster Ronson",
+    eventDate: Date.now(),
+    songs: [],
+    closed: false,
+  };
+
   try {
     const user = await UserModel.findById(req.userId);
 
