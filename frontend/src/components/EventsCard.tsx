@@ -13,6 +13,8 @@ const EventCard = ({ event }: Props) => {
     })
     : 'N/A';
 
+  const numberOfSongs = event.songs.length
+
   return (
     <Card
       bg="gray.900"
@@ -20,8 +22,8 @@ const EventCard = ({ event }: Props) => {
       borderRadius="sm"
       boxShadow="xl"
       p={2}
-      maxW={{ base: "xs", sm: "sm", md: "md" }}
-      minW={{ base: "xs", sm: "sm", md: "sm" }}
+      maxW={{ base: "100%", md: "lg" }}
+      minW={{ base: "100%", md: 'lg' }}
       mx="auto"
       my={2}
       border="1px solid"
@@ -30,11 +32,17 @@ const EventCard = ({ event }: Props) => {
     >
       <CardBody p={0}>
         <VStack align="stretch" spacing={3}>
-          {/* Location and Date Header */}
+          {/* Location, Song Count, and Date Header */}
           <Flex alignItems="center" pb={2} borderBottom="1px solid" borderColor="gray.700">
             <Text fontSize="md" fontWeight="bold" color="blue.300">
               📍 {event.location}
             </Text>
+            {/* Number of Songs Tag */}
+            {numberOfSongs > 0 && (
+              <Tag size="sm" variant="subtle" colorScheme="purple" borderRadius="full" ml={1.5}>
+                🎤 {numberOfSongs}
+              </Tag>
+            )}
             <Spacer />
             {event.eventDate && (
               <Tag size="sm" variant="subtle" color="white" borderRadius="full">
@@ -45,7 +53,7 @@ const EventCard = ({ event }: Props) => {
 
           {/* Songs List */}
           <VStack align="stretch" spacing={1} pt={1}>
-            {event.songs.length > 0 ? (
+            {numberOfSongs > 0 ? (
               event.songs.map((song, index: number) => (
                 <HStack key={index} spacing={1} wrap="wrap" p={1} borderRadius="sm" bg="rgba(255,255,255,0.03)">
                   <Text fontSize="sm" color="gray.300" flexShrink={0}>
@@ -69,4 +77,3 @@ const EventCard = ({ event }: Props) => {
 };
 
 export { EventCard };
-
