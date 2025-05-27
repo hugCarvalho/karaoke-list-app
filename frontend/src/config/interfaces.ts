@@ -28,7 +28,7 @@ export interface Song {
   blacklisted: boolean,
   duet: boolean,
   inNextEventList: boolean,
-  notAvailable?: boolean,
+  notAvailable: boolean,
   events: EventData[],
   plays: number,
 }

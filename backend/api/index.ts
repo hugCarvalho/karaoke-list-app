@@ -37,9 +37,9 @@ const app = express();
 // });
 
 app.use(cors({
-  origin: APP_ORIGIN, // Allow requests from your frontend's origin
-  methods: ['GET', 'POST', 'OPTIONS', 'PUT', 'PATCH', 'DELETE'], // Specify allowed HTTP methods
-  allowedHeaders: ['Content-Type', 'Authorization', 'Cookie'], // Specify allowed request headers
+  origin: APP_ORIGIN,
+  methods: ['GET', 'POST', 'OPTIONS', 'PUT', 'PATCH', 'DELETE'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'Cookie'],
   credentials: true, // Enable sending credentials (cookies, authorization headers)
 }));
 
@@ -70,7 +70,7 @@ app.use("/list", authenticate, listRoutes)
 //TODO move away these fns
 async function getPopularSongs(artist: string) {
   const prompt = `
-    Please list the 20 most popular songs by ${artist}.
+    Please list the 25 most popular songs by ${artist}.
     The return value must be a an array of the names of the songs For example: ["No surprises", "Creep", ...].
     Do NOT include any introductory or concluding text, only the array.
   `;

@@ -27,23 +27,20 @@ export const deleteSession = async (id: string) => API.delete(`/sessions/${id}`)
 
 export const getSongsList = async (): Promise<Song[]> => API.get("/list");
 
+export const getArtistsDb = async () => {
+  return API.get("/list/artists")
+};
+export const getEventsList = async (): Promise<KaraokeEvents[]> => {
+  return API.get("/list/events")
+};
 export const addSong = async (data: Song) => {
   return API.post("/list/add", data)
 };
 export const addSangSong = async (data: Song) => {
   return API.post("/list/add-sang-song", data)
 };
-export const updateSong = async (data: { songId: string, value: boolean, type: CheckboxGroup }) => {
+export const updateSongListTypes = async (data: { songId: string, value: boolean, type: CheckboxGroup }) => {
   return API.patch("/list/update", data)
-};
-export const deleteSong = async (data: { songId: string }) => {
-  return API.delete(`/list/delete/${data.songId}`)
-};
-export const getArtistsDb = async () => {
-  return API.get("/list/artists")
-};
-export const getEventsList = async (): Promise<KaraokeEvents[]> => {
-  return API.get("/list/events")
 };
 export const updatePlayCount = async (data: { songId: string; artist: string; title: string }) => {
   return API.patch(`/list/update/songs/update-play/${data.songId}`, {
@@ -51,6 +48,9 @@ export const updatePlayCount = async (data: { songId: string; artist: string; ti
     title: data.title,
   });
 }
+export const deleteSong = async (data: { songId: string }) => {
+  return API.delete(`/list/delete/${data.songId}`)
+};
 //Events
 export const createEvent = async () => {
   return API.post("/list/add-event", null)

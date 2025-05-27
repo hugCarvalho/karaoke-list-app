@@ -1,8 +1,8 @@
 import { CloseIcon, DeleteIcon, TriangleDownIcon, TriangleUpIcon } from "@chakra-ui/icons";
-import { Button, Center, Checkbox, HStack, IconButton, Input, InputGroup, InputRightElement, Tbody, Td, Text, Th, Thead, Tr, useToast, VStack } from "@chakra-ui/react";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { Button, Center, Checkbox, HStack, IconButton, Input, InputGroup, InputRightElement, Tbody, Td, Text, Th, Thead, Tr, VStack } from "@chakra-ui/react";
+import { useQuery } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
-import { deleteSong, getSongsList, updatePlayCount, updateSong } from "../api/api";
+import { getSongsList } from "../api/api";
 import { ListsToggleGroup } from "../components/buttonGroups/ListsToggleGroup";
 import PageWrapper from "../components/PageWrapper";
 import TableSpinner from "../components/table/TableSpinner";
@@ -12,14 +12,15 @@ import { CheckboxGroup, SortConfig } from "../config/formInterfaces";
 import { Song } from "../config/interfaces";
 import { ListType } from "../config/types";
 import { QUERIES } from "../constants/queries";
+import { useDeleteSong } from "../hooks/list/useDeleteSong";
+import { useUpdatePlayCount } from "../hooks/list/useUpdatePlayCount";
+import { useUpdateSongListTypes } from "../hooks/list/useUpdateSongListTypes";
 import { formatToGermanDate } from "../utils/date";
 
 const checkBoxSize = { base: "sm", md: "md" };
 const thFontSize = { base: "xs", md: "md" };
 
 const SongList = () => {
-  const queryClient = useQueryClient();
-  const toast = useToast();
   const [sortConfig, setSortConfig] = useState<SortConfig>({ key: "artist", direction: "ascending" });
   const [songFilterText, setSongFilterText] = useState("");
   const [artistFilterText, setArtistFilterText] = useState("");
@@ -31,42 +32,9 @@ const SongList = () => {
     initialData: [],
   });
 
-  const { mutate: addSongMutation } = useMutation({
-    mutationFn: updatePlayCount,
-    onSuccess: () => {
-      toast({
-        title: "Song updated.",
-        description: "The song has been updated.",
-        status: "success",
-        duration: 3000,
-        isClosable: true,
-      });
-      queryClient.invalidateQueries({ queryKey: [QUERIES.SONGS_LIST] });
-    },
-    onError: (error: any) => {
-      toast({
-        title: "Error updating song.",
-        description: error?.message || "An error occurred while updating the song.",
-        status: "error",
-        duration: 5000,
-        isClosable: true,
-      });
-    },
-  });
-
-  const { mutate: updateBlacklistedMutation, isPending: isUpdatePending } = useMutation({
-    mutationFn: updateSong,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [QUERIES.SONGS_LIST] });
-    },
-  });
-
-  const { mutate: deleteSongMutation, isPending: isDeletePending } = useMutation({
-    mutationFn: deleteSong,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [QUERIES.SONGS_LIST] });
-    },
-  });
+  const { mutate: updatePlayCountMutation } = useUpdatePlayCount()
+  const { mutate: updateListTypeMutation } = useUpdateSongListTypes()
+  const { mutate: deleteSongMutation, isPending: isDeletePending } = useDeleteSong();
 
   const filteredSongs = useMemo(() => {
     if (!data) return [];
@@ -99,7 +67,7 @@ const SongList = () => {
   };
 
   const handleCheckboxChange = (songId: string, value: boolean, type: CheckboxGroup) => {
-    updateBlacklistedMutation({ songId, value: !value, type });
+    updateListTypeMutation({ songId, value: !value, type });
   };
 
   const handleDelete = (songId: string) => {
@@ -269,7 +237,7 @@ const SongList = () => {
                 </Td>
                 <Td fontSize={thFontSize}>{song.plays}</Td>
                 <Td fontSize={thFontSize}>
-                  <Button size={{ base: "xs", md: "sm" }} onClick={() => addSongMutation(song)}>
+                  <Button size={{ base: "xs", md: "sm" }} onClick={() => updatePlayCountMutation(song)}>
                     Add
                   </Button>
                 </Td>
