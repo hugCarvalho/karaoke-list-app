@@ -1,5 +1,4 @@
-import { InfoOutlineIcon } from "@chakra-ui/icons";
-import { Button, Center, Flex, FormControl, FormErrorMessage, FormLabel, Heading, IconButton, Input, Spinner, Tooltip, useToast } from "@chakra-ui/react";
+import { Button, Center, Flex, FormControl, FormErrorMessage, FormLabel, Input, Spinner, useToast } from "@chakra-ui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
@@ -9,6 +8,7 @@ import * as uuid from "uuid";
 import { addSangSong, closeEvent, createEvent, getArtistsDb, getEventsList } from "../api/api";
 import { AddToggleButtonGroup } from "../components/buttonGroups/AddToggleButtonGroup";
 import CheckboxGroup from "../components/buttonGroups/CheckboxGroup";
+import PageHeader from "../components/buttonGroups/Header";
 import PageWrapper from "../components/PageWrapper";
 import { Option, SongsSangFormData, songsSangFormSchema } from "../config/formInterfaces";
 import { Artist, Data, KaraokeEvents } from "../config/interfaces";
@@ -200,18 +200,11 @@ const SongsSang = () => {
     <PageWrapper>
       <Center><AddToggleButtonGroup /></Center>
       <Center mb={4}>
-        <Heading size="lg">Songs Sang</Heading>
-        <Tooltip label="Add songs that have been sung">
-          <IconButton
-            aria-label="Info"
-            icon={<InfoOutlineIcon />}
-            size="sm"
-            ml={2}
-            variant="ghost"
-          />
-        </Tooltip>
+        <PageHeader
+          title="Songs Sang"
+          tooltipLabel="Add songs that have you sung. You need to open an event first. They will appear on the history."
+        />
       </Center>
-
       {isEventsListLoading ? <Center>
         <Spinner />
       </Center> : <>
@@ -228,6 +221,14 @@ const SongsSang = () => {
       {
         !isEventsListLoading && isEventOpen && <><form onSubmit={handleSubmit(onSubmit)} noValidate>
           <Flex direction={{ base: "column", md: "row" }} gap={4} mb={4}>
+            <Button
+              isLoading={isCloseEventPending}
+              isDisabled={isCloseEventPending}
+              onClick={() => closeEventMutation()}
+              variant={"secondary"}
+            >
+              Close Event
+            </Button>
             <FormControl isInvalid={!!errors.artist} isRequired>
               <FormLabel htmlFor="artist">Artist</FormLabel>
               <CreatableSelect
@@ -310,20 +311,12 @@ const SongsSang = () => {
             setValue={setValue}
           />
 
-          <Button type="submit" colorScheme="blue" isLoading={isPending || isVerifying} isDisabled={isPending || isVerifying}>
+
+          <Button w={"100%"} type="submit" colorScheme="blue" isLoading={isPending || isVerifying} isDisabled={isPending || isVerifying}>
             Save
           </Button>
         </form>
-          <Button
-            w={"100%"}
-            mt={10}
-            isLoading={isCloseEventPending}
-            isDisabled={isCloseEventPending}
-            onClick={() => closeEventMutation()}
-            variant={"secondary"}
-          >
-            Close Event
-          </Button>
+
         </>
       }
     </PageWrapper>
