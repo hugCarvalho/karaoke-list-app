@@ -45,58 +45,60 @@ const SongList = () => {
 
   return (
     <PageWrapper>
-      <VStack spacing={4} alignItems="stretch">
-        <HStack spacing={4}>
-          <InputGroup>
-            <Input
-              placeholder="Filter by artist"
-              value={artistFilterText}
-              onChange={(e) => setArtistFilterText(e.target.value)}
-              size="md"
-              bg="gray.100"
-              _placeholder={{ color: 'gray.500' }}
-              color={"blackAlpha.800"}
-            />
-            {artistFilterText && (
-              <InputRightElement>
-                <IconButton
-                  aria-label="Clear artist filter"
-                  icon={<CloseIcon color={"blackAlpha.800"} />}
-                  size="sm"
-                  onClick={handleClearArtistFilter}
-                  variant={"ghost"}
-                />
-              </InputRightElement>
-            )}
-          </InputGroup>
-          <InputGroup>
-            <Input
-              placeholder="Filter by song name"
-              value={songFilterText}
-              onChange={(e) => setSongFilterText(e.target.value)}
-              size="md"
-              bg="gray.100"
-              _placeholder={{ color: 'gray.500' }}
-              color={"blackAlpha.800"}
-            />
-            {songFilterText && (
-              <InputRightElement>
-                <IconButton
-                  aria-label="Clear song filter"
-                  icon={<CloseIcon color={"blackAlpha.800"} />}
-                  size="sm"
-                  onClick={handleClearSongFilter}
-                  variant={"ghost"}
-                />
-              </InputRightElement>
-            )}
-          </InputGroup>
-        </HStack>
+      <VStack spacing={4} alignItems="stretch" >
+        <VStack paddingBottom={2} position={"sticky"} top={"72px"} zIndex={10} background={"#19202c"}>
+          <Center>
+            <ListsToggleGroup listName={listName} setListName={setListName} />
+          </Center>
 
-        <Center mt={2}>
-          <ListsToggleGroup listName={listName} setListName={setListName} />
-        </Center>
+          <HStack spacing={4}>
+            <InputGroup>
+              <Input
+                placeholder="Filter by artist"
+                value={artistFilterText}
+                onChange={(e) => setArtistFilterText(e.target.value)}
+                size="md"
+                bg="gray.100"
+                _placeholder={{ color: 'gray.500' }}
+                color={"blackAlpha.800"}
+              />
+              {artistFilterText && (
+                <InputRightElement>
+                  <IconButton
+                    aria-label="Clear artist filter"
+                    icon={<CloseIcon color={"blackAlpha.800"} />}
+                    size="sm"
+                    onClick={handleClearArtistFilter}
+                    variant={"ghost"}
+                  />
+                </InputRightElement>
+              )}
+            </InputGroup>
+            <InputGroup>
+              <Input
+                placeholder="Filter by song name"
+                value={songFilterText}
+                onChange={(e) => setSongFilterText(e.target.value)}
+                size="md"
+                bg="gray.100"
+                _placeholder={{ color: 'gray.500' }}
+                color={"blackAlpha.800"}
+              />
+              {songFilterText && (
+                <InputRightElement>
+                  <IconButton
+                    aria-label="Clear song filter"
+                    icon={<CloseIcon color={"blackAlpha.800"} />}
+                    size="sm"
+                    onClick={handleClearSongFilter}
+                    variant={"ghost"}
+                  />
+                </InputRightElement>
+              )}
+            </InputGroup>
+          </HStack>
 
+        </VStack>
         <TableWrapper>
           <TableHead sortConfig={sortConfig} requestSort={requestSort} tableFontSize={tableFontSize} />
           <TableBody isLoading={isLoading} sortedSongs={sortedSongs} tableFontSize={tableFontSize} />

@@ -1,9 +1,7 @@
-import { Box, Container, useMediaQuery } from '@chakra-ui/react';
+import { Box, Container } from '@chakra-ui/react';
 import { ReactNode } from 'react';
 
 const PageWrapper = ({ children }: { children: ReactNode }) => {
-  const [isMobile] = useMediaQuery('(max-width: 768px)'); // TODO: breakpoint to constant
-
   return (
     <Box
       height="100vh"
