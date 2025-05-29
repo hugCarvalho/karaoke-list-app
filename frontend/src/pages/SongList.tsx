@@ -1,7 +1,7 @@
 import { CloseIcon, DeleteIcon } from "@chakra-ui/icons";
 import { Button, Center, Checkbox, HStack, IconButton, Input, InputGroup, InputRightElement, Tbody, Td, Tr, VStack } from "@chakra-ui/react";
 import { useQuery } from "@tanstack/react-query";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { getSongsList } from "../api/api";
 import { ListsToggleGroup } from "../components/buttonGroups/ListsToggleGroup";
 import EmptyList from "../components/EmptyList";
@@ -9,13 +9,13 @@ import PageWrapper from "../components/PageWrapper";
 import { TableHead } from "../components/table/TableHeader";
 import TableSpinner from "../components/table/TableSpinner";
 import TableWrapper from "../components/table/TableWrapper";
-import { ACTIONS } from "../config/actions";
-import { CheckboxGroup, SortConfig } from "../config/formInterfaces";
+import { CheckboxGroup } from "../config/formInterfaces";
 import { Song } from "../config/interfaces";
 import { ListType } from "../config/types";
 import { QUERIES } from "../constants/queries";
 import { useDeleteSong } from "../hooks/list/useDeleteSong";
 import { useFilteredSongs } from "../hooks/list/useFilteredSongs";
+import { useSortableList } from "../hooks/list/useSortableList";
 import { useUpdatePlayCount } from "../hooks/list/useUpdatePlayCount";
 import { useUpdateSongListTypes } from "../hooks/list/useUpdateSongListTypes";
 import { formatToGermanDate } from "../utils/date";
@@ -24,7 +24,6 @@ const checkBoxSize = { base: "sm", md: "md" };
 const thFontSize = { base: "xs", md: "md" };
 
 const SongList = () => {
-  const [sortConfig, setSortConfig] = useState<SortConfig>({ key: "artist", direction: "ascending" });
   const [songFilterText, setSongFilterText] = useState("");
   const [artistFilterText, setArtistFilterText] = useState("");
   const [listName, setListName] = useState<ListType>(null);
@@ -39,19 +38,7 @@ const SongList = () => {
   const { mutate: updateListTypeMutation } = useUpdateSongListTypes()
   const { mutate: deleteSongMutation, isPending: isDeletePending } = useDeleteSong();
   const filteredSongs = useFilteredSongs({ data, songFilterText, artistFilterText, listName })
-
-  const sortedSongs = useMemo(() => {
-    if (!filteredSongs) return [];
-    return ACTIONS.sortList(sortConfig, filteredSongs);
-  }, [filteredSongs, sortConfig]);
-
-  const requestSort = (key: SortConfig["key"]) => {
-    let direction = "ascending" as SortConfig["direction"];
-    if (sortConfig.key === key && sortConfig.direction === "ascending") {
-      direction = "descending";
-    }
-    setSortConfig({ key, direction });
-  };
+  const { sortedList: sortedSongs, sortConfig, requestSort } = useSortableList<Song>(filteredSongs, "artist");
 
   const handleCheckboxChange = (songId: string, value: boolean, type: CheckboxGroup) => {
     updateListTypeMutation({ songId, value: !value, type });
