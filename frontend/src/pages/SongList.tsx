@@ -15,6 +15,7 @@ import { Song } from "../config/interfaces";
 import { ListType } from "../config/types";
 import { QUERIES } from "../constants/queries";
 import { useDeleteSong } from "../hooks/list/useDeleteSong";
+import { useFilteredSongs } from "../hooks/list/useFilteredSongs";
 import { useUpdatePlayCount } from "../hooks/list/useUpdatePlayCount";
 import { useUpdateSongListTypes } from "../hooks/list/useUpdateSongListTypes";
 import { formatToGermanDate } from "../utils/date";
@@ -37,23 +38,7 @@ const SongList = () => {
   const { mutate: updatePlayCountMutation } = useUpdatePlayCount()
   const { mutate: updateListTypeMutation } = useUpdateSongListTypes()
   const { mutate: deleteSongMutation, isPending: isDeletePending } = useDeleteSong();
-
-  const filteredSongs = useMemo(() => {
-    if (!data) return [];
-    let filteredData = data || []
-    filteredData = data.filter((song) => !song.notAvailable)
-    if (listName === "fav") filteredData = data.filter((song) => song.fav)
-    if (listName === "blacklist") filteredData = data.filter((song) => song.blacklisted)
-    if (listName === "duet") filteredData = data.filter((song) => song.duet)
-    if (listName === "nextEvent") filteredData = data.filter((song) => song.inNextEventList)
-    if (listName === "notAvailable") {
-      filteredData = data.filter((song) => song.notAvailable)
-    }
-    return filteredData.filter((song) => {
-      return song.title.toLowerCase().includes(songFilterText.toLowerCase()) &&
-        song.artist.toLowerCase().includes(artistFilterText.toLowerCase())
-    });
-  }, [data, songFilterText, artistFilterText, listName]);
+  const filteredSongs = useFilteredSongs({ data, songFilterText, artistFilterText, listName })
 
   const sortedSongs = useMemo(() => {
     if (!filteredSongs) return [];
