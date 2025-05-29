@@ -5,14 +5,14 @@ import { SortConfig } from "../../config/formInterfaces";
 type TableHeadProps = {
   sortConfig: SortConfig;
   requestSort: (key: SortConfig["key"]) => void;
-  thFontSize: { base: string; md: string };
+  tableFontSize: { base: string; md: string };
 };
 
-export const TableHead = ({ sortConfig, requestSort, thFontSize }: TableHeadProps) => {
+export const TableHead = ({ sortConfig, requestSort, tableFontSize }: TableHeadProps) => {
   return (
     <Thead>
       <Tr>
-        <Th fontSize={thFontSize} textAlign="center" minWidth={120}>
+        <Th fontSize={tableFontSize} textAlign="center" minWidth={120}>
           Song
           <IconButton
             aria-label="Sort by Song"
@@ -28,7 +28,7 @@ export const TableHead = ({ sortConfig, requestSort, thFontSize }: TableHeadProp
             variant="ghost"
           />
         </Th>
-        <Th fontSize={thFontSize} minWidth={100}>
+        <Th fontSize={tableFontSize} minWidth={100}>
           Artist
           <IconButton
             aria-label="Sort by Artist"
@@ -44,15 +44,15 @@ export const TableHead = ({ sortConfig, requestSort, thFontSize }: TableHeadProp
             variant="ghost"
           />
         </Th>
-        <Th fontSize={thFontSize} minW={{ base: "15%", md: "auto" }}>Fav</Th>
-        <Th fontSize={thFontSize} minW={{ base: "15%", md: "auto" }}>Next</Th>
-        <Th fontSize={thFontSize} minW={{ base: "15%", md: "auto" }}>Duet</Th>
-        <Th fontSize={thFontSize} minW={{ base: "15%", md: "auto" }}>Blacklist</Th>
-        <Th fontSize={thFontSize} minW={{ base: "15%", md: "auto" }}>N/A</Th>
-        <Th fontSize={thFontSize} minW={{ base: "15%", md: "auto" }}>Plays</Th>
-        <Th fontSize={thFontSize} minW={{ base: "20%", md: "auto" }}>Add Play</Th>
-        <Th fontSize={thFontSize} minW={{ base: "25%", md: "auto" }}>Last Sang</Th>
-        <Th fontSize={thFontSize} textAlign="center" minW={{ base: "15%", md: "auto" }}>Delete</Th>
+        <Th fontSize={tableFontSize} minW={{ base: "15%", md: "auto" }}>Fav</Th>
+        <Th fontSize={tableFontSize} minW={{ base: "15%", md: "auto" }}>Next</Th>
+        <Th fontSize={tableFontSize} minW={{ base: "15%", md: "auto" }}>Duet</Th>
+        <Th fontSize={tableFontSize} minW={{ base: "15%", md: "auto" }}>Blacklist</Th>
+        <Th fontSize={tableFontSize} minW={{ base: "15%", md: "auto" }}>N/A</Th>
+        <Th fontSize={tableFontSize} minW={{ base: "15%", md: "auto" }}>Plays</Th>
+        <Th fontSize={tableFontSize} minW={{ base: "20%", md: "auto" }}>Add Play</Th>
+        <Th fontSize={tableFontSize} minW={{ base: "25%", md: "auto" }}>Last Sang</Th>
+        <Th fontSize={tableFontSize} textAlign="center" minW={{ base: "15%", md: "auto" }}>Delete</Th>
       </Tr>
     </Thead>
   );

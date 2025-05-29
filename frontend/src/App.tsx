@@ -4,9 +4,6 @@ import { Navigate, Route, Routes, useNavigate } from "react-router-dom";
 import AppContainer from "./components/AppContainer";
 import { TokenRefreshClient } from "./config/apiClient";
 import AddSong from "./pages/AddSong";
-import Blacklist from "./pages/Blacklist";
-import Favourites from "./pages/Favourites";
-import NextEventList from "./pages/NextEventList";
 import SongList from "./pages/SongList";
 import SongsSang from "./pages/SongsSang";
 import ForgotPassword from "./pages/auth/ForgotPassword";
@@ -48,15 +45,11 @@ function App() {
         (
           <Route path="/" element={<AppContainer />}>
             <Route index element={<AddSong />} />
-            {/* <Route path="profile" element={<Profile />} /> */}
-            <Route path="settings" element={<Settings />} />
-            <Route path="favourites" element={<Favourites />} />
-            <Route path="blacklist" element={<Blacklist />} />
-            <Route path="next-event-list" element={<NextEventList />} />
             <Route path="songs-sang" element={<SongsSang />} />
             <Route path="list" element={<SongList />} />
-            <Route path="statistics" element={<Statistics />} />
             <Route path="history" element={<EventsHistory />} />
+            <Route path="settings" element={<Settings />} />
+            <Route path="statistics" element={<Statistics />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Route>
         ) :
