@@ -1,9 +1,10 @@
 import { CloseIcon, DeleteIcon } from "@chakra-ui/icons";
-import { Button, Center, Checkbox, HStack, IconButton, Input, InputGroup, InputRightElement, Tbody, Td, Text, Tr, VStack } from "@chakra-ui/react";
+import { Button, Center, Checkbox, HStack, IconButton, Input, InputGroup, InputRightElement, Tbody, Td, Tr, VStack } from "@chakra-ui/react";
 import { useQuery } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
 import { getSongsList } from "../api/api";
 import { ListsToggleGroup } from "../components/buttonGroups/ListsToggleGroup";
+import EmptyList from "../components/EmptyList";
 import PageWrapper from "../components/PageWrapper";
 import { TableHead } from "../components/table/TableHeader";
 import TableSpinner from "../components/table/TableSpinner";
@@ -83,16 +84,9 @@ const SongList = () => {
     setArtistFilterText("");
   };
 
-  if (data?.length === 0 && !isLoading && !isFetching)
-    return (
-      <PageWrapper>
-        <Center p={4}>
-          <Text fontSize={"lg"} fontWeight={"bold"}>
-            Your list is empty!
-          </Text>
-        </Center>
-      </PageWrapper>
-    );
+  if (data?.length === 0 && !isLoading && !isFetching) {
+    return <EmptyList />
+  }
 
   return (
     <PageWrapper>
@@ -143,17 +137,19 @@ const SongList = () => {
             )}
           </InputGroup>
         </HStack>
+
         <Center mt={2}>
           <ListsToggleGroup listName={listName} setListName={setListName} />
         </Center>
         <TableWrapper>
-          <TableHead sortConfig={sortConfig} requestSort={requestSort} thFontSize={thFontSize} />
 
+          <TableHead sortConfig={sortConfig} requestSort={requestSort} thFontSize={thFontSize} />
           <Tbody>
             {sortedSongs.map((song) => {
               const lastEvent = song.events.reverse()[0];
               const lastSangDate = lastEvent ? formatToGermanDate(lastEvent.eventDate) : "-";
               const typeColor = song.blacklisted ? "red" : song.fav ? "lime" : song.inNextEventList ? "blue.300" : undefined;
+
               return <Tr key={song.songId}>
                 <Td fontSize={thFontSize} color={typeColor} >{song.title}</Td>
                 <Td fontSize={thFontSize} color={typeColor} >{song.artist}</Td>
