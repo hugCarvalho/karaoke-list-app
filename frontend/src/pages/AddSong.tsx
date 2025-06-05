@@ -1,20 +1,22 @@
-import { InfoOutlineIcon } from "@chakra-ui/icons";
-import { Button, Center, Flex, FormControl, FormErrorMessage, FormLabel, Heading, IconButton, Tooltip, useToast } from "@chakra-ui/react";
+import { Button, Center, Flex, FormControl, FormErrorMessage, FormLabel } from "@chakra-ui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import CreatableSelect from "react-select/creatable";
 import * as uuid from "uuid";
-import { addSong, getArtistsDb } from "../api/api";
+import { getArtistsDb } from "../api/api";
 import { AddToggleButtonGroup } from "../components/buttonGroups/AddToggleButtonGroup";
 import CheckboxGroup from "../components/buttonGroups/CheckboxGroup";
+import PageHeader from "../components/buttonGroups/Header";
 import PageWrapper from "../components/PageWrapper";
 import { BaseSongFormData, baseSongFormSchema, Option } from "../config/formInterfaces";
 import { Artist } from "../config/interfaces";
-import queryClient from "../config/queryClient";
 import { QUERIES } from "../constants/queries";
-import { getSongsFromOpenAI, isDataVerified } from "../services/externalApi";
+import { useAddSong } from "../hooks/useAddSong";
+import useAppToast from "../hooks/useAppToast";
+import { useFilteredSongOptions } from "../hooks/useFilteredSongOptions";
+import { isDataVerified } from "../services/externalApi";
 import { capitalizeArtistNames } from "../utils/strings";
 
 const defaultValues = {
@@ -29,11 +31,12 @@ const defaultValues = {
 }
 
 const AddSong = () => {
-  const { getValues, register, handleSubmit, watch, reset, setValue, formState: { errors } } = useForm<BaseSongFormData>({
+  const { register, handleSubmit, watch, setValue, formState: { errors } } = useForm<BaseSongFormData>({
     resolver: zodResolver(baseSongFormSchema),
     defaultValues,
   });
-  const toast = useToast();
+  const { showErrorToast } = useAppToast();
+
   const fav = watch("fav");
   const blacklisted = watch("blacklisted");
   const duet = watch("duet");
@@ -43,42 +46,18 @@ const AddSong = () => {
   //Select Options
   const [artistOptions, setArtistOptions] = useState<Option[]>([]);
   const [songOptions, setSongOptions] = useState<Option[]>([]);
-  const [artistOptionValue, setArtistOptionValue] = useState<Option | null>();
+  const [artistOptionValue, setArtistOptionValue] = useState<Option | null>(null);
   const [songOptionValue, setSongOptionValue] = useState<Option | null>();
   const [isVerifying, setIsVerifying] = useState<boolean>(false);
 
   const { data: artistsDb, isLoading, isError, error } = useQuery({
     queryKey: [QUERIES.GET_ARTISTS_DB],
     queryFn: getArtistsDb,
+
   });
-  const { data: backendSongOptions, isLoading: isOpenAILoading } = useQuery({
-    queryKey: ['songs', artistOptionValue?.value],
-    queryFn: () => artistOptionValue?.value ? getSongsFromOpenAI(artistOptionValue.value) : null,
-    enabled: !!artistOptionValue?.value,
-    staleTime: Infinity,
-  });
-  const { mutate: addSongMutation, isPending } = useMutation({
-    mutationFn: addSong,
-    onSuccess: () => {
-      toast({
-        title: "Song Added.",
-        description: "The song has been added to your list.",
-        status: "success",
-        duration: 3000,
-        isClosable: true,
-      });
-      queryClient.invalidateQueries({ queryKey: [QUERIES.SONGS_LIST] })
-    },
-    onError: (error: any) => {
-      toast({
-        title: "Error adding song.",
-        description: error?.message || "An error occurred while adding the song.",
-        status: "error",
-        duration: 5000,
-        isClosable: true,
-      });
-    },
-  });
+  const { options: filteredSongSelectOptions, isLoadingOpenAI } = useFilteredSongOptions({ songOptions: songOptions, artistOptionValue: artistOptionValue });
+  const { mutate: addSongMutation, isPending } = useAddSong();
+
 
   useEffect(() => {
     if (artistsDb?.data) {
@@ -94,41 +73,19 @@ const AddSong = () => {
     }
   }, [artistsDb])
 
-  const filterOptionsByArtist = () => {
-    const filteredOptionsByArtist = songOptions.filter(song => song.artist === artistOptionValue?.value)
-    if (backendSongOptions) {
-      const allOptions = [...filteredOptionsByArtist, ...backendSongOptions];
-      const uniqueOptions = [];
-      const seenValues = new Set();
-
-      for (const option of allOptions) {
-        if (!seenValues.has(option.value)) {
-          uniqueOptions.push(option);
-          seenValues.add(option.value);
-        }
-      }
-      return uniqueOptions;
-    }
-    return filteredOptionsByArtist
-  };
-
   const onSubmit = async (data: BaseSongFormData) => {
     setIsVerifying(true)
     try {
       const res = await isDataVerified(data.title, data.artist)
       setIsVerifying(false)
       if (res?.verified === false) {
-        toast({
-          title: "Error verifying song data.",
-          description: error?.message || "Artist and song mismatch or typo present, please check data entered.",
-          status: "error",
-          duration: 5000,
-          isClosable: true,
-        });
+        showErrorToast("Error verifying song data.", "Artist and song mismatch or typo present, please check data entered.");
         return
       }
-    } catch (error) {
+    } catch (verificationError: any) {
       setIsVerifying(false)
+      showErrorToast("Verification failed.", "An unexpected error occurred during verification.");
+      return;
     }
 
     const eventData = {
@@ -139,22 +96,13 @@ const AddSong = () => {
     const songData = { songId: uuid.v4(), events: [eventData], ...data, artist: capitalizedArtistName };
     addSongMutation(songData);
   }
-
+  console.log('%c AddSong.tsx - line: 99', 'color: white; background-color: #f58899;', artistOptionValue, '<-artistOptionValue')
+  console.log('%c AddSong.tsx - line: 100', 'color: white; background-color: #d815c5;', artistOptions, '<-artistOptions')
   return (
     <PageWrapper>
       <Center><AddToggleButtonGroup /></Center>
-      <Center mb={4}>
-        <Heading size="lg">Add songs</Heading>
-        <Tooltip label="Add songs to your list">
-          <IconButton
-            aria-label="Info"
-            icon={<InfoOutlineIcon />}
-            size="sm"
-            ml={2}
-            variant="ghost"
-          />
-        </Tooltip>
-      </Center>
+
+      <PageHeader title="Add songs" tooltipLabel="Add songs to your list" />
 
       <form onSubmit={handleSubmit(onSubmit)} noValidate>
         <Flex direction={{ base: "column", md: "row" }} gap={4} mb={4}>
@@ -166,11 +114,13 @@ const AddSong = () => {
               options={artistOptions}
               value={artistOptionValue}
               onCreateOption={(e) => {
+                console.log("onCreateOption", e)
                 setArtistOptions(state => [...state, { value: e, label: e }])
                 setArtistOptionValue({ value: e, label: e })
                 setValue("artist", e)
               }}
               onChange={(option) => {
+                console.log('%c AddSong.tsx - line: 122', 'color: white; background-color: #f58801;', option, '<-option')
                 setValue("artist", option?.value || "")
                 setArtistOptionValue(option)
               }}
@@ -188,10 +138,10 @@ const AddSong = () => {
           <FormControl isInvalid={!!errors.title} isRequired>
             <FormLabel htmlFor="title">Song</FormLabel>
             <CreatableSelect
-              isLoading={isOpenAILoading}
+              isLoading={isLoadingOpenAI}
               placeholder="Type or select a song"
               isClearable
-              options={artistOptionValue ? filterOptionsByArtist() : songOptions}
+              options={filteredSongSelectOptions}
               value={songOptionValue}
               onCreateOption={(e) => {
                 setSongOptions(state => [...state, { value: e, label: e }])
