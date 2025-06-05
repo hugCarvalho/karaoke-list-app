@@ -3,7 +3,6 @@ import { useMemo } from 'react';
 import { Option } from '../config/formInterfaces';
 import { getSongsFromOpenAI } from '../services/externalApi';
 
-
 type UseFilteredSongOptionsProps = {
   songOptions: Option[];
   artistOptionValue: Option | null;
@@ -18,7 +17,6 @@ export const useFilteredSongOptions = ({
   songOptions,
   artistOptionValue,
 }: UseFilteredSongOptionsProps): UseFilteredSongOptionsReturn => {
-
 
   const { data: backendSongOptions, isLoading: isLoadingOpenAI } = useQuery<Option[]>({
     queryKey: ['songs', artistOptionValue?.value],
