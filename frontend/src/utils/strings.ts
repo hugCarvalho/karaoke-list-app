@@ -11,3 +11,42 @@ export const capitalizeArtistNames = (artistName: string) => {
   });
   return capitalizedWords.join(" ");
 };
+
+/**
+ * Capitalizes the first letter of a song name.
+ * For subsequent words, it capitalizes the first letter unless
+ * the word is a common small word (e.g., "a", "the", "and", "of").
+ *
+ * @param songName The raw song name string.
+ * @returns The capitalized song name.
+ */
+export const capitalizeSongNames = (songName: string): string => {
+  if (!songName) {
+    return "";
+  }
+
+  // Defines a set of common "small words" that should generally be lowercase
+  const smallWords = new Set([
+    "a", "an", "the", "and", "but", "or", "for", "nor", "on", "at", "to", "from", "by", "of", "in", "with", "as", "is"
+  ]);
+
+  return songName
+    .trim()
+    .split(/\s+/)
+    .map((word, index) => {
+      if (word.length === 0) {
+        return "";
+      }
+
+      if (index === 0) {
+        return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+      }
+
+      if (smallWords.has(word.toLowerCase())) {
+        return word.toLowerCase();
+      }
+
+      return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+    })
+    .join(' ');
+};

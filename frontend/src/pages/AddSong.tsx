@@ -17,7 +17,7 @@ import { useAddSong } from "../hooks/useAddSong";
 import useAppToast from "../hooks/useAppToast";
 import { useFilteredSongOptions } from "../hooks/useFilteredSongOptions";
 import { isDataVerified } from "../services/externalApi";
-import { capitalizeArtistNames } from "../utils/strings";
+import { capitalizeArtistNames, capitalizeSongNames } from "../utils/strings";
 
 const defaultValues = {
   title: "",
@@ -93,7 +93,8 @@ const AddSong = () => {
       eventDate: null
     }
     const capitalizedArtistName = capitalizeArtistNames(data.artist)
-    const songData = { songId: uuid.v4(), events: [eventData], ...data, artist: capitalizedArtistName };
+    const capitalizedSongName = capitalizeSongNames(data.title)
+    const songData = { songId: uuid.v4(), events: [eventData], ...data, artist: capitalizedArtistName, title: capitalizedSongName };
     addSongMutation(songData);
   }
   console.log('%c AddSong.tsx - line: 99', 'color: white; background-color: #f58899;', artistOptionValue, '<-artistOptionValue')
