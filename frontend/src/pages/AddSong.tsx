@@ -31,11 +31,11 @@ const defaultValues = {
 }
 
 const AddSong = () => {
+  const { showErrorToast } = useAppToast();
   const { register, handleSubmit, watch, setValue, formState: { errors } } = useForm<BaseSongFormData>({
     resolver: zodResolver(baseSongFormSchema),
     defaultValues,
   });
-  const { showErrorToast } = useAppToast();
 
   const fav = watch("fav");
   const blacklisted = watch("blacklisted");
@@ -77,7 +77,7 @@ const AddSong = () => {
         showErrorToast("Error verifying song data.", "Artist and song mismatch or typo present, please check data entered.");
         return
       }
-    } catch (verificationError: any) {
+    } catch (verificationError) {
       setIsVerifying(false)
       showErrorToast("Verification failed.", "An unexpected error occurred during verification.");
       return;

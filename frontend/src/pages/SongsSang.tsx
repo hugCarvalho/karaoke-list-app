@@ -1,4 +1,4 @@
-import { Button, Center, Flex, FormControl, FormErrorMessage, FormLabel, HStack, Input, Spinner, useToast } from "@chakra-ui/react";
+import { Button, Center, Flex, FormControl, FormErrorMessage, FormLabel, HStack, Input, Spinner } from "@chakra-ui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
@@ -14,9 +14,11 @@ import { Option, SongsSangFormData, songsSangFormSchema } from "../config/formIn
 import { Data, KaraokeEvents } from "../config/interfaces";
 import { QUERIES } from "../constants/queries";
 import { useAddSong } from "../hooks/useAddSong";
+import useAppToast from "../hooks/useAppToast";
 import { useCloseEvent } from "../hooks/useCloseEvent";
 import { useCreateEvent } from "../hooks/useCreateEvent";
-import { getSongsFromOpenAI, isDataVerified } from "../services/externalApi";
+import { useFilteredSongOptions } from "../hooks/useFilteredSongOptions";
+import { isDataVerified } from "../services/externalApi";
 import { getArtistsSelectData, getSongsSelectData } from "../utils/artists";
 import { formatToGermanDate } from "../utils/date";
 import { capitalizeArtistNames, capitalizeSongNames } from "../utils/strings";
@@ -35,6 +37,7 @@ const defaultValues = {
 }
 
 const SongsSang = () => {
+  const { showErrorToast } = useAppToast();
   const { mutate: createEventMutation, isPending: isCreateEventPending } = useCreateEvent();
   const { mutate: closeEventMutation, isPending: isCloseEventPending } = useCloseEvent();
   const { register, handleSubmit, watch, reset, setValue, formState: { errors } } = useForm<SongsSangFormData>({
@@ -42,7 +45,6 @@ const SongsSang = () => {
     defaultValues,
   });
 
-  const toast = useToast();
   const fav = watch("fav");
   const blacklisted = watch("blacklisted");
   const duet = watch("duet");
@@ -64,13 +66,9 @@ const SongsSang = () => {
     queryKey: [QUERIES.GET_EVENTS_LIST],
     queryFn: getEventsList,
   });
-  const { data: backendSongOptions, isLoading: isOpenAILoading } = useQuery({
-    queryKey: ['songs', artistOptionValue?.value],
-    queryFn: () => artistOptionValue?.value ? getSongsFromOpenAI(artistOptionValue.value) : null,
-    enabled: !!artistOptionValue?.value,
-    staleTime: Infinity,
-  });
   const { mutate: addSongMutation, isPending } = useAddSong("event");
+  const { options: filteredSongSelectOptions, isLoadingOpenAI } = useFilteredSongOptions({ songOptions: songOptions, artistOptionValue: artistOptionValue });
+
 
   useEffect(() => {
     if (artistsDb?.data) {
@@ -88,17 +86,13 @@ const SongsSang = () => {
       const res = await isDataVerified(data.title, data.artist)
       setIsVerifying(false)
       if (res?.verified === false) {
-        toast({
-          title: "Error verifying song data.",
-          description: error?.message || "Artist and song mismatch or typo present, please check data entered.",
-          status: "error",
-          duration: 5000,
-          isClosable: true,
-        });
+        showErrorToast("Error verifying song data.", "Artist and song mismatch or typo present, please check data entered.");
         return
       }
-    } catch (error) {
+    } catch (verificationError) {
       setIsVerifying(false)
+      showErrorToast("Verification failed.", "An unexpected error occurred during verification.");
+      return;
     }
 
     const eventData = {
@@ -113,24 +107,6 @@ const SongsSang = () => {
   };
 
   const isEventOpen = eventsList?.some((e: KaraokeEvents) => !e.closed) ?? false;
-
-  const filterOptionsByArtist = () => {
-    const filteredOptionsByArtist = songOptions.filter(song => song.artist === artistOptionValue?.value)
-    if (backendSongOptions) {
-      const allOptions = [...filteredOptionsByArtist, ...backendSongOptions];
-      const uniqueOptions = [];
-      const seenValues = new Set();
-
-      for (const option of allOptions) {
-        if (!seenValues.has(option.value)) {
-          uniqueOptions.push(option);
-          seenValues.add(option.value);
-        }
-      }
-      return uniqueOptions;
-    }
-    return filteredOptionsByArtist
-  };
 
   return (
     <PageWrapper>
@@ -198,10 +174,10 @@ const SongsSang = () => {
             <FormControl isInvalid={!!errors.title} isRequired>
               <FormLabel htmlFor="title">Song</FormLabel>
               <CreatableSelect
-                isLoading={isOpenAILoading}
+                isLoading={isLoadingOpenAI}
                 placeholder="Type or select a song"
                 isClearable
-                options={artistOptionValue ? filterOptionsByArtist() : songOptions}
+                options={filteredSongSelectOptions}
                 value={songOptionValue}
                 onCreateOption={(e) => {
                   setSongOptions(state => [...state, { value: e, label: e }])
