@@ -11,12 +11,13 @@ import CheckboxGroup from "../components/buttonGroups/CheckboxGroup";
 import PageHeader from "../components/buttonGroups/Header";
 import PageWrapper from "../components/PageWrapper";
 import { Option, SongsSangFormData, songsSangFormSchema } from "../config/formInterfaces";
-import { Artist, Data, KaraokeEvents } from "../config/interfaces";
+import { Data, KaraokeEvents } from "../config/interfaces";
 import queryClient from "../config/queryClient";
 import { QUERIES } from "../constants/queries";
 import { useCloseEvent } from "../hooks/useCloseEvent";
 import { useCreateEvent } from "../hooks/useCreateEvent";
 import { getSongsFromOpenAI, isDataVerified } from "../services/externalApi";
+import { getArtistsSelectData, getSongsSelectData } from "../utils/artists";
 import { formatToGermanDate } from "../utils/date";
 import { capitalizeArtistNames } from "../utils/strings";
 
@@ -49,12 +50,12 @@ const SongsSang = () => {
   const inNextEventList = watch("inNextEventList");
   const notAvailable = watch("notAvailable");
 
+  const [isVerifying, setIsVerifying] = useState<boolean>(false);
   //Select Options
   const [artistOptions, setArtistOptions] = useState<Option[]>([]);
   const [songOptions, setSongOptions] = useState<Option[]>([]);
   const [artistOptionValue, setArtistOptionValue] = useState<Option | null>();
   const [songOptionValue, setSongOptionValue] = useState<Option | null>();
-  const [isVerifying, setIsVerifying] = useState<boolean>(false);
 
   const { data: artistsDb, error } = useQuery({
     queryKey: [QUERIES.GET_ARTISTS_DB],
@@ -96,13 +97,9 @@ const SongsSang = () => {
 
   useEffect(() => {
     if (artistsDb?.data) {
-      const artist = artistsDb.data.map((artist: Artist) => {
-        return { value: artist.name, label: artist.name }
-      }) ?? []
-      const songs = artistsDb.data.reduce((acc: Artist[], artist: Artist) => {
-        const songLabels = artist.songs.map(song => ({ value: song, label: song }));
-        return [...acc, ...songLabels];
-      }, []) ?? []
+      const artist = getArtistsSelectData(artistsDb)
+      const songs = getSongsSelectData(artistsDb)
+
       setArtistOptions(artist)
       setSongOptions(songs)
     }

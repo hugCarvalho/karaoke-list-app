@@ -11,12 +11,12 @@ import CheckboxGroup from "../components/buttonGroups/CheckboxGroup";
 import PageHeader from "../components/buttonGroups/Header";
 import PageWrapper from "../components/PageWrapper";
 import { BaseSongFormData, baseSongFormSchema, Option } from "../config/formInterfaces";
-import { Artist } from "../config/interfaces";
 import { QUERIES } from "../constants/queries";
 import { useAddSong } from "../hooks/useAddSong";
 import useAppToast from "../hooks/useAppToast";
 import { useFilteredSongOptions } from "../hooks/useFilteredSongOptions";
 import { isDataVerified } from "../services/externalApi";
+import { getArtistsSelectData, getSongsSelectData } from "../utils/artists";
 import { capitalizeArtistNames, capitalizeSongNames } from "../utils/strings";
 
 const defaultValues = {
@@ -43,12 +43,12 @@ const AddSong = () => {
   const inNextEventList = watch("inNextEventList");
   const notAvailable = watch("notAvailable");
 
+  const [isVerifying, setIsVerifying] = useState<boolean>(false);
   //Select Options
   const [artistOptions, setArtistOptions] = useState<Option[]>([]);
   const [songOptions, setSongOptions] = useState<Option[]>([]);
   const [artistOptionValue, setArtistOptionValue] = useState<Option | null>(null);
   const [songOptionValue, setSongOptionValue] = useState<Option | null>();
-  const [isVerifying, setIsVerifying] = useState<boolean>(false);
 
   const { data: artistsDb, isLoading, isError, error } = useQuery({
     queryKey: [QUERIES.GET_ARTISTS_DB],
@@ -58,16 +58,11 @@ const AddSong = () => {
   const { options: filteredSongSelectOptions, isLoadingOpenAI } = useFilteredSongOptions({ songOptions: songOptions, artistOptionValue: artistOptionValue });
   const { mutate: addSongMutation, isPending } = useAddSong();
 
-
   useEffect(() => {
     if (artistsDb?.data) {
-      const artist = artistsDb.data.map((artist: Artist) => {
-        return { value: artist.name, label: artist.name }
-      }) ?? []
-      const songs = artistsDb.data.reduce((acc: Artist[], artist: Artist) => {
-        const songLabels = artist.songs.map(song => ({ value: song, label: song, artist: artist.name }));
-        return [...acc, ...songLabels];
-      }, []) ?? []
+      const artist = getArtistsSelectData(artistsDb)
+      const songs = getSongsSelectData(artistsDb)
+
       setArtistOptions(artist)
       setSongOptions(songs)
     }
@@ -95,6 +90,7 @@ const AddSong = () => {
     const capitalizedArtistName = capitalizeArtistNames(data.artist)
     const capitalizedSongName = capitalizeSongNames(data.title)
     const songData = { songId: uuid.v4(), events: [eventData], ...data, artist: capitalizedArtistName, title: capitalizedSongName };
+
     addSongMutation(songData);
   }
   console.log('%c AddSong.tsx - line: 99', 'color: white; background-color: #f58899;', artistOptionValue, '<-artistOptionValue')
@@ -115,13 +111,11 @@ const AddSong = () => {
               options={artistOptions}
               value={artistOptionValue}
               onCreateOption={(e) => {
-                console.log("onCreateOption", e)
                 setArtistOptions(state => [...state, { value: e, label: e }])
                 setArtistOptionValue({ value: e, label: e })
                 setValue("artist", e)
               }}
               onChange={(option) => {
-                console.log('%c AddSong.tsx - line: 122', 'color: white; background-color: #f58801;', option, '<-option')
                 setValue("artist", option?.value || "")
                 setArtistOptionValue(option)
               }}

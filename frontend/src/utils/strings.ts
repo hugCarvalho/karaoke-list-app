@@ -27,7 +27,8 @@ export const capitalizeSongNames = (songName: string): string => {
 
   // Defines a set of common "small words" that should generally be lowercase
   const smallWords = new Set([
-    "a", "an", "the", "and", "but", "or", "for", "nor", "on", "at", "to", "from", "by", "of", "in", "with", "as", "is"
+    "a", "an", "the", "and", "but", "or", "for", "nor", "on", "at", "to", "from", "by", "of", "in", "with", "as", "is",
+    "o", "e", //possible in other languages
   ]);
 
   return songName
