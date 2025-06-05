@@ -1,25 +1,25 @@
 import { Button, Center, Flex, FormControl, FormErrorMessage, FormLabel, HStack, Input, Spinner, useToast } from "@chakra-ui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import CreatableSelect from "react-select/creatable";
 import * as uuid from "uuid";
-import { addSangSong, getArtistsDb, getEventsList } from "../api/api";
+import { getArtistsDb, getEventsList } from "../api/api";
 import { AddToggleButtonGroup } from "../components/buttonGroups/AddToggleButtonGroup";
 import CheckboxGroup from "../components/buttonGroups/CheckboxGroup";
 import PageHeader from "../components/buttonGroups/Header";
 import PageWrapper from "../components/PageWrapper";
 import { Option, SongsSangFormData, songsSangFormSchema } from "../config/formInterfaces";
 import { Data, KaraokeEvents } from "../config/interfaces";
-import queryClient from "../config/queryClient";
 import { QUERIES } from "../constants/queries";
+import { useAddSong } from "../hooks/useAddSong";
 import { useCloseEvent } from "../hooks/useCloseEvent";
 import { useCreateEvent } from "../hooks/useCreateEvent";
 import { getSongsFromOpenAI, isDataVerified } from "../services/externalApi";
 import { getArtistsSelectData, getSongsSelectData } from "../utils/artists";
 import { formatToGermanDate } from "../utils/date";
-import { capitalizeArtistNames } from "../utils/strings";
+import { capitalizeArtistNames, capitalizeSongNames } from "../utils/strings";
 
 const defaultValues = {
   title: "",
@@ -34,7 +34,6 @@ const defaultValues = {
   plays: 1
 }
 
-//TODO: maintain 2 diff routes or add options in add songs to deal with adding new songs or sang songs
 const SongsSang = () => {
   const { mutate: createEventMutation, isPending: isCreateEventPending } = useCreateEvent();
   const { mutate: closeEventMutation, isPending: isCloseEventPending } = useCloseEvent();
@@ -71,29 +70,7 @@ const SongsSang = () => {
     enabled: !!artistOptionValue?.value,
     staleTime: Infinity,
   });
-  const { mutate: addSongMutation, isPending } = useMutation({
-    mutationFn: addSangSong,
-    onSuccess: () => {
-      toast({
-        title: "Song Added.",
-        description: "The song has been added to your list.",
-        status: "success",
-        duration: 3000,
-        isClosable: true,
-      });
-      reset();
-      queryClient.invalidateQueries({ queryKey: [QUERIES.SONGS_LIST] })
-    },
-    onError: (error: any) => {
-      toast({
-        title: "Error adding song.",
-        description: error?.message || "An error occurred while adding the song.",
-        status: "error",
-        duration: 5000,
-        isClosable: true,
-      });
-    },
-  });
+  const { mutate: addSongMutation, isPending } = useAddSong("event");
 
   useEffect(() => {
     if (artistsDb?.data) {
@@ -129,7 +106,9 @@ const SongsSang = () => {
       eventDate: data.eventDate
     }
     const capitalizedArtistName = capitalizeArtistNames(data.artist)
-    const songData = { songId: uuid.v4(), events: [eventData], ...data, artist: capitalizedArtistName };
+    const capitalizedSongName = capitalizeSongNames(data.title)
+
+    const songData = { songId: uuid.v4(), events: [eventData], ...data, artist: capitalizedArtistName, title: capitalizedSongName };
     addSongMutation(songData);
   };
 

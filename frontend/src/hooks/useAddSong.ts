@@ -1,14 +1,16 @@
 import { useMutation } from "@tanstack/react-query";
-import { addSong } from "../api/api";
+import { addSangSong, addSong } from "../api/api";
 import queryClient from "../config/queryClient";
 import { QUERIES } from "../constants/queries";
 import useAppToast from "./useAppToast";
 
-export const useAddSong = () => {
+type Prop = "event" | "list"
+
+export const useAddSong = (type: Prop) => {
   const { showSuccessToast, showErrorToast } = useAppToast();
 
   return useMutation({
-    mutationFn: addSong,
+    mutationFn: type === "event" ? addSangSong : addSong,
     onSuccess: () => {
       showSuccessToast("Song added.", "The song has been added to your list.");
       queryClient.invalidateQueries({ queryKey: [QUERIES.GET_EVENTS_LIST] });

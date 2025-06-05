@@ -56,7 +56,7 @@ const AddSong = () => {
 
   });
   const { options: filteredSongSelectOptions, isLoadingOpenAI } = useFilteredSongOptions({ songOptions: songOptions, artistOptionValue: artistOptionValue });
-  const { mutate: addSongMutation, isPending } = useAddSong();
+  const { mutate: addSongMutation, isPending } = useAddSong("list");
 
   useEffect(() => {
     if (artistsDb?.data) {
