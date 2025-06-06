@@ -6,6 +6,7 @@ import { useForm } from "react-hook-form";
 import CreatableSelect from "react-select/creatable";
 import * as uuid from "uuid";
 import { getArtistsDb, getEventsList } from "../api/api";
+import { AlertSuggestions } from "../components/AlertSuggestions";
 import { AddToggleButtonGroup } from "../components/buttonGroups/AddToggleButtonGroup";
 import CheckboxGroup from "../components/buttonGroups/CheckboxGroup";
 import PageHeader from "../components/buttonGroups/Header";
@@ -35,6 +36,7 @@ const defaultValues = {
   eventDate: new Date(),
   plays: 1
 }
+const suggestionInitValue = { type: "", data: [] }
 
 const SongsSang = () => {
   const { showErrorToast } = useAppToast();
@@ -52,6 +54,8 @@ const SongsSang = () => {
   const notAvailable = watch("notAvailable");
 
   const [isVerifying, setIsVerifying] = useState<boolean>(false);
+  const [typoSuggestions, setTypoSuggestions] = useState(suggestionInitValue);
+
   //Select Options
   const [artistOptions, setArtistOptions] = useState<Option[]>([]);
   const [songOptions, setSongOptions] = useState<Option[]>([]);
@@ -80,12 +84,20 @@ const SongsSang = () => {
   }, [artistsDb])
 
   const onSubmit = async (data: SongsSangFormData) => {
+    setTypoSuggestions(suggestionInitValue)
     setIsVerifying(true)
     try {
       const res = await isDataVerified(data.title, data.artist)
       setIsVerifying(false)
       if (res?.verified === false) {
-        showErrorToast("Error verifying song data.", "Artist and song mismatch or typo present, please check data entered.");
+        if (res.type === "artist") {
+          setTypoSuggestions({ type: "artist", data: res.suggestions })
+          return
+        }
+        if (res.type === "song") {
+          console.log('%c AddSong.tsx - line: 87', 'color: white; background-color: #f58899;', "id", '<-"id"')
+          setTypoSuggestions({ type: "song", data: res.suggestions })
+        }
         return
       }
     } catch (verificationError) {
@@ -100,7 +112,6 @@ const SongsSang = () => {
     }
     const capitalizedArtistName = capitalizeArtistNames(data.artist)
     const capitalizedSongName = capitalizeSongNames(data.title)
-
     const songData = { songId: uuid.v4(), events: [eventData], ...data, artist: capitalizedArtistName, title: capitalizedSongName };
     addSongMutation(songData);
   };
@@ -226,6 +237,16 @@ const SongsSang = () => {
             notAvailable={notAvailable}
             setValue={setValue}
           />
+
+          {typoSuggestions.data.length > 0 &&
+            <AlertSuggestions
+              type={typoSuggestions.type as "artist" | "song"}
+              suggestions={typoSuggestions.data}
+              setValue={setValue}
+              setArtistOptionValue={setArtistOptionValue}
+              setSongOptionValue={setSongOptionValue}
+            />
+          }
 
           <HStack>
             <Button w={"100%"} type="submit" colorScheme="blue" isLoading={isPending || isVerifying} isDisabled={isPending || isVerifying}>

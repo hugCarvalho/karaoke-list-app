@@ -41,7 +41,8 @@ export async function suggestArtistName(misspelledName: string): Promise<string[
 
   const prompt = `
     The following is a potentially misspelled artist or music group name: "${misspelledName}".
-    Search for an artist name or group name that is similar to the misspelled name and return 3 suggestions for the correct spelling or similar popular artist/group names.
+    Search for an artist name or group name that is similar to the misspelled name and return ALWAYS one to three suggestions,
+    depending on how good the hipothesis are, for the correct spelling or similar popular artist/group names.
     Return the suggestions as a JSON object with a single key "suggestions", whose value is a JSON array of strings.
     Do NOT include any other text, explanation, or formatting outside of this JSON object.
 
