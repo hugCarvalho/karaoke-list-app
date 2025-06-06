@@ -69,7 +69,6 @@ const SongsSang = () => {
   const { mutate: addSongMutation, isPending } = useAddSong("event");
   const { options: filteredSongSelectOptions, isLoadingOpenAI } = useFilteredSongOptions({ songOptions: songOptions, artistOptionValue: artistOptionValue });
 
-
   useEffect(() => {
     if (artistsDb?.data) {
       const artist = getArtistsSelectData(artistsDb)
@@ -144,6 +143,7 @@ const SongsSang = () => {
             >
               Close Event
             </Button>
+            {/* ARTIST */}
             <FormControl isInvalid={!!errors.artist} isRequired>
               <FormLabel htmlFor="artist">Artist</FormLabel>
               <CreatableSelect
@@ -171,6 +171,7 @@ const SongsSang = () => {
                 <FormErrorMessage>{errors.artist.message}</FormErrorMessage>
               )}
             </FormControl>
+            {/* SONG TITLE */}
             <FormControl isInvalid={!!errors.title} isRequired>
               <FormLabel htmlFor="title">Song</FormLabel>
               <CreatableSelect
@@ -200,7 +201,7 @@ const SongsSang = () => {
               )}
             </FormControl>
           </Flex>
-
+          {/* LOCATION     */}
           <Flex direction={{ base: "column", md: "row" }} gap={4} mb={4}>
             <FormControl isInvalid={!!errors.location}>
               <FormLabel>Location</FormLabel>
@@ -209,7 +210,7 @@ const SongsSang = () => {
                 <FormErrorMessage>{errors.location.message}</FormErrorMessage>
               )}
             </FormControl>
-
+            {/* EVENT DATE */}
             <FormControl>
               <FormLabel>Event Date</FormLabel>
               <Input value={formatToGermanDate(new Date().toString())} isDisabled />
