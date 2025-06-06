@@ -1,4 +1,4 @@
-import { Alert, AlertDescription, AlertIcon, AlertTitle, Box, Button, Center, Flex, FormControl, FormErrorMessage, FormLabel, Stack } from "@chakra-ui/react";
+import { Box, Button, Center, Flex, FormControl, FormErrorMessage, FormLabel } from "@chakra-ui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
@@ -6,6 +6,7 @@ import { useForm } from "react-hook-form";
 import CreatableSelect from "react-select/creatable";
 import * as uuid from "uuid";
 import { getArtistsDb } from "../api/api";
+import { AlertSuggestions } from "../components/AlertSuggestions";
 import { AddToggleButtonGroup } from "../components/buttonGroups/AddToggleButtonGroup";
 import CheckboxGroup from "../components/buttonGroups/CheckboxGroup";
 import PageHeader from "../components/buttonGroups/Header";
@@ -76,6 +77,7 @@ const AddSong = () => {
     setIsVerifying(true)
     try {
       const res = await isDataVerified(data.title, data.artist)
+      console.log('%c AddSong.tsx - line: 80', 'color: white; background-color: #445470;', res, '<-res')
       setIsVerifying(false)
       if (res?.verified === false) {
         if (res.type === "artist") {
@@ -83,6 +85,7 @@ const AddSong = () => {
           return
         }
         if (res.type === "song") {
+          console.log('%c AddSong.tsx - line: 87', 'color: white; background-color: #f58899;', "id", '<-"id"')
           setTypoSuggestions({ type: "song", data: res.suggestions })
         }
         return
@@ -101,9 +104,10 @@ const AddSong = () => {
     const capitalizedArtistName = capitalizeArtistNames(data.artist)
     const capitalizedSongName = capitalizeSongNames(data.title)
     const songData = { songId: uuid.v4(), events: [eventData], ...data, artist: capitalizedArtistName, title: capitalizedSongName };
-
+    console.log('%c AddSong.tsx - line: 106', 'color: white; background-color: #f80303', songData, '<-songData')
     addSongMutation(songData);
   }
+  console.log('%c AddSong.tsx - line: 108', 'color: white; background-color: #00cc29', typoSuggestions, '<-typoSuggestions')
 
   return (
     <PageWrapper>
@@ -181,40 +185,13 @@ const AddSong = () => {
           setValue={setValue}
         />
         {typoSuggestions.data.length > 0 &&
-          <Box as="section" pb={4} justifyContent={"center"} display={"flex"} >
-            <Alert status="warning" variant="top-accent" flexDirection={"column"} rounded={"md"} maxWidth={"xl"}>
-              <AlertIcon />
-              <AlertTitle mb={2}> {typoSuggestions.type} could not be verified. Did you mean?</AlertTitle>
-              <AlertDescription
-                display="flex"
-                flexDirection="column"
-                alignItems="center"
-                textAlign="center"
-                mx="auto"
-              >
-                <Stack direction="row" spacing={2} justifyContent={"center"} flexWrap={"wrap"} >
-                  {typoSuggestions.data.map((item) => {
-                    return <Button key={item} variant="solid" padding={1} size={"xs"} colorScheme="green"
-                      onClick={() => {
-                        if (typoSuggestions.type === "artist") {
-                          setArtistOptionValue({ value: item, label: item })
-                          setValue("artist", item)
-                        }
-                        if (typoSuggestions.type === "song") {
-                          setSongOptionValue({ value: item, label: item })
-                          setValue("title", item)
-                        }
-                      }}
-                      type="submit"
-                    >
-                      {item}
-                    </Button>
-                  })}
-                </Stack>
-              </AlertDescription>
-
-            </Alert>
-          </Box>
+          <AlertSuggestions
+            type={typoSuggestions.type as "artist" | "song"}
+            suggestions={typoSuggestions.data}
+            setValue={setValue}
+            setArtistOptionValue={setArtistOptionValue}
+            setSongOptionValue={setSongOptionValue}
+          />
         }
         <Box display={"flex"} justifyContent={"center"} alignItems={"center"}>
           <Button type="submit" colorScheme="blue"

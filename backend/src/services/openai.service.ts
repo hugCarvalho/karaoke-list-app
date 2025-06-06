@@ -62,7 +62,7 @@ export async function suggestArtistName(misspelledName: string): Promise<string[
     });
 
     const content = response.choices[0].message.content;
-    console.log("first", content)
+    console.log("ARTIST NAME", content)
     if (content) {
       try {
         const parsedObject = JSON.parse(content);
@@ -106,7 +106,7 @@ export async function suggestSongName(artist: string, song: string): Promise<str
   A- a potentially misspelled song name.
   B- a song that does not belong to this artist: "${artist}".
   1- Prioritize searching for matches within songs that belong to "${artist}" and
-    return a min of 1 suggestion and a max of 3 suggestions, depending on how good the hipothesis are.
+    return ALWAYS a minimum of 1 suggestion and a max of 3 suggestions, depending on how good the hipothesis are.
     Return data as a JSON object with a single key "suggestions",
     whose value is a JSON array with the options, being the first one always the better match.
 
@@ -126,7 +126,7 @@ export async function suggestSongName(artist: string, song: string): Promise<str
     });
 
     const content = response.choices[0].message.content;
-    console.log("first", content)
+    console.log("SONG NAME", content)
     if (content) {
       try {
         const parsedObject = JSON.parse(content);
