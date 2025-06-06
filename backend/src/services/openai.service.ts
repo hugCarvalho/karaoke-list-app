@@ -41,7 +41,7 @@ export async function suggestArtistName(misspelledName: string): Promise<string[
 
   const prompt = `
     The following is a potentially misspelled artist or music group name: "${misspelledName}".
-    Search for an artist name or group name that is similar to the misspelled name and return 3 suggestion for the correct spelling or similar popular artist/group names.
+    Search for an artist name or group name that is similar to the misspelled name and return 3 suggestions for the correct spelling or similar popular artist/group names.
     Return the suggestions as a JSON object with a single key "suggestions", whose value is a JSON array of strings.
     Do NOT include any other text, explanation, or formatting outside of this JSON object.
 
@@ -86,32 +86,32 @@ export async function suggestArtistName(misspelledName: string): Promise<string[
 }
 
 /**
- * Generates suggestions for a song name, either correcting a typo or suggesting a different artist.
- * It uses the OpenAI API to analyze the provided song and artist context.
+ * Generates suggestions for a song name, specifically focusing on correcting typos or finding matches
+ * within the context of the provided artist. It prioritizes finding accurate matches
+ * for the given artist's discography.
  *
- * The function prioritizes:
- * 1. Correcting a typo in the song name if it's likely.
- * 2. If no typo is found, suggesting other artists who might have performed that song.
+ * This function uses the OpenAI API to analyze the provided song and artist names.
  *
- * @param artist The name of the artist currently associated with the song.
- * @param song The song name, which may be misspelled or associated with the wrong artist.
+ * @param artist The name of the artist to which the song is associated.
+ * @param song The song name, which may be misspelled or potentially an incorrect song for the artist.
  * @returns A Promise that resolves to a string array of suggestions.
- * - If a typo is found in the song name, the array will contain a single corrected song name (e.g., `["Lithium"]`).
- * - If the song belongs to a different artist, the array will contain one or more suggested artist/group/band names (e.g., `["Nirvana", "David Bowie"]`).
- * - Returns an empty array `[]` if the API call fails, the response cannot be parsed, or no relevant suggestions are found.
+ * The array will contain a minimum of 1 and a maximum of 3 suggestions,
+ * with the best match always being the first element.
+ * Returns an empty array `[]` if the API call fails, the response cannot be parsed,
+ * or no relevant suggestions are found by the AI.
  */
 export async function suggestSongName(artist: string, song: string): Promise<string[]> {
   const prompt = `
-    "${song}" is either:
-      A- a potentially misspelled song name.
-      B- a song that does not belong to this artist: "${artist}".
-    1- Prioritize searching for typos in the song name first. If a typo is found, stop and return a JSON object with a single key "suggestions", whose value is a JSON array with the correctly spelled song name as a string.
-    2- Otherwise, search for an artist/group/band that might have this song. If an artist is found, return artist/group/band name as a JSON object with a single key "suggestions", whose value is a JSON array of strings.
-    Do NOT include any other text, explanation, or formatting outside of this JSON object.
+  "${song}" is either:
+  A- a potentially misspelled song name.
+  B- a song that does not belong to this artist: "${artist}".
+  1- Prioritize searching for matches within songs that belong to "${artist}" and
+    return a min of 1 suggestion and a max of 3 suggestions, depending on how good the hipothesis are.
+    Return data as a JSON object with a single key "suggestions",
+    whose value is a JSON array with the options, being the first one always the better match.
 
     Example for case 1, artist is "Nirvana" and song is "litium": {"suggestions": ["Lithium"]} -> it is a typo
     Example for case 1, artist is "Queen" and song is "Under presure": {"suggestions": ["Under Pressure"]} -> it is a typo
-    Example for case 2, artist is "The Beach Boys" and song is "The man who sold the world": {"suggestions": ["Nirvana", "David Bowie"]}
   `;
 
   try {
@@ -134,6 +134,7 @@ export async function suggestSongName(artist: string, song: string): Promise<str
         if (parsedObject && Array.isArray(parsedObject.suggestions)) {
           return parsedObject.suggestions
             .filter((s: any) => typeof s === 'string')
+            .slice(0, 3);
         }
       } catch (parseError) {
         console.error(`Error parsing OpenAI response for suggestions (content: "${content}"):`, parseError);

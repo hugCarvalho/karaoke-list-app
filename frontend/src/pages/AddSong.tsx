@@ -1,4 +1,4 @@
-import { Button, Center, Flex, FormControl, FormErrorMessage, FormLabel } from "@chakra-ui/react";
+import { Alert, AlertDescription, AlertIcon, AlertTitle, Box, Button, Center, Flex, FormControl, FormErrorMessage, FormLabel, Stack } from "@chakra-ui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
@@ -30,6 +30,8 @@ const defaultValues = {
   plays: 0
 }
 
+const suggestionInitValue = { type: "", data: [] }
+
 const AddSong = () => {
   const { showErrorToast } = useAppToast();
   const { register, handleSubmit, watch, setValue, formState: { errors } } = useForm<BaseSongFormData>({
@@ -44,6 +46,7 @@ const AddSong = () => {
   const notAvailable = watch("notAvailable");
 
   const [isVerifying, setIsVerifying] = useState<boolean>(false);
+  const [typoSuggestions, setTypoSuggestions] = useState(suggestionInitValue);
   //Select Options
   const [artistOptions, setArtistOptions] = useState<Option[]>([]);
   const [songOptions, setSongOptions] = useState<Option[]>([]);
@@ -69,14 +72,22 @@ const AddSong = () => {
   }, [artistsDb])
 
   const onSubmit = async (data: BaseSongFormData) => {
+    setTypoSuggestions(suggestionInitValue)
     setIsVerifying(true)
     try {
       const res = await isDataVerified(data.title, data.artist)
       setIsVerifying(false)
       if (res?.verified === false) {
-        showErrorToast("Error verifying song data.", "Artist and song mismatch or typo present, please check data entered.");
+        if (res.type === "artist") {
+          setTypoSuggestions({ type: "artist", data: res.suggestions })
+          return
+        }
+        if (res.type === "song") {
+          setTypoSuggestions({ type: "song", data: res.suggestions })
+        }
         return
       }
+
     } catch (verificationError) {
       setIsVerifying(false)
       showErrorToast("Verification failed.", "An unexpected error occurred during verification.");
@@ -93,8 +104,7 @@ const AddSong = () => {
 
     addSongMutation(songData);
   }
-  console.log('%c AddSong.tsx - line: 99', 'color: white; background-color: #f58899;', artistOptionValue, '<-artistOptionValue')
-  console.log('%c AddSong.tsx - line: 100', 'color: white; background-color: #d815c5;', artistOptions, '<-artistOptions')
+
   return (
     <PageWrapper>
       <Center><AddToggleButtonGroup /></Center>
@@ -130,6 +140,7 @@ const AddSong = () => {
               <FormErrorMessage>{errors.artist.message}</FormErrorMessage>
             )}
           </FormControl>
+
           <FormControl isInvalid={!!errors.title} isRequired>
             <FormLabel htmlFor="title">Song</FormLabel>
             <CreatableSelect
@@ -169,12 +180,53 @@ const AddSong = () => {
           notAvailable={notAvailable}
           setValue={setValue}
         />
+        {typoSuggestions.data.length > 0 &&
+          <Box as="section" pb={4} justifyContent={"center"} display={"flex"} >
+            <Alert status="warning" variant="top-accent" flexDirection={"column"} rounded={"md"} maxWidth={"xl"}>
+              <AlertIcon />
+              <AlertTitle mb={2}> {typoSuggestions.type} could not be verified. Did you mean?</AlertTitle>
+              <AlertDescription
+                display="flex"
+                flexDirection="column"
+                alignItems="center"
+                textAlign="center"
+                mx="auto"
+              >
+                <Stack direction="row" spacing={2} justifyContent={"center"} flexWrap={"wrap"} >
+                  {typoSuggestions.data.map((item) => {
+                    return <Button key={item} variant="solid" padding={1} size={"xs"} colorScheme="green"
+                      onClick={() => {
+                        if (typoSuggestions.type === "artist") {
+                          setArtistOptionValue({ value: item, label: item })
+                          setValue("artist", item)
+                        }
+                        if (typoSuggestions.type === "song") {
+                          setSongOptionValue({ value: item, label: item })
+                          setValue("title", item)
+                        }
+                      }}
+                      type="submit"
+                    >
+                      {item}
+                    </Button>
+                  })}
+                </Stack>
+              </AlertDescription>
 
-        <Button type="submit" colorScheme="blue" isLoading={isPending || isVerifying} isDisabled={isPending || isVerifying}>
-          Save
-        </Button>
+            </Alert>
+          </Box>
+        }
+        <Box display={"flex"} justifyContent={"center"} alignItems={"center"}>
+          <Button type="submit" colorScheme="blue"
+            isLoading={isPending || isVerifying}
+            isDisabled={isPending || isVerifying}
+            width={"xl"}
+          >
+            Save
+          </Button>
+        </Box>
       </form>
-    </PageWrapper>
+    </PageWrapper >
   );
 };
 
