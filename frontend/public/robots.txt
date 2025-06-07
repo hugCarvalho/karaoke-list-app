@@ -1,0 +1,46 @@
+# robots.txt
+# This file tells search engine crawlers which URLs they can access on your site.
+# Place this file in your project's `public` folder.
+
+# User-agent: * applies the following rules to all web robots.
+User-agent: *
+
+# Allow: / instructs all robots to crawl all content on your website.
+# This is usually the default behavior if no robots.txt exists, but explicitly stating it
+# can be useful for clarity.
+Allow: /
+
+# Disallow rules: Uncomment and modify these lines if you want to prevent
+# search engines from crawling specific paths on your site.
+
+Disallow: /admin/
+# Disallows all robots from crawling any URLs under the /admin/ path.
+# Useful for administrative dashboards or backend interfaces.
+
+# Disallow: /login/
+# Disallows crawling of login pages. Users can still access them directly.
+
+Disallow: /register/
+# Disallows crawling of registration pages.
+
+# Disallow: /private/
+# Disallows crawling of any private or user-specific content areas.
+
+Disallow: /api/
+# Disallows crawling of API endpoints if they are not meant for public indexing.
+
+Disallow: /test/
+# Disallows crawling of any testing or development pages.
+
+# Disallow: /*.json$
+# Disallows crawling of all .json files (e.g., if you have data files that aren't meant
+# for direct indexing, but be careful not to block your manifest!)
+
+# Disallow: /*.xml$
+# Disallows crawling of all .xml files (e.g., if you have XML data files, but be
+# careful if you plan to have a sitemap.xml that you *do* want indexed).
+
+# Sitemap: You can optionally include the URL to your sitemap.xml file.
+# This helps search engines discover all your important pages.
+# If you create a sitemap, ensure it's also in your `public` folder.
+# Sitemap: https://yourdomain.com/sitemap.xml

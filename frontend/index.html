@@ -3,14 +3,89 @@
 
 <head>
   <meta charset="UTF-8" />
-  <link rel="icon" type="image/svg+xml" href="/vite.svg" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Karaoke</title>
+  <title>Karaoke List</title>
+
+  <!-- Essential SEO Meta Tags -->
+  <!-- Meta Description: A brief, accurate summary of the page's content for search engines. -->
+  <meta name="description"
+    content="Manage your karaoke song lists, track favorites, and plan your next singing session with the Karaoke List app.">
+  <!-- Canonical URL: Helps prevent duplicate content issues by specifying the preferred version of a page. -->
+  <!-- Replace with your actual domain when deploying -->
+  <link rel="canonical" href="https://karaoke-list-app.onrender.com/">
+
+  <!-- Open Graph Meta Tags (for social media sharing previews) -->
+  <!-- These ensure your links look good when shared on platforms like Facebook, LinkedIn, etc. -->
+  <meta property="og:title" content="Karaoke List - Your Ultimate Song Planner">
+  <meta property="og:description"
+    content="Manage your karaoke song lists, track favorites, and plan your next singing session with the Karaoke List app.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://karaoke-list-app.onrender.com/">
+  <!-- Replace with a relevant image for sharing, ideally 1200x630 pixels. Save it in your /public folder. -->
+  <meta property="og:image" content="https://karaoke-list-app.onrender.com/karaoke-list-share-image.jpg">
+
+  <!-- Twitter Card Meta Tags (for Twitter sharing previews) -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Karaoke List - Your Ultimate Song Planner">
+  <meta name="twitter:description"
+    content="Manage your karaoke song lists, track favorites, and plan your next singing session with the Karaoke List app.">
+  <!-- Replace with a relevant image for Twitter sharing, ideally 1200x675 pixels. Save it in your /public folder. -->
+  <meta name="twitter:image" content="https://karaoke-list-app.onrender.com/karaoke-list-twitter-image.jpg">
+
+  <!-- Favicons and Web App Manifest for PWA functionality -->
+  <!-- Standard favicon (for most browsers) -->
+  <link rel="icon" href="/favicon.ico" sizes="any">
+  <!-- Apple Touch Icon (for iOS home screen icon) -->
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+
+  <!-- Android Chrome icons (referenced by web app manifest) -->
+  <link rel="icon" type="image/png" sizes="192x192" href="/android-chrome-192x192.png">
+  <link rel="icon" type="image/png" sizes="512x512" href="/android-chrome-512x512.png">
+
+  <!-- Smaller favicons for various contexts -->
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+
+  <!-- Web App Manifest (essential for PWA installation) -->
+  <link rel="manifest" href="/site.webmanifest">
+
+  <!-- Theme color for browser UI and splash screen background color -->
+  <meta name="theme-color" content="#ffffff">
+  <meta name="background-color" content="#ffffff">
+
 </head>
 
 <body>
   <div id="root"></div>
   <script type="module" src="/src/main.tsx"></script>
+
+  <!-- Service Worker registration for PWA functionality -->
+  <script>
+    // Check if the browser supports Service Workers
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        // Register your service worker file (e.g., sw.js).
+        // This file should be placed in your `public` folder for Vite to serve it correctly.
+        navigator.serviceWorker.register('/sw.js')
+          .then(registration => {
+            console.log('Service Worker registered with scope:', registration.scope);
+          })
+          .catch(error => {
+            console.error('Service Worker registration failed:', error);
+          });
+      });
+    }
+  </script>
+
+  <!-- No-JavaScript Fallback (optional but good for accessibility/SEO) -->
+  <noscript>
+    <div style="padding: 20px; text-align: center; background-color: #ffcccc; color: #cc0000; font-family: sans-serif;">
+      <h1>JavaScript Required</h1>
+      <p>This application requires JavaScript to function. Please enable JavaScript in your browser settings to proceed.
+      </p>
+    </div>
+  </noscript>
+
 </body>
 
 </html>
