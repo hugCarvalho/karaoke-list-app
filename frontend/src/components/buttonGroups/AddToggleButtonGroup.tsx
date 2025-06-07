@@ -1,4 +1,4 @@
-import { Button, HStack } from "@chakra-ui/react";
+import { Button, ButtonGroup } from "@chakra-ui/react";
 import { useLocation, useNavigate } from "react-router-dom";
 
 export const AddToggleButtonGroup = () => {
@@ -15,13 +15,13 @@ export const AddToggleButtonGroup = () => {
   };
 
   return (
-    <HStack spacing={0} mb={4}>
+    <ButtonGroup isAttached mb={3}>
       <Button
         isActive={!isSangSongActive}
         onClick={handleAddClick}
         size="sm"
         variant={!isSangSongActive ? "solid" : "outline"}
-        colorScheme={!isSangSongActive ? "blue" : undefined}
+        colorScheme={!isSangSongActive ? "green" : undefined}
         borderRadius="md"
         borderRightRadius={0}
       >
@@ -32,12 +32,12 @@ export const AddToggleButtonGroup = () => {
         onClick={handleSangClick}
         size="sm"
         variant={isSangSongActive ? "solid" : "outline"}
-        colorScheme={isSangSongActive ? "blue" : undefined}
+        colorScheme={isSangSongActive ? "purple" : undefined}
         borderRadius="md"
         borderLeftRadius={0}
       >
         Sang
       </Button>
-    </HStack>
+    </ButtonGroup>
   );
 };

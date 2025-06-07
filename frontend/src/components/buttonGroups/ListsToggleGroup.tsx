@@ -24,14 +24,14 @@ export const ListsToggleGroup = ({ listName, setListName }: Props) => {
   ]
 
   return (
-    <ButtonGroup variant={"outline"} isAttached>
+    <ButtonGroup variant={"outline"} isAttached mb={3}>
       {buttons.map((button) => (
         <Button
           key={button.label}
           onClick={button.action}
           size="sm"
           variant={button.active ? "solid" : "outline"}
-          colorScheme={button.active ? "blue" : undefined}
+          colorScheme={button.active ? "yellow" : undefined}
           borderRadius="md"
           px={{ base: 2, md: 4 }}
           py={{ base: 1, md: 2 }}

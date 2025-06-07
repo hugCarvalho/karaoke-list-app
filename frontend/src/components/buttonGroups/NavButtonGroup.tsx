@@ -3,20 +3,18 @@ import { useLocation, useNavigate } from "react-router-dom";
 
 const NavButtons = () => {
   const navigate = useNavigate();
-  const location = useLocation();
+  const { pathname } = useLocation();
   const [isMobile] = useMediaQuery("(max-width: 768px)");
 
   const buttons = [
-    { label: "Add", path: "/", icon: "➕" },
-    { label: "List", path: "/list", icon: "📜" },
-    { label: "History", path: "/history", icon: "⏭️" },
-
+    { label: "ADD", path: "/", icon: "➕" },
+    { label: "LIST", path: "/list", icon: "📜" },
+    { label: "HISTORY", path: "/history", icon: "⏭️" },
     // { label: "Fav", path: "/favourites", icon: "⭐" },
     // { label: "Blacklist", path: "/blacklist", icon: "🚫" },
     // { label: "Duet", path: "/duet", icon: "🎤" },
     // { label: "Next", path: "/next-event-list", icon: "⏭️" },
   ];
-
   return (
     <Flex
       p={4}
@@ -26,18 +24,19 @@ const NavButtons = () => {
       justify={"center"}
       background={"black"}
     >
-      <ButtonGroup isAttached variant="outline" >
-        {buttons.map((button) => (
-          <Button
-            key={button.path}
+      <ButtonGroup isAttached variant="solid" >
+        {buttons.map((button) => {
+          return <Button
+            key={button.label}
             onClick={() => navigate(button.path)}
-            isActive={location.pathname === button.path}
+            variant={"link"}
+            colorScheme={pathname === button.path || (pathname === "/songs-sang" && button.label === "ADD") ? "orange" : undefined} //TODO: decide wether to use path or state and update/fix code
             px={{ base: 2, md: 4 }}
             py={{ base: 1, md: 2 }}
           >
             {isMobile ? button.label : `${button.label} ${button.icon}`}
           </Button>
-        ))}
+        })}
       </ButtonGroup>
     </Flex>
   );

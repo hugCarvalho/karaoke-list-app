@@ -120,20 +120,19 @@ const SongsSang = () => {
   return (
     <PageWrapper>
       <Center><AddToggleButtonGroup /></Center>
-      <Center mb={4}>
-        <PageHeader
-          title="Songs Sang"
-          //TODO: tooltip format
-          tooltipLabel="1- Open an event. 2-Add new songs that have you sung 3-If song already exists, use lists instead 4- This will appear in the history 5- There can be only one event open at the same time."
-        />
-      </Center>
-      {isEventsListLoading ? <Center>
-        <Spinner />
-      </Center> : <>
-      </>
+
+      <PageHeader
+        title="Songs Sang"
+        //TODO: tooltip format
+        tooltipLabel="1- Open an event. 2-Add new songs that have you sung 3-If song already exists, use lists instead 4- This will appear in the history 5- There can be only one event open at the same time."
+      />
+      {isEventsListLoading &&
+        <Center>
+          <Spinner />
+        </Center>
       }
-      {
-        !isEventsListLoading && !isEventOpen && <>
+      {!isEventsListLoading && !isEventOpen &&
+        <>
           <div>
             <p>{!isEventsListLoading && "You have no events open. Create one?"}</p>
             <Button onClick={() => createEventMutation()}>Create event</Button>
@@ -143,16 +142,6 @@ const SongsSang = () => {
       {
         !isEventsListLoading && isEventOpen && <><form onSubmit={handleSubmit(onSubmit)} noValidate>
           <Flex direction={{ base: "column", md: "row" }} gap={4} mb={4}>
-            {/* BTN mobile only */}
-            <Button
-              display={{ base: "block", md: "none" }}
-              isLoading={isCloseEventPending}
-              isDisabled={isCloseEventPending}
-              onClick={() => closeEventMutation()}
-              variant={"secondary"}
-            >
-              Close Event
-            </Button>
             {/* ARTIST */}
             <FormControl isInvalid={!!errors.artist} isRequired>
               <FormLabel htmlFor="artist">Artist</FormLabel>
@@ -226,7 +215,7 @@ const SongsSang = () => {
               <Input value={formatToGermanDate(new Date().toString())} isDisabled />
             </FormControl>
           </Flex>
-
+          {/* CHECKBOXES GROUP */}
           <CheckboxGroup
             duet={duet}
             register={register}
@@ -236,7 +225,7 @@ const SongsSang = () => {
             notAvailable={notAvailable}
             setValue={setValue}
           />
-
+          {/* ARTIST OR SONG SUGGESTIONS */}
           {typoSuggestions.data.length > 0 &&
             <AlertSuggestions
               type={typoSuggestions.type as "artist" | "song"}
@@ -246,15 +235,15 @@ const SongsSang = () => {
               setSongOptionValue={setSongOptionValue}
             />
           }
-
+          {/* ACTION BTNS */}
           <HStack>
-            <Button w={"100%"} type="submit" colorScheme="blue" isLoading={isPending || isVerifying} isDisabled={isPending || isVerifying}>
+            <Button flex={1} type="submit" colorScheme="blue" isLoading={isPending || isVerifying} isDisabled={isPending || isVerifying}>
               Save
             </Button>
-            {/* BTN mobile only */}
             <Button
-              w={"20%"}
-              display={{ base: "none", md: "block" }}
+              w={{ base: "auto", md: "20%" }}
+              p={{ base: 1, md: undefined }}
+              fontSize={{ base: "xs", md: "md" }}
               isLoading={isCloseEventPending}
               isDisabled={isCloseEventPending}
               onClick={() => closeEventMutation()}
@@ -264,7 +253,6 @@ const SongsSang = () => {
             </Button>
           </HStack>
         </form>
-
         </>
       }
     </PageWrapper>
