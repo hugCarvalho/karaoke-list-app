@@ -22,7 +22,7 @@ import { useFilteredSongOptions } from "../hooks/useFilteredSongOptions";
 import { isDataVerified } from "../services/externalApi";
 import { getArtistsSelectData, getSongsSelectData } from "../utils/artists";
 import { formatToGermanDate } from "../utils/date";
-import { capitalizeArtistNames, capitalizeSongNames } from "../utils/strings";
+import { capitalizeArtistNames } from "../utils/strings";
 
 const defaultValues = {
   title: "",
@@ -111,8 +111,7 @@ const SongsSang = () => {
       eventDate: data.eventDate
     }
     const capitalizedArtistName = capitalizeArtistNames(data.artist)
-    const capitalizedSongName = capitalizeSongNames(data.title)
-    const songData = { songId: uuid.v4(), events: [eventData], ...data, artist: capitalizedArtistName, title: capitalizedSongName };
+    const songData = { songId: uuid.v4(), events: [eventData], ...data, artist: capitalizedArtistName };
     addSongMutation(songData);
   };
 

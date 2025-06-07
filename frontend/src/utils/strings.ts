@@ -20,7 +20,7 @@ export const capitalizeArtistNames = (artistName: string) => {
  * @param songName The raw song name string.
  * @returns The capitalized song name.
  */
-export const capitalizeSongNames = (songName: string): string => {
+export const capitalizeSongNames = (songName: string): string => { // Todo: in german names look weird, what to do?
   if (!songName) {
     return "";
   }
