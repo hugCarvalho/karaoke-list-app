@@ -15,7 +15,7 @@ export const AddToggleButtonGroup = () => {
   };
 
   return (
-    <ButtonGroup isAttached mb={3}>
+    <ButtonGroup isAttached mb={5} mt={3}>
       <Button
         isActive={!isSangSongActive}
         onClick={handleAddClick}
