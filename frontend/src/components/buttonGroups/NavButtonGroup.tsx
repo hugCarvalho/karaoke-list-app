@@ -30,11 +30,11 @@ const NavButtons = () => {
             key={button.label}
             onClick={() => navigate(button.path)}
             variant={"link"}
-            colorScheme={pathname === button.path || (pathname === "/songs-sang" && button.label === "ADD") ? "orange" : undefined} //TODO: decide wether to use path or state and update/fix code
+            color={pathname === button.path || (pathname === "/songs-sang" && button.label === "ADD") ? "orange" : "inherit"} //TODO: decide wether to use path or state and update/fix code
             px={{ base: 2, md: 4 }}
             py={{ base: 1, md: 2 }}
           >
-            {isMobile ? button.label : `${button.label} ${button.icon}`}
+            {`${button.label} ${button.icon}`}
           </Button>
         })}
       </ButtonGroup>

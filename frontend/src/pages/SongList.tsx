@@ -16,6 +16,7 @@ import { useFilteredSongs } from "../hooks/list/useFilteredSongs";
 import { useSortableList } from "../hooks/list/useSortableList";
 
 const tableFontSize = { base: "xs", md: "md" };
+const header = "60px"
 
 const SongList = () => {
   const [songFilterText, setSongFilterText] = useState("");
@@ -46,12 +47,13 @@ const SongList = () => {
   return (
     <PageWrapper>
       <VStack spacing={4} alignItems="stretch" >
-        <VStack paddingBottom={2} position={"sticky"} top={"72px"} zIndex={10} background={"#19202c"}>
+        <VStack position={"sticky"} top={header} zIndex={10} background={"#19202c"} spacing={3} p={3} >
+          {/* SUB LISTS NAVIGATION BAR  */}
           <Center>
             <ListsToggleGroup listName={listName} setListName={setListName} />
           </Center>
-
           <HStack spacing={4}>
+            {/* FILTER BY ARTIST INPUT */}
             <InputGroup>
               <Input
                 placeholder="Filter by artist"
@@ -74,6 +76,7 @@ const SongList = () => {
                 </InputRightElement>
               )}
             </InputGroup>
+            {/* FILTER BY SONG INPUT */}
             <InputGroup>
               <Input
                 placeholder="Filter by song name"
@@ -97,7 +100,6 @@ const SongList = () => {
               )}
             </InputGroup>
           </HStack>
-
         </VStack>
         <TableWrapper>
           <TableHead sortConfig={sortConfig} requestSort={requestSort} tableFontSize={tableFontSize} />
