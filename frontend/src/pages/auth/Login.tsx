@@ -32,12 +32,13 @@ const Login = () => {
 
   return (
     <Flex minH="100vh" align="center" justify="center">
-      <Container mx="auto" maxW="md" py={120} px={10} textAlign="center">
+      <Container mx="auto" maxW="md" py={120} px={10} textAlign="center" role="main">
         <Heading fontSize="4xl" mb={8} color="whiteAlpha.900" pb={10}>
           <i>Sing</i> in to your account
         </Heading>
         {/* MAIN AUTHENTICATION BOX */}
         <Box
+          role="region"
           boxShadow={"0px -6px 5px rgba(254, 254, 254, 0.877)"}
           rounded="lg"
           bg="gray.700"
@@ -47,7 +48,7 @@ const Login = () => {
           {/* ROUNDED CIRCLE ICON */}
           <IconCircle />
           {/* ERROR MESSAGE FOR API CALL */}
-          <Box mb={3} color="red.400" minH={6}>
+          <Box mb={3} color="red.400" minH={6} role="alert">
             {isError && "Invalid email or password"}
           </Box>
 
@@ -71,7 +72,7 @@ const Login = () => {
                   _placeholder={{ color: "gray.200" }}
                 />
                 {/* ERROR MESSAGE EMAIL */}
-                <Text fontSize="xs" color="red.300" textAlign={"left"} minH={4} lineHeight={1.4}>
+                <Text fontSize="xs" color="red.300" textAlign={"left"} minH={4} lineHeight={1.4} aria-live="polite">
                   {errors.email && errors.email.message}
                 </Text>
               </FormControl>
@@ -92,7 +93,7 @@ const Login = () => {
                   _placeholder={{ color: "gray.200" }}
                 />
                 {/* ERROR MESSAGE PASSWORD */}
-                <Text fontSize="xs" color="red.300" textAlign={"left"} minH={4} lineHeight={1.4}>
+                <Text fontSize="xs" color="red.300" textAlign={"left"} minH={4} lineHeight={1.4} aria-live="polite">
                   {errors.password && errors.password.message}
                 </Text>
               </FormControl>

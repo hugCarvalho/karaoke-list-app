@@ -5,6 +5,7 @@ const iconCircleSize = "70px";
 export const IconCircle = () => {
   return (
     <Box
+      aria-hidden="true"
       // border={"1px solid #4e4e4e"}
       position="absolute"
       top={`-${parseInt(iconCircleSize.replace('px', '')) / 2}px`}
@@ -18,7 +19,7 @@ export const IconCircle = () => {
       justifyContent="center"
       zIndex="1"
     >
-      <Text fontSize="3xl" aria-hidden="true">🎤</Text>
+      <Text fontSize="3xl" >🎤</Text>
     </Box>
   )
 }
