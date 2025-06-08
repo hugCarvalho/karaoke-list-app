@@ -103,9 +103,7 @@ const Login = () => {
                 to="/password/forgot"
                 fontSize="sm"
                 _hover={{ textDecoration: "underline" }}
-                textAlign={{
-                  base: "center",
-                }}
+                color={"blue.200"}
               >
                 Forgot password?
               </ChakraLink>
@@ -121,7 +119,7 @@ const Login = () => {
               {/* DON'T HAVE ACCOUNT */}
               <Text align="center" fontSize="sm">
                 Don&apos;t have an account?{" "}
-                <ChakraLink as={Link} to="/register" _hover={{ textDecoration: "underline" }}>
+                <ChakraLink as={Link} to="/register" _hover={{ textDecoration: "underline" }} color={"blue.200"} fontWeight={600}>
                   Sign up
                 </ChakraLink>
               </Text>
