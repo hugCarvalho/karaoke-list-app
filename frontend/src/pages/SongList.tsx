@@ -59,7 +59,7 @@ const SongList = () => {
                 placeholder="Filter by artist"
                 value={artistFilterText}
                 onChange={(e) => setArtistFilterText(e.target.value)}
-                size="md"
+                size="sm"
                 bg="gray.100"
                 _placeholder={{ color: 'gray.500' }}
                 color={"blackAlpha.800"}
@@ -82,7 +82,7 @@ const SongList = () => {
                 placeholder="Filter by song name"
                 value={songFilterText}
                 onChange={(e) => setSongFilterText(e.target.value)}
-                size="md"
+                size="sm"
                 bg="gray.100"
                 _placeholder={{ color: 'gray.500' }}
                 color={"blackAlpha.800"}
