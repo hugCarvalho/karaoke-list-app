@@ -16,7 +16,8 @@ import { useFilteredSongs } from "../hooks/list/useFilteredSongs";
 import { useSortableList } from "../hooks/list/useSortableList";
 
 const tableFontSize = { base: "xs", md: "md" };
-const header = "60px"
+const header = 60
+const extraPadding = 10
 
 const SongList = () => {
   const [songFilterText, setSongFilterText] = useState("");
@@ -47,7 +48,7 @@ const SongList = () => {
   return (
     <PageWrapper>
       <VStack spacing={4} alignItems="stretch" >
-        <VStack position={"sticky"} top={header} zIndex={10} background={"#19202c"} spacing={3} p={3} >
+        <VStack position={"sticky"} top={`${header + extraPadding}px`} zIndex={10} background={"#19202c"} spacing={3} p={3} >
           {/* SUB LISTS NAVIGATION BAR  */}
           <Center>
             <ListsToggleGroup listName={listName} setListName={setListName} />
