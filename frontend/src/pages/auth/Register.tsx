@@ -3,6 +3,7 @@ import { useMutation } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import { signup } from "../../api/api";
+import { IconCircle } from "../../components/IconCircle";
 import { EMAIL_PATTERN } from "../../constants/email";
 
 type FormData = {
@@ -10,22 +11,11 @@ type FormData = {
   password: string;
   confirmPassword: string;
 };
+const defaultValues = { email: "", password: "", confirmPassword: "" };
 
 const Register = () => {
   const navigate = useNavigate();
-  const {
-    handleSubmit,
-    register,
-    formState: { isSubmitting, errors, isValid },
-    reset,
-    watch,
-  } = useForm({
-    defaultValues: {
-      email: "",
-      password: "",
-      confirmPassword: "",
-    },
-  });
+  const { handleSubmit, register, formState: { isSubmitting, errors, isValid }, reset, watch } = useForm<FormData>({ defaultValues });
 
   const { mutate: createAccount, isPending, isError, error } = useMutation({
     mutationFn: signup,
@@ -43,20 +33,32 @@ const Register = () => {
 
   return (
     <Flex minH="100vh" align="center" justify="center">
-      <Container mx="auto" maxW="md" py={12} px={6} textAlign="center">
-        <Heading fontSize="4xl" mb={6}>
+      <Container mx="auto" maxW="md" px={10} textAlign="center" role="main">
+        <Heading fontSize="4xl" mb={20} color="whiteAlpha.900">
           Create an account
         </Heading>
-        <Box rounded="lg" bg="gray.700" boxShadow="lg" p={8}>
-          {isError && (
-            <Box mb={3} color="red.400">
-              {error?.message || "An error occurred"}
-            </Box>
-          )}
+        {/* MAIN AUTHENTICATION BOX */}
+        <Box
+          role="region"
+          boxShadow={"0px -6px 5px rgba(254, 254, 254, 0.877)"}
+          rounded="lg"
+          bg={"gray.700"}
+          p={8}
+          position="relative"
+        >
+          {/* Rounded Circle Icon */}
+          <IconCircle />
+
+          {/* ERROR MESSAGE FOR API CALL */}
+          <Box mb={3} color="red.400" minH={6} textAlign="center" role="alert">
+            {isError && (error?.message || "An error occurred")}
+          </Box>
+
           <form onSubmit={handleSubmit(onSubmit)}>
-            <Stack spacing={4}>
+            <Stack spacing={1}>
+              {/* EMAIL INPUT */}
               <FormControl id="email" isInvalid={Boolean(errors.email)}>
-                <FormLabel>Email address</FormLabel>
+                <FormLabel >Email address</FormLabel>
                 <Input
                   type="email"
                   {...register("email", {
@@ -67,14 +69,16 @@ const Register = () => {
                     },
                   })}
                   autoFocus
+                  borderColor="gray.600"
+                  color="white"
+                  _placeholder={{ color: "gray.200" }}
                 />
-                {errors.email?.message && (
-                  <Text fontSize="sm" color="red.500">
-                    {errors.email.message}
-                  </Text>
-                )}
+                {/* Error message for email field */}
+                <Text fontSize="xs" color="red.300" textAlign={"left"} minH={4} lineHeight={1.4} aria-live="polite">
+                  {errors.email?.message && errors.email.message}
+                </Text>
               </FormControl>
-
+              {/* PASSWORD INPUT*/}
               <FormControl id="password" isInvalid={Boolean(errors.password)}>
                 <FormLabel>Password</FormLabel>
                 <Input
@@ -86,45 +90,58 @@ const Register = () => {
                       message: "Password must be at least 6 characters",
                     },
                   })}
+                  borderColor="gray.600"
+                  color="white"
                 />
-                {errors.password?.message && (
-                  <Text fontSize="sm" color="red.500">
-                    {errors.password.message}
-                  </Text>
-                )}
-                <Text color="text.muted" fontSize="xs" textAlign="left" mt={2}>
+                {/* PASSWORD HINT */}
+                <Text color="gray.400" fontSize="xs" textAlign="left">
                   - Must be at least 6 characters long.
                 </Text>
+                {/* ERROR MESSAGE FOR PASSWORD FIELD */}
+                <Text fontSize="xs" color="red.300" textAlign={"left"} minH={4} lineHeight={1.4} aria-live="polite">
+                  {errors.password?.message && errors.password.message}
+                </Text>
               </FormControl>
-
+              {/* CONFIRM PASSWORD INPUT */}
               <FormControl id="confirmPassword" isInvalid={Boolean(errors.confirmPassword)}>
                 <FormLabel>Confirm Password</FormLabel>
                 <Input
                   type="password"
                   {...register("confirmPassword", {
                     required: "Confirm password is required",
-                    validate: (value) => value === watch("password") || "Passwords do not match", // Corrected line
+                    validate: (value) => value === watch("password") || "Passwords do not match",
                   })}
+                  borderColor="gray.600"
+                  color="white"
                 />
-                {errors.confirmPassword?.message && (
-                  <Text fontSize="sm" color="red.500">
-                    {errors.confirmPassword.message}
-                  </Text>
-                )}
+                {/* ERROR MESSAGE FOR CONFIRM PASSWORD FIELD */}
+                <Text fontSize="xs" color="red.300" textAlign={"left"} minH={4} lineHeight={1.4} aria-live="polite">
+                  {errors.confirmPassword?.message && errors.confirmPassword.message}
+                </Text>
               </FormControl>
-
+              {/* FORGOT PASSWORD LINK */}
+              <ChakraLink
+                as={Link}
+                to="/password/forgot"
+                fontSize="sm"
+                _hover={{ textDecoration: "underline" }}
+              >
+                Forgot password?
+              </ChakraLink>
+              {/* CTA BUTTON */}
               <Button
                 my={2}
                 isLoading={isPending || isSubmitting}
-                isDisabled={!isValid}
+                isDisabled={isPending || isSubmitting}
                 type="submit"
+                size="md"
               >
                 Create Account
               </Button>
-
-              <Text align="center" fontSize="sm" color="text.muted">
+              {/* ALREADY HAVE ACCOUNT TEXT AND LINK */}
+              <Text align="center" fontSize="sm" color="gray.300">
                 Already have an account?{" "}
-                <ChakraLink as={Link} to="/login">
+                <ChakraLink as={Link} to="/login" _hover={{ textDecoration: "underline" }}>
                   Sign in
                 </ChakraLink>
               </Text>
