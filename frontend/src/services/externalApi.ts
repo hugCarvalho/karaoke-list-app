@@ -71,7 +71,6 @@ export const isDataVerified = async (song: string, artist: string) => {
     throw new Error(errorData.error || 'Failed to fetch songs');
   }
   const { suggestions } = await response.json();
-  console.log("first", suggestions)
   return { type: "song", status: "success", verified: false, suggestions };
 };
 

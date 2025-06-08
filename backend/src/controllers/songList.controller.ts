@@ -59,7 +59,6 @@ const updateEventsList = async (userId: string, artistName: string, title: strin
 export const addOrUpdateSongHandler = catchErrors(async (req, res) => {
   const artistName = req.body.artist
   const title = req.body.title
-  console.log("addOrUpdateSongHandler", req.body.songId)
 
   try {
     const user = await UserModel.findById(req.userId);
@@ -115,7 +114,6 @@ export const addOrUpdateSongHandler = catchErrors(async (req, res) => {
 export const addSangSongHandler = catchErrors(async (req, res) => {
   const artistName = req.body.artist
   const title = req.body.title
-  console.log("addOrUpdateSongHandlerFFFFF", req.body.songId)
 
   try {
     const user = await UserModel.findById(req.userId);
@@ -219,8 +217,7 @@ export const getSongListHandler = catchErrors(async (req, res) => {
 
 export const updateSongHandler = catchErrors(async (req, res) => {
   const { songId, value, type } = req.body as { songId: string, value: boolean, type: "blacklisted" | "fav" | "nextEvent" };
-  // const userId = req.user._id;
-  // console.log('songId', songId, value, type)
+
   if (!songId || typeof value !== 'boolean') {
     return res.status(400).json({
       status: 400,

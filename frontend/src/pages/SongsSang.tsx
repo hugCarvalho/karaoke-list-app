@@ -95,7 +95,6 @@ const SongsSang = () => {
           return
         }
         if (res.type === "song") {
-          console.log('%c AddSong.tsx - line: 87', 'color: white; background-color: #f58899;', "id", '<-"id"')
           setTypoSuggestions({ type: "song", data: res.suggestions })
         }
         return

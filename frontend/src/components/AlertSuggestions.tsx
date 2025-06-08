@@ -13,7 +13,7 @@ type AlertSuggestionsProps = {
 
 export const AlertSuggestions = ({ type, suggestions, setValue, setArtistOptionValue, setSongOptionValue }: AlertSuggestionsProps) => {
   if (suggestions.length === 0) { return null; }
-  console.log('%c AlertSuggestions.tsx - line: 17', 'color: white; background-color: #f58801;', suggestions, '<-suggestions')
+
   return (
     <Box as="section" pb={4} justifyContent={"center"} display={"flex"} >
       <Alert status="warning" variant="top-accent" flexDirection={"column"} rounded={"md"} maxWidth={"xl"}>
