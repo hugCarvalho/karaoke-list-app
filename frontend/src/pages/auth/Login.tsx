@@ -32,8 +32,8 @@ const Login = () => {
 
   return (
     <Flex minH="100vh" align="center" justify="center">
-      <Container mx="auto" maxW="md" py={120} px={10} textAlign="center" role="main">
-        <Heading fontSize="4xl" mb={8} color="whiteAlpha.900" pb={10}>
+      <Container mx="auto" maxW="md" px={10} textAlign="center" role="main">
+        <Heading fontSize="4xl" mb={20} color="whiteAlpha.900">
           <i>Sing</i> in to your account
         </Heading>
         {/* MAIN AUTHENTICATION BOX */}
@@ -56,7 +56,7 @@ const Login = () => {
             <Stack spacing={2}>
               <FormControl id="email" isInvalid={Boolean(errors.email)}>
                 {/* EMAIL INPUT */}
-                <FormLabel color="whiteAlpha.800">Email address</FormLabel>
+                <FormLabel>Email address</FormLabel>
                 <Input
                   type="email"
                   {...register("email", {
@@ -78,7 +78,7 @@ const Login = () => {
               </FormControl>
               {/* PASSWORD */}
               <FormControl id="password" isInvalid={Boolean(errors.password)}>
-                <FormLabel color="whiteAlpha.800">Password</FormLabel>
+                <FormLabel>Password</FormLabel>
                 <Input
                   type="password"
                   {...register("password", {
@@ -102,7 +102,6 @@ const Login = () => {
                 as={Link}
                 to="/password/forgot"
                 fontSize="sm"
-                color="blue.300"
                 _hover={{ textDecoration: "underline" }}
                 textAlign={{
                   base: "center",
@@ -116,14 +115,13 @@ const Login = () => {
                 isLoading={isPending || isSubmitting}
                 isDisabled={isPending || isSubmitting}
                 type="submit"
-                colorScheme="teal"
               >
                 Sign in
               </Button>
               {/* DON'T HAVE ACCOUNT */}
-              <Text align="center" fontSize="sm" color="gray.300">
+              <Text align="center" fontSize="sm">
                 Don&apos;t have an account?{" "}
-                <ChakraLink as={Link} to="/register" color="blue.300" _hover={{ textDecoration: "underline" }}>
+                <ChakraLink as={Link} to="/register" _hover={{ textDecoration: "underline" }}>
                   Sign up
                 </ChakraLink>
               </Text>

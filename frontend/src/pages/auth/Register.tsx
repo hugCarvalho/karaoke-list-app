@@ -34,7 +34,7 @@ const Register = () => {
   return (
     <Flex minH="100vh" align="center" justify="center">
       <Container mx="auto" maxW="md" px={10} textAlign="center" role="main">
-        <Heading fontSize="4xl" mb={14} color="whiteAlpha.900">
+        <Heading fontSize="4xl" mb={20} color="whiteAlpha.900">
           Create an account
         </Heading>
         {/* MAIN AUTHENTICATION BOX */}
@@ -58,7 +58,7 @@ const Register = () => {
             <Stack spacing={1}>
               {/* EMAIL INPUT */}
               <FormControl id="email" isInvalid={Boolean(errors.email)}>
-                <FormLabel color="whiteAlpha.800">Email address</FormLabel>
+                <FormLabel >Email address</FormLabel>
                 <Input
                   type="email"
                   {...register("email", {
@@ -80,7 +80,7 @@ const Register = () => {
               </FormControl>
               {/* PASSWORD INPUT*/}
               <FormControl id="password" isInvalid={Boolean(errors.password)}>
-                <FormLabel color="whiteAlpha.800">Password</FormLabel>
+                <FormLabel>Password</FormLabel>
                 <Input
                   type="password"
                   {...register("password", {
@@ -104,7 +104,7 @@ const Register = () => {
               </FormControl>
               {/* CONFIRM PASSWORD INPUT */}
               <FormControl id="confirmPassword" isInvalid={Boolean(errors.confirmPassword)}>
-                <FormLabel color="whiteAlpha.800">Confirm Password</FormLabel>
+                <FormLabel>Confirm Password</FormLabel>
                 <Input
                   type="password"
                   {...register("confirmPassword", {
@@ -124,8 +124,7 @@ const Register = () => {
                 as={Link}
                 to="/password/forgot"
                 fontSize="sm"
-                color="blue.300"
-                _hover={{ textDecoration: "underline", color: "blue.400" }}
+                _hover={{ textDecoration: "underline" }}
               >
                 Forgot password?
               </ChakraLink>
@@ -135,7 +134,6 @@ const Register = () => {
                 isLoading={isPending || isSubmitting}
                 isDisabled={isPending || isSubmitting}
                 type="submit"
-                colorScheme="teal"
                 size="md"
               >
                 Create Account
@@ -143,7 +141,7 @@ const Register = () => {
               {/* ALREADY HAVE ACCOUNT TEXT AND LINK */}
               <Text align="center" fontSize="sm" color="gray.300">
                 Already have an account?{" "}
-                <ChakraLink as={Link} to="/login" color="blue.300" _hover={{ textDecoration: "underline", color: "blue.400" }}>
+                <ChakraLink as={Link} to="/login" _hover={{ textDecoration: "underline" }}>
                   Sign in
                 </ChakraLink>
               </Text>
