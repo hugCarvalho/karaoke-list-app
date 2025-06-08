@@ -63,7 +63,6 @@ export async function suggestArtistName(misspelledName: string): Promise<string[
     });
 
     const content = response.choices[0].message.content;
-    console.log("ARTIST NAME", content)
     if (content) {
       try {
         const parsedObject = JSON.parse(content);
@@ -127,7 +126,6 @@ export async function suggestSongName(artist: string, song: string): Promise<str
     });
 
     const content = response.choices[0].message.content;
-    console.log("SONG NAME", content)
     if (content) {
       try {
         const parsedObject = JSON.parse(content);

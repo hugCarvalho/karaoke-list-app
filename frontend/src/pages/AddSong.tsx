@@ -77,7 +77,6 @@ const AddSong = () => {
     setIsVerifying(true)
     try {
       const res = await isDataVerified(data.title, data.artist)
-      console.log('%c AddSong.tsx - line: 80', 'color: white; background-color: #445470;', res, '<-res')
       setIsVerifying(false)
       if (res?.verified === false) {
         if (res.type === "artist") {
@@ -85,7 +84,6 @@ const AddSong = () => {
           return
         }
         if (res.type === "song") {
-          console.log('%c AddSong.tsx - line: 87', 'color: white; background-color: #f58899;', "id", '<-"id"')
           setTypoSuggestions({ type: "song", data: res.suggestions })
         }
         return
@@ -103,10 +101,8 @@ const AddSong = () => {
     }
     const capitalizedArtistName = capitalizeArtistNames(data.artist)
     const songData = { songId: uuid.v4(), events: [eventData], ...data, artist: capitalizedArtistName };
-    console.log('%c AddSong.tsx - line: 106', 'color: white; background-color: #f80303', songData, '<-songData')
     addSongMutation(songData);
   }
-  console.log('%c AddSong.tsx - line: 108', 'color: white; background-color: #00cc29', typoSuggestions, '<-typoSuggestions')
 
   return (
     <PageWrapper>
