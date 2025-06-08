@@ -17,12 +17,14 @@ const NavButtons = () => {
   ];
   return (
     <Flex
+      as="nav"
       p={4}
       position={"fixed"}
       zIndex={100}
       width={"100%"}
       justify={"center"}
       background={"black"}
+      aria-label="Main website navigation"
     >
       <ButtonGroup isAttached variant="solid" >
         {buttons.map((button) => {
@@ -35,7 +37,9 @@ const NavButtons = () => {
             py={{ base: 1, md: 2 }}
           >
             {`${button.label}`}
-            <span style={{ fontSize: "20px", paddingLeft: "5px" }}>{` ${button.icon}`}</span>
+            <span style={{ fontSize: "20px", paddingLeft: "5px" }} aria-hidden="true">
+              {` ${button.icon}`}
+            </span>
           </Button>
         })}
       </ButtonGroup>
