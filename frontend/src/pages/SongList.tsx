@@ -16,6 +16,8 @@ import { useFilteredSongs } from "../hooks/list/useFilteredSongs";
 import { useSortableList } from "../hooks/list/useSortableList";
 
 const tableFontSize = { base: "xs", md: "md" };
+const header = 60
+const extraPadding = 10
 
 const SongList = () => {
   const [songFilterText, setSongFilterText] = useState("");
@@ -46,18 +48,19 @@ const SongList = () => {
   return (
     <PageWrapper>
       <VStack spacing={4} alignItems="stretch" >
-        <VStack paddingBottom={2} position={"sticky"} top={"72px"} zIndex={10} background={"#19202c"}>
+        <VStack position={"sticky"} top={`${header + extraPadding}px`} zIndex={10} background={"#19202c"} spacing={3} p={3} >
+          {/* SUB LISTS NAVIGATION BAR  */}
           <Center>
             <ListsToggleGroup listName={listName} setListName={setListName} />
           </Center>
-
           <HStack spacing={4}>
+            {/* FILTER BY ARTIST INPUT */}
             <InputGroup>
               <Input
                 placeholder="Filter by artist"
                 value={artistFilterText}
                 onChange={(e) => setArtistFilterText(e.target.value)}
-                size="md"
+                size="sm"
                 bg="gray.100"
                 _placeholder={{ color: 'gray.500' }}
                 color={"blackAlpha.800"}
@@ -74,12 +77,13 @@ const SongList = () => {
                 </InputRightElement>
               )}
             </InputGroup>
+            {/* FILTER BY SONG INPUT */}
             <InputGroup>
               <Input
                 placeholder="Filter by song name"
                 value={songFilterText}
                 onChange={(e) => setSongFilterText(e.target.value)}
-                size="md"
+                size="sm"
                 bg="gray.100"
                 _placeholder={{ color: 'gray.500' }}
                 color={"blackAlpha.800"}
@@ -97,7 +101,6 @@ const SongList = () => {
               )}
             </InputGroup>
           </HStack>
-
         </VStack>
         <TableWrapper>
           <TableHead sortConfig={sortConfig} requestSort={requestSort} tableFontSize={tableFontSize} />

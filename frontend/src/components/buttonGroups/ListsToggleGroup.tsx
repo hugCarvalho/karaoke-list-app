@@ -24,7 +24,7 @@ export const ListsToggleGroup = ({ listName, setListName }: Props) => {
   ]
 
   return (
-    <ButtonGroup variant={"outline"} isAttached mb={3}>
+    <ButtonGroup variant={"outline"} isAttached>
       {buttons.map((button) => (
         <Button
           key={button.label}

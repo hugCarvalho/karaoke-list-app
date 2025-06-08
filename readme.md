@@ -8,6 +8,7 @@
 
 ### 📡 APIs Used
   - [MusicBrainz](https://musicbrainz.org/doc/MusicBrainz_API)
+  - [OpenAi](https://platform.openai.com/docs/overview)
 
 ### ⚙️ Full Tech Stack
 * Main:
@@ -48,11 +49,12 @@
   - In-app features
     - Create lists (all, sang, favs, duet, blacklist, next event)
     - Add songs to lists
+    - Creatable Select with AI powered results 🪄
+    - AI powered suggestions when unknown artist or song 🪄
     - Move songs between lists
     - Remove songs from lists
-    - Delete songs from list
     - Songs sang history
-    - Creatable Select
+    - Delete songs from list
     - Number plays
 
 And more to come...
