@@ -1,6 +1,6 @@
 import { Center, Spinner } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
-import { Navigate, Route, Routes, useNavigate } from "react-router-dom";
+import { Navigate, Route, Routes, useLocation, useNavigate } from "react-router-dom";
 import AppContainer from "./components/AppContainer";
 import { TokenRefreshClient } from "./config/apiClient";
 import AddSong from "./pages/AddSong";
@@ -18,6 +18,7 @@ import Statistics from "./pages/profile/Statistics";
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
   const navigate = useNavigate();
+  const { pathname } = useLocation();
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -31,6 +32,30 @@ function App() {
 
     checkAuth();
   }, [navigate]);
+
+  //TODO - extend and move away
+  useEffect(() => {
+    let pageTitle;
+    if (pathname === '/') {
+      pageTitle = 'Karaoke App - Add songs to your list';
+    } else if (pathname === '/register') {
+      pageTitle = 'Karaoke App - Create Account';
+    } else if (pathname === '/login') {
+      pageTitle = 'Karaoke App - Sign In';
+    } else if (pathname === '/password/forgot') {
+      pageTitle = 'Karaoke App - Request Password';
+    } else if (pathname === '/password/reset') {
+      pageTitle = 'Karaoke App - Reset Password';
+    } else if (pathname === '/list') {
+      pageTitle = 'Karaoke App - List';
+    } else if (pathname === '/history') {
+      pageTitle = 'Karaoke App - History Events';
+    } else {
+      pageTitle = 'Karaoke App';
+    }
+    document.title = pageTitle;
+
+  }, [pathname]);
 
   if (isAuthenticated === null) {
     return <Center w="100vw" h="90vh" flexDir="column">
