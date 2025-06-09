@@ -108,7 +108,7 @@ const AddSong = () => {
     <PageWrapper>
       <Center><AddToggleButtonGroup /></Center>
 
-      <PageHeader title="Add songs" tooltipLabel="Add songs to your list" />
+      <PageHeader title="Add Songs to List" tooltipLabel="Add songs to your list" />
 
       <form onSubmit={handleSubmit(onSubmit)} noValidate>
         <Flex direction={{ base: "column", md: "row" }} gap={4} mb={4}>
