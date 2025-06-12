@@ -125,6 +125,7 @@ const Register = () => {
                 to="/password/forgot"
                 fontSize="sm"
                 _hover={{ textDecoration: "underline" }}
+                color={"blue.200"} fontWeight={600}
               >
                 Forgot password?
               </ChakraLink>
@@ -141,7 +142,7 @@ const Register = () => {
               {/* ALREADY HAVE ACCOUNT TEXT AND LINK */}
               <Text align="center" fontSize="sm" color="gray.300">
                 Already have an account?{" "}
-                <ChakraLink as={Link} to="/login" _hover={{ textDecoration: "underline" }}>
+                <ChakraLink as={Link} to="/login" _hover={{ textDecoration: "underline" }} color={"blue.200"} fontWeight={600}>
                   Sign in
                 </ChakraLink>
               </Text>
