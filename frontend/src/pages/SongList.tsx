@@ -44,7 +44,6 @@ const SongList = () => {
   if (data?.length === 0 && !isLoading && !isFetching) {
     return <EmptyList />
   }
-
   return (
     <PageWrapper>
       <VStack spacing={4} alignItems="stretch" >
