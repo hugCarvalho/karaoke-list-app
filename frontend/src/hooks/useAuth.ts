@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
-import { getUser, User } from "../api/api";
+import { User } from "src/config/interfaces";
+import { getUser } from "../api/api";
 import { QUERIES } from "../constants/queries";
 
 interface UseAuthResult {
