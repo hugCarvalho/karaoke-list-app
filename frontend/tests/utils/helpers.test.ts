@@ -1,4 +1,4 @@
-import { capitalizeArtistNames, capitalizeSongNames } from '../../src/utils/strings.ts';
+import { capitalizeArtistNames, capitalizeSongNames } from '../../src/utils/strings';
 
 describe('capitalizeArtistName', () => {
   it('should capitalize the first letter of each word', () => {

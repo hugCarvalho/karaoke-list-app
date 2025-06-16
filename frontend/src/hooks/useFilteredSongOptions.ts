@@ -31,16 +31,13 @@ export const useFilteredSongOptions = ({
   });
 
   const filteredAndUniqueOptions = useMemo(() => {
-    // 1. Filter songs from your DB by the selected artist
     const filteredFromDb = songOptions.filter(song => song.artist === artistOptionValue?.value);
 
-    // 2. Combine with songs from OpenAI if available
     let allOptions = [...filteredFromDb];
     if (backendSongOptions) {
       allOptions = [...allOptions, ...backendSongOptions];
     }
 
-    // 3. Create unique options based on 'value' (song title)
     const uniqueOptions: Option[] = [];
     const seenValues = new Set();
 
