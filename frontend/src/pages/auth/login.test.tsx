@@ -84,7 +84,7 @@ describe('Login Component', () => {
 
     expect(screen.getByRole('button', { name: /Sign in/i })).toBeInTheDocument();
     expect(screen.getByRole('link', { name: /Forgot password?/i })).toBeInTheDocument();
-    expect(screen.getByRole('link', { name: /Sign up/i })).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: "Sign up" })).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: /Sing in to your account/i })).toBeInTheDocument();
     expect(screen.getByRole('region')).toBeInTheDocument(); // MAIN AUTHENTICATION BOX
     expect(screen.getByRole('alert')).toBeInTheDocument(); // API Error message container
@@ -274,7 +274,7 @@ describe('Login Component', () => {
     const forgotPasswordLink = screen.getByRole('link', { name: /Forgot password?/i });
     expect(forgotPasswordLink).toHaveAttribute('href', '/password/forgot');
 
-    const signUpLink = screen.getByRole('link', { name: /Sign up/i });
+    const signUpLink = screen.getByRole('link', { name: "Sign up" });
     expect(signUpLink).toHaveAttribute('href', '/register');
   });
 });

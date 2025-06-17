@@ -120,7 +120,7 @@ const Login = () => {
               <Text align="center" fontSize="sm">
                 Don&apos;t have an account?{" "}
                 <ChakraLink as={Link} to="/register" _hover={{ textDecoration: "underline" }} color={"blue.200"} fontWeight={600}>
-                  Sign u
+                  Sign ups
                 </ChakraLink>
               </Text>
             </Stack>
