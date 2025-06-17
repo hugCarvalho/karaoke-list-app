@@ -1,0 +1,36 @@
+# .github/workflows/ci.yml
+
+name: CI
+
+on:
+  push:
+    branches:
+      - main # Runs on push to the main branch
+      - develop # Optional: runs on push to a develop branch
+  pull_request:
+    branches:
+      - main
+      - develop # Runs on pull requests targeting these branches
+
+jobs:
+  test:
+    name: Run Tests
+    runs-on: ubuntu-latest # The operating system to run the job on
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4 # Action to check out your repository code
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20' # Specify your Node.js version (e.g., 18, 20, 22)
+          cache: 'npm' # Caches npm dependencies to speed up builds
+
+      - name: Install dependencies
+        run: npm install # Or 'yarn install' if you use Yarn
+
+      - name: Run tests
+        run: npm test # Or 'yarn test'
+        env: # Optional: Set environment variables for your tests if needed
+          CI: true # Often used by test runners to indicate a CI environment
