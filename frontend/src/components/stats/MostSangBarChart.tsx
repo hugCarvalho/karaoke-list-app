@@ -102,12 +102,13 @@ const MostSangBarChart = ({ data }: { data: Song[] }) => {
           tick={CustomYAxisTick}
         />
         <Tooltip
+          cursor={{ fill: 'transparent' }}
           contentStyle={{ borderRadius: 15 }}
           labelStyle={{ color: "black", fontWeight: "bold" }}
-          itemStyle={{ paddingTop: '0px', paddingBottom: '2px', margin: 0, borderRadius: 10 }}
-          wrapperStyle={{ padding: '12px' }}
+          itemStyle={{ paddingTop: '0px', paddingBottom: '2px', margin: 0, borderRadius: 10, color: "limegreen" }}
+          wrapperStyle={{ padding: '8px' }}
         />
-        <Bar dataKey="plays" fill="#ff7300" />
+        <Bar dataKey="plays" fill="#ff7300" activeBar={{ fill: 'limegreen' }} />
       </BarChart>
     </ResponsiveContainer>
   );
