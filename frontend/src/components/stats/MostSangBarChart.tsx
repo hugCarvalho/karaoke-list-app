@@ -17,7 +17,7 @@ interface CustomYAxisTickProps {
     // ... other tick properties
   };
 }
-// --- Configuration for multi-line ticks ---
+// Configuration for multi-line ticks
 const MAX_CHARS_PER_LINE = 11;
 const LINE_HEIGHT_OFFSET = 12; // Adjust this to control vertical spacing between lines (e.g., fontSize + some padding)
 
@@ -71,7 +71,6 @@ const CustomYAxisTick = ({ x, y, payload }: CustomYAxisTickProps) => {
     </text>
   );
 };
-
 
 const MostSangBarChart = ({ data }: { data: Song[] }) => {
 
