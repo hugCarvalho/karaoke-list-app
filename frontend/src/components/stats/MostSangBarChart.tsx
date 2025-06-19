@@ -6,7 +6,7 @@ interface SongPlayData {
   title: string;
   plays: number;
 }
-const topCount = 5;
+const topCount = 10;
 
 const MostSangBarChart = ({ data }: { data: Song[] }) => {
 
@@ -23,16 +23,21 @@ const MostSangBarChart = ({ data }: { data: Song[] }) => {
   }, [data, topCount]);
 
   return (
-    <ResponsiveContainer width="100%" height={300}>
+    <ResponsiveContainer width="100%" maxHeight={500}>
       <BarChart
         data={mostSangData}
-        margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+        margin={{ top: 10, right: 0, left: 20, bottom: 5 }}
         layout="vertical"
       >
         <CartesianGrid strokeDasharray="3 3" />
         <XAxis type="number" label={{ value: 'Plays', position: 'bottom' }} />
         <YAxis type="category" dataKey="title" />
-        <Tooltip />
+        <Tooltip
+          contentStyle={{ borderRadius: 15 }}
+          labelStyle={{ color: "black", fontWeight: "bold" }}
+          itemStyle={{ paddingTop: '0px', paddingBottom: '2px', margin: 0, borderRadius: 10 }}
+          wrapperStyle={{ padding: '12px' }}
+        />
         <Bar dataKey="plays" fill="#ff7300" />
       </BarChart>
     </ResponsiveContainer>

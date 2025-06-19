@@ -20,6 +20,7 @@ export default function Statistics() {
         <Heading size="lg">Statistics</Heading>
       </Center>
       <MostSangBarChart data={data} />
+
     </PageWrapper>
   )
 }
