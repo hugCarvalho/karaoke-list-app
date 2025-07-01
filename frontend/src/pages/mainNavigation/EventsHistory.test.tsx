@@ -117,7 +117,7 @@ describe('EventsHistory', () => {
     expect(mockCreateEventMutate).toHaveBeenCalledTimes(1);
   });
 
-  test.only('renders active event and "Close Event" button when an event is open', async () => {
+  test('renders active event and "Close Event" button when an event is open', async () => {
     const activeEvent = { _id: 'e1', title: 'Karaoke Night', closed: false };
     const closedEvent = { _id: 'e2', title: 'Old Karaoke', closed: true };
     mockGetEventsList([activeEvent, closedEvent]);
