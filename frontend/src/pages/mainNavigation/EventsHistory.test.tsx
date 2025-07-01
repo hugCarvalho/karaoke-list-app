@@ -1,4 +1,3 @@
-// src/pages/EventsHistory/EventsHistory.test.tsx
 import userEvent from '@testing-library/user-event';
 import { render, screen, waitFor } from '../../../tests/utils/test-utils';
 
@@ -12,8 +11,6 @@ import { EventsHistory } from './EventsHistory';
 jest.mock('@tanstack/react-query', () => ({
   ...jest.requireActual('@tanstack/react-query'), // Keep all actual exports
   useQuery: jest.fn(), // <-- Mock useQuery specifically
-  // You might also want to mock useMutation similarly if needed for other tests
-  // useMutation: jest.fn(),
 }));
 
 // Mock the API calls
