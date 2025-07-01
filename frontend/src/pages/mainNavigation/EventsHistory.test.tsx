@@ -54,13 +54,18 @@ describe('EventsHistory', () => {
         },
       },
     });
-
-    // Reset the mock for useQuery before each test to ensure a clean state
-    (useQuery as jest.Mock).mockClear();
+    (useCreateEventHook.useCreateEvent as jest.Mock).mockReturnValue({
+      mutate: jest.fn(),
+      isPending: false,
+    });
+    (useCloseEventHook.useCloseEvent as jest.Mock).mockReturnValue({
+      mutate: jest.fn(),
+      isPending: false,
+    })
   });
 
   afterEach(async () => {
-    await queryClient.clear();
+    queryClient.clear();
   });
 
   const mockGetEventsList = (data: any[], isLoading = false, isFetching = false) => {
@@ -93,7 +98,7 @@ describe('EventsHistory', () => {
   test('renders loading spinner initially', () => {
     mockGetEventsList([], true, true);
     render(<EventsHistory />);
-    expect(screen.getByRole('progressbar')).toBeInTheDocument();
+    expect(screen.getByText('Loading...')).toBeInTheDocument();
     expect(screen.queryByText('Active Event')).not.toBeInTheDocument();
   });
 
