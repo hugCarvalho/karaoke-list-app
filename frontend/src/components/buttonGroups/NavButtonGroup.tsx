@@ -9,6 +9,7 @@ const NavButtons = () => {
   const buttons = [
     { label: "ADD", path: "/", icon: "➕" },
     { label: "LIST", path: "/list", icon: "📜" }, // 🗒🗓📜📃📑
+    { label: "SEARCH", path: "/search-song", icon: "🕰" }, // 🗒🗓📜📃📑
     { label: "HISTORY", path: "/history", icon: "📅" }, //🗞🗳🗃🗓🗂🗄🛎🎙🎚🎛🕰🛠🗡🛡🕳 📒📖
     // { label: "Fav", path: "/favourites", icon: "⭐" },
     // { label: "Blacklist", path: "/blacklist", icon: "🚫" },
