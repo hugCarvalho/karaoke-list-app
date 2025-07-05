@@ -12,6 +12,6 @@ listRoutes.post("/add-sang-song", addSangSongHandler)
 listRoutes.post("/add-event", addEventsHandler)
 listRoutes.post("/close-event", closeEventsHandler)
 listRoutes.patch("/update", updateSongHandler)
-listRoutes.delete("/delete/:songId", deleteSongHandler)
 listRoutes.patch("/update/songs/update-play/:songId", updateSongPlayCountHandler)
+listRoutes.delete("/delete/:songId", deleteSongHandler)
 export default listRoutes
