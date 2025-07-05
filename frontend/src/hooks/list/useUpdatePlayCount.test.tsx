@@ -2,7 +2,6 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { renderHook, waitFor } from '@testing-library/react';
 import React from 'react';
 import { useUpdatePlayCount } from './useUpdatePlayCount';
-// Mock the `apiClient` module directly since it uses `import.meta.env`
 jest.mock('../../config/apiClient', () => ({
   __esModule: true,
   default: {
@@ -172,7 +171,6 @@ describe('useUpdatePlayCount', () => {
       [QUERIES.SONGS_LIST],
       mockInitialSongsList // Expect rollback to the original list
     );
-    // --- FIX IS HERE: EXPECTED CALLS SHOULD BE 2 ---
     expect(mockedQueryClientInstance.setQueryData).toHaveBeenCalledTimes(2); // One for optimistic, one for rollback
 
     // Verify queries were invalidated in onSettled (even on error)
