@@ -40,7 +40,7 @@ const suggestionInitValue = { type: "", data: [] }
 
 const SongsSang = () => {
   const { showErrorToast } = useAppToast();
-  const { mutate: createEventMutation, isPending: isCreateEventPending, isSuccess } = useCreateEvent();
+  const { mutate: createEventMutation, isPending: isCreateEventPending } = useCreateEvent();
   const { mutate: closeEventMutation, isPending: isCloseEventPending, status: statusCloseEvent } = useCloseEvent();
   const { register, handleSubmit, watch, reset, setValue, formState: { errors } } = useForm<SongsSangFormData>({
     resolver: zodResolver(songsSangFormSchema),
@@ -66,7 +66,7 @@ const SongsSang = () => {
     queryKey: [QUERIES.GET_ARTISTS_DB],
     queryFn: getArtistsDb,
   });
-  const { data: eventsList, isLoading: isEventsListLoading, isRefetching: isEventsListRefetching, status } = useQuery<Data["events"]>({
+  const { data: eventsList, isLoading: isEventsListLoading, isRefetching: isEventsListRefetching } = useQuery<Data["events"]>({
     queryKey: [QUERIES.GET_EVENTS_LIST],
     queryFn: getEventsList,
   });
@@ -114,11 +114,6 @@ const SongsSang = () => {
   };
 
   const isEventOpen = eventsList?.some((e: KaraokeEvents) => !e.closed) ?? false;
-  // console.log('%c SongsSang.tsx - line: 121', 'color: white; background-color: #d815c5;', isEventOpen, '<-isEventOpen')
-  // console.log('%c SongsSang.tsx - line: 118 -->', 'color: white; background-color: #007acc', isEventsListLoading, '<-isEventsListLoading')
-  // console.log('%c SongsSang.tsx - line: 119', 'color: white; background-color: #f80303', isEventsListRefetching, '<-isEventsListRefetching')
-  console.log('%c SongsSang.tsx - line: 120', 'color: white; background-color: black;', isCloseEventPending, '<-isCloseEventPending')
-  console.log('%c SongsSang.tsx - line: 120', 'color: white; background-color: #1594d8;', statusCloseEvent, '<-status')
   const showSpinner = isEventsListLoading || (!isEventOpen && isEventsListRefetching)
 
   return (
