@@ -25,6 +25,20 @@ export const EventsHistory = () => {
       {
         (isLoading || isFetching) && <Center py={10}><Spinner size="xl" /></Center>
       }
+      {/* OPEN EVENT */}
+      {!isLoading && !isFetching && !isEventOpen && (
+        <VStack spacing={4} align="center" mb={8}>
+          <Text fontSize="lg">{!isEventOpen && "You have no events open. Create one?"}</Text>
+          <Button
+            isLoading={isCreateEventPending}
+            isDisabled={isCreateEventPending}
+            onClick={() => createEventMutation()}
+          >
+            Create Event
+          </Button>
+        </VStack>
+      )}
+      {/* CLOSE EVENT */}
       {!isLoading && !isFetching && isEventOpen && (
         <VStack spacing={4} mb={10}>
           <Heading as="h2" size="md" color={"burlywood"}>Active Event</Heading>
@@ -41,18 +55,6 @@ export const EventsHistory = () => {
             variant={"secondary"}
           >
             Close Event
-          </Button>
-        </VStack>
-      )}
-      {!isLoading && !isFetching && !isEventOpen && (
-        <VStack spacing={4} align="center" mb={8}>
-          <Text fontSize="lg">{!isEventOpen && "You have no events open. Create one?"}</Text>
-          <Button
-            isLoading={isCreateEventPending}
-            isDisabled={isCreateEventPending}
-            onClick={() => createEventMutation()}
-          >
-            Create Event
           </Button>
         </VStack>
       )}
