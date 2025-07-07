@@ -1,4 +1,4 @@
-import { Button, Center, Flex, FormControl, FormErrorMessage, FormLabel, HStack, Input, Spinner } from "@chakra-ui/react";
+import { Button, Center, Flex, FormControl, FormErrorMessage, FormLabel, HStack, Input, Spinner, Text, VStack } from "@chakra-ui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
@@ -40,8 +40,8 @@ const suggestionInitValue = { type: "", data: [] }
 
 const SongsSang = () => {
   const { showErrorToast } = useAppToast();
-  const { mutate: createEventMutation, isPending: isCreateEventPending } = useCreateEvent();
-  const { mutate: closeEventMutation, isPending: isCloseEventPending } = useCloseEvent();
+  const { mutate: createEventMutation, isPending: isCreateEventPending, isSuccess } = useCreateEvent();
+  const { mutate: closeEventMutation, isPending: isCloseEventPending, status: statusCloseEvent } = useCloseEvent();
   const { register, handleSubmit, watch, reset, setValue, formState: { errors } } = useForm<SongsSangFormData>({
     resolver: zodResolver(songsSangFormSchema),
     defaultValues,
@@ -66,7 +66,7 @@ const SongsSang = () => {
     queryKey: [QUERIES.GET_ARTISTS_DB],
     queryFn: getArtistsDb,
   });
-  const { data: eventsList, isLoading: isEventsListLoading } = useQuery<Data["events"]>({
+  const { data: eventsList, isLoading: isEventsListLoading, isRefetching: isEventsListRefetching, status } = useQuery<Data["events"]>({
     queryKey: [QUERIES.GET_EVENTS_LIST],
     queryFn: getEventsList,
   });
@@ -82,7 +82,6 @@ const SongsSang = () => {
       setSongOptions(songs)
     }
   }, [artistsDb])
-
   const onSubmit = async (data: SongsSangFormData) => {
     setTypoSuggestions(suggestionInitValue)
     setIsVerifying(true)
@@ -115,6 +114,12 @@ const SongsSang = () => {
   };
 
   const isEventOpen = eventsList?.some((e: KaraokeEvents) => !e.closed) ?? false;
+  // console.log('%c SongsSang.tsx - line: 121', 'color: white; background-color: #d815c5;', isEventOpen, '<-isEventOpen')
+  // console.log('%c SongsSang.tsx - line: 118 -->', 'color: white; background-color: #007acc', isEventsListLoading, '<-isEventsListLoading')
+  // console.log('%c SongsSang.tsx - line: 119', 'color: white; background-color: #f80303', isEventsListRefetching, '<-isEventsListRefetching')
+  console.log('%c SongsSang.tsx - line: 120', 'color: white; background-color: black;', isCloseEventPending, '<-isCloseEventPending')
+  console.log('%c SongsSang.tsx - line: 120', 'color: white; background-color: #1594d8;', statusCloseEvent, '<-status')
+  const showSpinner = isEventsListLoading || (!isEventOpen && isEventsListRefetching)
 
   return (
     <PageWrapper>
@@ -125,23 +130,27 @@ const SongsSang = () => {
         //TODO: tooltip format
         tooltipLabel="1- Open an event. 2-Add new songs that have you sung 3-If song already exists, use lists instead 4- This will appear in the history 5- There can be only one event open at the same time."
       />
-      {isEventsListLoading &&
+      {showSpinner &&
         <Center>
           <Spinner />
         </Center>
       }
-      {!isEventsListLoading && !isEventOpen &&
-        <>
-          <div>
-            <p>{!isEventsListLoading && "You have no events open. Create one?"}</p>
-            <Button onClick={() => createEventMutation()}>Create event</Button>
-          </div>
-        </>
+      {!isEventOpen && !isEventsListRefetching &&
+        <VStack spacing={4} align="center" mb={8}>
+          <Text fontSize="lg">{!isEventOpen && "You have no events open. Create one?"}</Text>
+          <Button
+            isLoading={isCreateEventPending}
+            isDisabled={isCreateEventPending}
+            onClick={() => createEventMutation()}
+          >
+            Create Event
+          </Button>
+        </VStack>
       }
-      {
-        !isEventsListLoading && isEventOpen && <><form onSubmit={handleSubmit(onSubmit)} noValidate>
+      {//FORM
+        isEventOpen && <form onSubmit={handleSubmit(onSubmit)} noValidate>
           <Flex direction={{ base: "column", md: "row" }} gap={4} mb={4}>
-            {/* ARTIST */}
+            {/* ARTIST INPUT*/}
             <FormControl isInvalid={!!errors.artist} isRequired>
               <FormLabel htmlFor="artist">Artist</FormLabel>
               <CreatableSelect
@@ -169,7 +178,7 @@ const SongsSang = () => {
                 <FormErrorMessage>{errors.artist.message}</FormErrorMessage>
               )}
             </FormControl>
-            {/* SONG TITLE */}
+            {/* SONG TITLE INPUT */}
             <FormControl isInvalid={!!errors.title} isRequired>
               <FormLabel htmlFor="title">Song</FormLabel>
               <CreatableSelect
@@ -236,7 +245,10 @@ const SongsSang = () => {
           }
           {/* ACTION BTNS */}
           <HStack>
-            <Button flex={1} type="submit" colorScheme="blue" isLoading={isPending || isVerifying} isDisabled={isPending || isVerifying}>
+            <Button flex={1} type="submit" colorScheme="blue"
+              isLoading={isPending || isVerifying}
+              isDisabled={isPending || isVerifying || isCloseEventPending || isEventsListRefetching}
+            >
               Save
             </Button>
             <Button
@@ -244,7 +256,7 @@ const SongsSang = () => {
               p={{ base: 1, md: undefined }}
               fontSize={{ base: "xs", md: "md" }}
               isLoading={isCloseEventPending}
-              isDisabled={isCloseEventPending}
+              isDisabled={isPending || isEventsListRefetching}
               onClick={() => closeEventMutation()}
               variant={"secondary"}
             >
@@ -252,7 +264,6 @@ const SongsSang = () => {
             </Button>
           </HStack>
         </form>
-        </>
       }
     </PageWrapper>
   );
