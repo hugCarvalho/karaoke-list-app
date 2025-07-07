@@ -41,7 +41,7 @@ const suggestionInitValue = { type: "", data: [] }
 const SongsSang = () => {
   const { showErrorToast } = useAppToast();
   const { mutate: createEventMutation, isPending: isCreateEventPending } = useCreateEvent();
-  const { mutate: closeEventMutation, isPending: isCloseEventPending, status: statusCloseEvent } = useCloseEvent();
+  const { mutate: closeEventMutation, isPending: isCloseEventPending } = useCloseEvent();
   const { register, handleSubmit, watch, reset, setValue, formState: { errors } } = useForm<SongsSangFormData>({
     resolver: zodResolver(songsSangFormSchema),
     defaultValues,
@@ -59,7 +59,7 @@ const SongsSang = () => {
   //Select Options
   const [artistOptions, setArtistOptions] = useState<Option[]>([]);
   const [songOptions, setSongOptions] = useState<Option[]>([]);
-  const [artistOptionValue, setArtistOptionValue] = useState<Option | null>();
+  const [artistOptionValue, setArtistOptionValue] = useState<Option | null>(null);
   const [songOptionValue, setSongOptionValue] = useState<Option | null>();
 
   const { data: artistsDb, error } = useQuery({
