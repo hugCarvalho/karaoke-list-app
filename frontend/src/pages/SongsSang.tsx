@@ -242,7 +242,7 @@ const SongsSang = () => {
           <HStack>
             <Button flex={1} type="submit" colorScheme="blue"
               isLoading={isPending || isVerifying}
-              isDisabled={isPending || isVerifying || isCloseEventPending}
+              isDisabled={isPending || isVerifying || isCloseEventPending || isEventsListRefetching}
             >
               Save
             </Button>
@@ -251,7 +251,7 @@ const SongsSang = () => {
               p={{ base: 1, md: undefined }}
               fontSize={{ base: "xs", md: "md" }}
               isLoading={isCloseEventPending}
-              isDisabled={isPending || isEventsListRefetching}
+              isDisabled={isPending || isCloseEventPending || isEventsListRefetching}
               onClick={() => closeEventMutation()}
               variant={"secondary"}
             >
