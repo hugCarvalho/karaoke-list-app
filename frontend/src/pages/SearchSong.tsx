@@ -76,11 +76,11 @@ export const SearchSong = () => {
 
   return (
     <PageWrapper>
-      <Heading size="md" mb={4}>Search Songs</Heading>
+      <Heading size="md" mb={6} textAlign={"center"}>Search Songs</Heading>
 
       <form onSubmit={handleSubmit(onSubmit)}>
         <Grid
-          templateColumns={{ base: "repeat(3, 1fr)", md: "repeat(4, 1fr)" }}
+          templateColumns={{ base: "repeat(3, 1fr)", md: "repeat(2, 1fr)" }}
           gap={4}
           mb={4}
         >
