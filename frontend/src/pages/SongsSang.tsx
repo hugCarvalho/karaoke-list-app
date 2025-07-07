@@ -242,7 +242,7 @@ const SongsSang = () => {
           <HStack>
             <Button flex={1} type="submit" colorScheme="blue"
               isLoading={isPending || isVerifying}
-              isDisabled={isPending || isVerifying || isCloseEventPending || isEventsListRefetching}
+              isDisabled={isPending || isVerifying || isCloseEventPending}
             >
               Save
             </Button>
