@@ -265,6 +265,41 @@ export const deleteSongHandler = catchErrors(async (req, res) => {
   return res.status(OK).json({ message: "Song removed" });
 });
 
+export const deleteSongFromCurrentEventHandler = catchErrors(async (req, res) => {
+  const songId = req.params.songId;
+  const userId = req.userId;
+  appAssert(songId, BAD_REQUEST, "Song ID is required.");
+
+  //Info: List.updateOne is better than List.findOneAndUpdate when no return data is needed, it is more performant
+  const result = await List.updateOne(
+    {
+      userId: userId,
+      "events.closed": false,
+      // OPTIONAL IMPROVEMENT: Pre-filter to ensure the song exists within that event's songs array.
+      // This makes `matchedCount` more precise.
+      "events.songs._id": songId
+    },
+    {
+      $pull: {
+        "events.$.songs": { _id: songId }
+      }
+    }
+  );
+
+  // Error Handling based on updateOne result
+  if (result.matchedCount === 0) {
+    // This means no List document was found that met all query criteria.
+    appAssert(false, NOT_FOUND, "List or current open event not found, or song does not exist within any event.");
+  }
+
+  if (result.modifiedCount === 0) {
+    // This means a List document was matched, but the $pull operation didn't modify it.
+    appAssert(false, NOT_FOUND, "Song not found in the current event's specific song list, or already removed.");
+  }
+
+  return res.status(OK).json({ message: "Song successfully removed from current event's list." });
+})
+
 export const getArtistsListHandler = catchErrors(async (req, res) => {
   const artists = await ArtistdbModel.find({});
   return res.status(OK).json({ success: true, data: artists });
