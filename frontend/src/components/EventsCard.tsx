@@ -1,14 +1,30 @@
 import { DeleteIcon } from '@chakra-ui/icons';
 import { Card, CardBody, Flex, HStack, IconButton, Spacer, Tag, Text, VStack } from '@chakra-ui/react';
+import { useMutation } from '@tanstack/react-query';
 import { useState } from 'react';
+import { deleteSongFromCurrentEvent } from '../api/api';
 import { KaraokeEvents } from '../config/interfaces';
-import { useDeleteSong } from '../hooks/list/useDeleteSong';
+import queryClient from '../config/queryClient';
+import { QUERIES } from '../constants/queries';
+import useAppToast from '../hooks/useAppToast';
 
 type Props = { event: KaraokeEvents, showDeleteButton?: boolean }
 
 const EventCard = ({ event, showDeleteButton }: Props) => {
+  const { showSuccessToast, showErrorToast } = useAppToast();
 
-  const { mutate: deleteSongMutation, isSuccess: isDeleteSongSuccess } = useDeleteSong();
+  const { mutate: deleteSong, isSuccess: isDeleteSongSuccess } = useMutation({
+    mutationFn: deleteSongFromCurrentEvent,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [QUERIES.GET_EVENTS_LIST] });
+    },
+    onError: (error: Error) => {
+      showErrorToast(
+        "Error deleting song",
+        error?.message || "An error occurred while deleting the song."
+      );
+    },
+  });
 
   const [songToDeleteId, setSongToDeleteId] = useState<string | null>(null);
   const formattedDate = event.eventDate
@@ -22,12 +38,12 @@ const EventCard = ({ event, showDeleteButton }: Props) => {
   const numberOfSongs = event.songs.length
 
   const handleDeleteSong = (songId: string, songTitle: string) => {
-    if (window.confirm(`Are you sure you want to delete "${songTitle}"?`)) {
-      setSongToDeleteId(songId);
-      deleteSongMutation({ songId });
-    }
+    console.log('%c EventsCard.tsx - line: 31 - HERE!!! LOOKING FOR ME? !!!', 'color: black; background-color: pink;')
+    deleteSong({ songId });
+    // if (window.confirm(`Are you sure you want to delete "${songTitle}"?`)) {
+    //   setSongToDeleteId(songId);
+    // }
   };
-
 
   return (
     <Card
