@@ -38,11 +38,10 @@ const EventCard = ({ event, showDeleteButton }: Props) => {
   const numberOfSongs = event.songs.length
 
   const handleDeleteSong = (songId: string, songTitle: string) => {
-    console.log('%c EventsCard.tsx - line: 31 - HERE!!! LOOKING FOR ME? !!!', 'color: black; background-color: pink;')
-    deleteSong({ songId });
-    // if (window.confirm(`Are you sure you want to delete "${songTitle}"?`)) {
-    //   setSongToDeleteId(songId);
-    // }
+    if (window.confirm(`Are you sure you want to delete "${songTitle}"?`)) {
+      deleteSong({ songId });
+      setSongToDeleteId(songId);
+    }
   };
 
   return (

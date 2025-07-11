@@ -52,7 +52,6 @@ export const deleteSong = async (data: { songId: string }) => {
   return API.delete(`/list/delete/${data.songId}`)
 };
 export const deleteSongFromCurrentEvent = (data: { songId: string }) => {
-  console.log("first", data)
   return API.delete(`/list/events/current/songs/${data.songId}`)
 };
 //Events
