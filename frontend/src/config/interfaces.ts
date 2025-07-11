@@ -34,6 +34,7 @@ export interface Song {
 }
 
 export type EventSongData = {
+  _id: string,
   artist: string,
   name: string
 }
