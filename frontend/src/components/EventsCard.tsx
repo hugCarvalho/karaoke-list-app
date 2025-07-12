@@ -1,32 +1,64 @@
 import { DeleteIcon } from '@chakra-ui/icons';
 import { Card, CardBody, Flex, HStack, IconButton, Spacer, Tag, Text, VStack } from '@chakra-ui/react';
-import { useMutation } from '@tanstack/react-query';
-import { useState } from 'react';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { deleteSongFromCurrentEvent } from '../api/api';
 import { KaraokeEvents } from '../config/interfaces';
-import queryClient from '../config/queryClient';
 import { QUERIES } from '../constants/queries';
 import useAppToast from '../hooks/useAppToast';
 
 type Props = { event: KaraokeEvents, showDeleteButton?: boolean }
 
-const EventCard = ({ event, showDeleteButton }: Props) => {
-  const { showSuccessToast, showErrorToast } = useAppToast();
+const EVENTS_LIST_QUERY_KEY = [QUERIES.GET_EVENTS_LIST];
 
-  const { mutate: deleteSong, isSuccess: isDeleteSongSuccess } = useMutation({
+const EventCard = ({ event, showDeleteButton }: Props) => {
+  const { showErrorToast } = useAppToast();
+
+  const queryClient = useQueryClient();
+
+  const { mutate: deleteSong } = useMutation({
     mutationFn: deleteSongFromCurrentEvent,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [QUERIES.GET_EVENTS_LIST] });
+    onMutate: async (variables) => {
+      const { songId } = variables;
+
+      // 1. Cancel any outgoing refetches so they don't overwrite optimistic update
+      await queryClient.cancelQueries({ queryKey: EVENTS_LIST_QUERY_KEY });
+
+      // 2. Snapshot the current data
+      const previousEvents = queryClient.getQueryData<KaraokeEvents[]>(EVENTS_LIST_QUERY_KEY);
+
+      // 3. Optimistically update the cache
+      queryClient.setQueryData<KaraokeEvents[]>(EVENTS_LIST_QUERY_KEY, (oldData) => {
+        if (!oldData) return oldData;
+
+        // Find the specific event card being rendered and modify its songs array
+        return oldData.map((e) => {
+          if (e._id === event._id) {
+            const updatedSongsList = e.songs.filter((song) => song._id !== songId);
+            return { ...e, songs: updatedSongsList };
+          }
+          return e;
+        });
+      });
+
+      // 4. Return a context object with the snapshotted data
+      return { previousEvents };
     },
-    onError: (error: Error) => {
+    onError: (error: Error, variables, context) => {
       showErrorToast(
         "Error deleting song",
         error?.message || "An error occurred while deleting the song."
       );
+      // 5. Rollback on error using the context data
+      if (context?.previousEvents) {
+        queryClient.setQueryData<KaraokeEvents[]>(EVENTS_LIST_QUERY_KEY, context.previousEvents);
+      }
+    },
+    onSettled: () => {
+      // 6. Invalidate and refetch to ensure client state is consistent with server
+      queryClient.invalidateQueries({ queryKey: EVENTS_LIST_QUERY_KEY });
     },
   });
 
-  const [songToDeleteId, setSongToDeleteId] = useState<string | null>(null);
   const formattedDate = event.eventDate
     ? new Date(event.eventDate).toLocaleDateString(undefined, {
       year: 'numeric',
@@ -40,7 +72,6 @@ const EventCard = ({ event, showDeleteButton }: Props) => {
   const handleDeleteSong = (songId: string, songTitle: string) => {
     if (window.confirm(`Are you sure you want to delete "${songTitle}"?`)) {
       deleteSong({ songId });
-      setSongToDeleteId(songId);
     }
   };
 
@@ -81,7 +112,7 @@ const EventCard = ({ event, showDeleteButton }: Props) => {
           </Flex>
 
           {/* Songs List */}
-          <VStack align="stretch" spacing={1} pt={1}>
+          <VStack align="stretch" spacing={1} pt={1} >
             {numberOfSongs > 0 ? (
               event.songs.map((song, index: number) => {
                 return <HStack key={index} spacing={1} wrap="wrap" p={1} borderRadius="sm" bg="rgba(255,255,255,0.03)">
@@ -91,12 +122,12 @@ const EventCard = ({ event, showDeleteButton }: Props) => {
                   <Text as="span" fontSize="sm" color="yellow.300" fontWeight="normal" flexShrink={1} noOfLines={1}>
                     {song.name}
                   </Text>
+                  <Spacer />
                   {showDeleteButton && <IconButton
                     icon={<DeleteIcon />}
                     size={"sm"}
                     variant="ghost"
                     onClick={() => handleDeleteSong(song._id, song.name)}
-                    // isLoading={isThisSongBeingDeleted}
                     aria-label={"`Delete song ${song.title} by ${song.artist}`"}
                   />}
                 </HStack>

@@ -43,7 +43,7 @@ export type KaraokeEvents = {
   _id: string,
   eventDate: Date,
   closed: boolean,
-  songs: [EventSongData] | [],
+  songs: EventSongData[] | [],
   location: string
 }
 
