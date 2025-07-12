@@ -12,10 +12,6 @@ import { useMutation } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import PageWrapper from "../components/PageWrapper";
 
-const searchSongs = async (filters: any) => {
-  return new Promise((resolve) => setTimeout(() => resolve(filters), 1000));
-};
-
 const decades = [
   { label: "30's", value: "decade 1930" },
   { label: "40's", value: "decade 1940" },
@@ -28,7 +24,6 @@ const decades = [
   { label: "2010", value: "decade 2010" },
   { label: "2020", value: "decade 2020" },
 ]
-
 const genres = [
   { label: "Pop", value: "pop" },
   { label: "Rock", value: "rock" },
@@ -37,6 +32,15 @@ const genres = [
   { label: "Folk", value: "folk" },
   { label: "Reggae", value: "reggae" },
   { label: "Heavy Metal", value: "heavyMetal" },
+]
+
+const language = [
+  { label: "German", value: "german" },
+  { label: "Spanish", value: "spanish" },
+  { label: "French", value: "french" },
+  { label: "Portuguese", value: "portuguese" },
+  { label: "Italian", value: "italian" },
+  { label: "English", value: "english" },
 ]
 
 const moods = [
@@ -50,6 +54,11 @@ type FormValues = {
   genre?: string;
   mood?: string;
   duet: boolean;
+  language?: string;
+};
+
+const searchSongs = async (filters: any) => {
+  return new Promise((resolve) => setTimeout(() => resolve(filters), 1000));
 };
 
 export const SearchSong = () => {
@@ -59,6 +68,7 @@ export const SearchSong = () => {
       genre: undefined,
       mood: undefined,
       duet: false,
+      language: undefined,
     },
   });
 
@@ -99,6 +109,17 @@ export const SearchSong = () => {
             <FormLabel>Genre</FormLabel>
             <Select placeholder="Select genre" {...register("genre")}>
               {genres.map(({ label, value }) => (
+                <option key={value} value={value}>
+                  {label}
+                </option>
+              ))}
+            </Select>
+          </FormControl>
+
+          <FormControl>
+            <FormLabel>Language</FormLabel>
+            <Select placeholder="Select language" {...register("language")}>
+              {moods.map(({ label, value }) => (
                 <option key={value} value={value}>
                   {label}
                 </option>
