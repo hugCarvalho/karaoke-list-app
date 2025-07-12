@@ -12,8 +12,8 @@ import { useCreateEvent } from "../../hooks/useCreateEvent";
 //TODO: location
 export const EventsHistory = () => {
   const { mutate: createEventMutation, isPending: isCreateEventPending } = useCreateEvent();
-  const { mutate: closeEventMutation, isPending: isCloseEventPending } = useCloseEvent();
-  const { data: eventsList, isLoading, isFetching } = useQuery<Data["events"]>({
+  const { mutate: closeEventMutation, isPending: isCloseEventPending, isSuccess } = useCloseEvent();
+  const { data: eventsList, isLoading, isFetching, isRefetching } = useQuery<Data["events"]>({
     queryKey: [QUERIES.GET_EVENTS_LIST],
     queryFn: getEventsList,
   });
@@ -23,14 +23,31 @@ export const EventsHistory = () => {
     <PageWrapper>
       <PageHeader title="Performances" tooltipLabel="List of all your performances" />
       {
-        (isLoading || isFetching) && <Center py={10}><Spinner size="xl" /></Center>
+        isLoading &&
+        <Center py={10}>
+          <Spinner size="xl" />
+        </Center>
       }
-      {!isLoading && !isFetching && isEventOpen && (
+      {/* OPEN EVENT */}
+      {!isEventOpen && (
+        <VStack spacing={4} align="center" mb={8}>
+          <Text fontSize="lg">{!isEventOpen && "You have no events open. Create one?"}</Text>
+          <Button
+            isLoading={isCreateEventPending}
+            isDisabled={isCreateEventPending}
+            onClick={() => createEventMutation()}
+          >
+            Create Event
+          </Button>
+        </VStack>
+      )}
+      {/* CLOSE EVENT */}
+      {isEventOpen && (
         <VStack spacing={4} mb={10}>
           <Heading as="h2" size="md" color={"burlywood"}>Active Event</Heading>
           {eventsList?.map((event: KaraokeEvents) => {
             if (!event.closed) {
-              return <EventCard key={event._id} event={event} />
+              return <EventCard key={event._id} event={event} showDeleteButton={true} />
             }
             return null
           })}
@@ -44,19 +61,7 @@ export const EventsHistory = () => {
           </Button>
         </VStack>
       )}
-      {!isLoading && !isFetching && !isEventOpen && (
-        <VStack spacing={4} align="center" mb={8}>
-          <Text fontSize="lg">{!isEventOpen && "You have no events open. Create one?"}</Text>
-          <Button
-            isLoading={isCreateEventPending}
-            isDisabled={isCreateEventPending}
-            onClick={() => createEventMutation()}
-          >
-            Create Event
-          </Button>
-        </VStack>
-      )}
-      {!isLoading && eventsList && eventsList.filter(event => event.closed).length > 0 && (
+      {eventsList && eventsList.filter(event => event.closed).length > 0 && (
         <VStack spacing={2} align="stretch">
           <Heading as="h3" size="lg" textAlign={"center"}>Events History</Heading>
           {eventsList?.map((event: KaraokeEvents) => {

@@ -51,6 +51,9 @@ export const updatePlayCount = async (data: { songId: string; artist: string; ti
 export const deleteSong = async (data: { songId: string }) => {
   return API.delete(`/list/delete/${data.songId}`)
 };
+export const deleteSongFromCurrentEvent = (data: { songId: string }) => {
+  return API.delete(`/list/events/current/songs/${data.songId}`)
+};
 //Events
 export const createEvent = async () => {
   return API.post("/list/add-event", null)

@@ -34,6 +34,7 @@ export interface Song {
 }
 
 export type EventSongData = {
+  _id: string,
   artist: string,
   name: string
 }
@@ -42,7 +43,7 @@ export type KaraokeEvents = {
   _id: string,
   eventDate: Date,
   closed: boolean,
-  songs: [EventSongData] | [],
+  songs: EventSongData[] | [],
   location: string
 }
 
