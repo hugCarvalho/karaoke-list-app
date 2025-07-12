@@ -131,7 +131,6 @@ const EventCard = ({ event, showDeleteButton }: Props) => {
                     aria-label={"`Delete song ${song.title} by ${song.artist}`"}
                   />}
                 </HStack>
-
               })
             ) : (
               <Text fontSize="sm" color="gray.400" fontStyle="italic">
