@@ -115,7 +115,6 @@ const EventCard = ({ event, showDeleteButton }: Props) => {
           <VStack align="stretch" spacing={1} pt={1} >
             {numberOfSongs > 0 ? (
               event.songs.map((song, index: number) => {
-
                 return <HStack key={index} spacing={1} wrap="wrap" p={1} borderRadius="sm" bg="rgba(255,255,255,0.03)">
                   <Text fontSize="sm" color="gray.300" flexShrink={0}>
                     🎤 {song.artist} -
