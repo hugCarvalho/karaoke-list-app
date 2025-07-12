@@ -34,7 +34,6 @@ const EventCard = ({ event, showDeleteButton }: Props) => {
         return oldData.map((e) => {
           if (e._id === event._id) {
             const updatedSongsList = e.songs.filter((song) => song._id !== songId);
-            console.log('%c EventsCard.tsx - line: 37', 'color: white; background-color: #f58801;', updatedSongsList, '<-updatedSongs')
             return { ...e, songs: updatedSongsList };
           }
           return e;
