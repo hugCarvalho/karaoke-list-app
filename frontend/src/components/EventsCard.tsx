@@ -113,9 +113,10 @@ const EventCard = ({ event, showDeleteButton }: Props) => {
           </Flex>
 
           {/* Songs List */}
-          <VStack align="stretch" spacing={1} pt={1}>
+          <VStack align="stretch" spacing={1} pt={1} >
             {numberOfSongs > 0 ? (
               event.songs.map((song, index: number) => {
+
                 return <HStack key={index} spacing={1} wrap="wrap" p={1} borderRadius="sm" bg="rgba(255,255,255,0.03)">
                   <Text fontSize="sm" color="gray.300" flexShrink={0}>
                     🎤 {song.artist} -
@@ -123,6 +124,7 @@ const EventCard = ({ event, showDeleteButton }: Props) => {
                   <Text as="span" fontSize="sm" color="yellow.300" fontWeight="normal" flexShrink={1} noOfLines={1}>
                     {song.name}
                   </Text>
+                  <Spacer />
                   {showDeleteButton && <IconButton
                     icon={<DeleteIcon />}
                     size={"sm"}
@@ -131,6 +133,7 @@ const EventCard = ({ event, showDeleteButton }: Props) => {
                     aria-label={"`Delete song ${song.title} by ${song.artist}`"}
                   />}
                 </HStack>
+
               })
             ) : (
               <Text fontSize="sm" color="gray.400" fontStyle="italic">
