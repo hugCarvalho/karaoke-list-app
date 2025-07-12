@@ -119,7 +119,7 @@ export const SearchSong = () => {
           <FormControl>
             <FormLabel>Language</FormLabel>
             <Select placeholder="Select language" {...register("language")}>
-              {moods.map(({ label, value }) => (
+              {language.map(({ label, value }) => (
                 <option key={value} value={value}>
                   {label}
                 </option>
