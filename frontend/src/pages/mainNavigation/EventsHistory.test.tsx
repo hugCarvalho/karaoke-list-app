@@ -40,6 +40,7 @@ jest.mock('../../components/EventsCard', () => ({
 
 describe('EventsHistory', () => {
   let queryClient: QueryClient;
+  let consoleErrorSpy: jest.SpyInstance;
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -59,15 +60,17 @@ describe('EventsHistory', () => {
       mutate: jest.fn(),
       isPending: false,
     })
+    consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => { });
   });
 
   afterEach(async () => {
     queryClient.clear();
+    consoleErrorSpy.mockRestore(); // Restore console.error after each test
   });
 
-  const mockGetEventsList = (data: any[], isLoading = false, isFetching = false) => {
+  const mockGetEventsList = (data: any[] | null, isLoading = false, isFetching = false) => {
     (api.getEventsList as jest.Mock).mockResolvedValue(data);
-    // Now you mock useQuery directly because you've mocked the module
+
     (useQuery as jest.Mock).mockReturnValue({
       data,
       isLoading,
@@ -240,5 +243,20 @@ describe('EventsHistory', () => {
     render(<EventsHistory />);
     expect(screen.getByRole('heading', { name: "Performances" })).toBeInTheDocument();
     expect(screen.queryByRole('heading', { name: 'Events History' })).not.toBeInTheDocument();
+  });
+  test('renders init state of page in case of null eventsList', async () => {
+    mockGetEventsList(null);
+
+    render(<EventsHistory />);
+
+    // Wait for the render cycle to complete and for potential errors to be logged.
+    await waitFor(() => {
+      expect(consoleErrorSpy).not.toHaveBeenCalled();
+
+      expect(screen.queryByText('You have no events open. Create one?')).toBeInTheDocument();
+      expect(screen.queryByRole('button', { name: /create event/i })).toBeInTheDocument();
+      expect(screen.queryByText('Active Event')).not.toBeInTheDocument();
+      expect(screen.queryByText('Events History')).not.toBeInTheDocument();
+    });
   });
 });
