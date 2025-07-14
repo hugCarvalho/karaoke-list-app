@@ -445,7 +445,7 @@ export const getEventsListHandler = catchErrors(async (req, res) => {
     const list = await List.findOne({ userId: user._id });
 
     if (!list) {
-      return res.status(OK).json({ success: true, events: [] });
+      return res.status(OK).json(null);
     }
 
     return res.status(OK).json(list.events);
