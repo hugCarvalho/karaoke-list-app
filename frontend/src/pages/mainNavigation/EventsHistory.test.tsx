@@ -65,7 +65,7 @@ describe('EventsHistory', () => {
 
   afterEach(async () => {
     queryClient.clear();
-    consoleErrorSpy.mockRestore(); // Restore console.error after each test
+    consoleErrorSpy.mockRestore();
   });
 
   const mockGetEventsList = (data: any[] | null, isLoading = false, isFetching = false) => {
@@ -249,10 +249,8 @@ describe('EventsHistory', () => {
 
     render(<EventsHistory />);
 
-    // Wait for the render cycle to complete and for potential errors to be logged.
     await waitFor(() => {
       expect(consoleErrorSpy).not.toHaveBeenCalled();
-
       expect(screen.queryByText('You have no events open. Create one?')).toBeInTheDocument();
       expect(screen.queryByRole('button', { name: /create event/i })).toBeInTheDocument();
       expect(screen.queryByText('Active Event')).not.toBeInTheDocument();
