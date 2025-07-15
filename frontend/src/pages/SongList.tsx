@@ -40,7 +40,6 @@ const SongList = () => {
     setArtistFilterText("");
   };
 
-  console.log('%c SongList.tsx - line: 44', 'color: white; background-color: #f58801;', isLoading, '<-isLoading', data, '<-data')
   return (
     <PageWrapper>
       <VStack spacing={4} alignItems="stretch" >
