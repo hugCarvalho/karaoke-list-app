@@ -101,9 +101,9 @@ const SongList = () => {
         <TableWrapper>
           <TableHead sortConfig={sortConfig} requestSort={requestSort} tableFontSize={tableFontSize} />
           {isLoading && <TableSpinner />}
-          {!isLoading && data.length > 0 && <TableBody sortedSongs={sortedSongs} tableFontSize={tableFontSize} />}
+          {!isLoading && data?.length > 0 && <TableBody sortedSongs={sortedSongs} tableFontSize={tableFontSize} />}
         </TableWrapper>
-        {!isLoading && data.length === 0 && !isFetching && <EmptyList />}
+        {!isLoading && data?.length === 0 && !isFetching && <EmptyList />}
       </VStack>
     </PageWrapper>
   );
