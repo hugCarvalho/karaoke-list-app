@@ -12,11 +12,12 @@ import { useCreateEvent } from "../../hooks/useCreateEvent";
 //TODO: location
 export const EventsHistory = () => {
   const { mutate: createEventMutation, isPending: isCreateEventPending } = useCreateEvent();
-  const { mutate: closeEventMutation, isPending: isCloseEventPending, isSuccess } = useCloseEvent();
-  const { data: eventsList, isLoading, isFetching, isRefetching } = useQuery<Data["events"]>({
+  const { mutate: closeEventMutation, isPending: isCloseEventPending } = useCloseEvent();
+  const { data: eventsList, isLoading } = useQuery<Data["events"]>({
     queryKey: [QUERIES.GET_EVENTS_LIST],
     queryFn: getEventsList,
   });
+
   const isEventOpen = eventsList?.some((e: KaraokeEvents) => !e.closed) ?? false;
 
   return (
@@ -29,12 +30,12 @@ export const EventsHistory = () => {
         </Center>
       }
       {/* OPEN EVENT */}
-      {!isEventOpen && (
+      {!isLoading && !isEventOpen && (
         <VStack spacing={4} align="center" mb={8}>
           <Text fontSize="lg">{!isEventOpen && "You have no events open. Create one?"}</Text>
           <Button
-            isLoading={isCreateEventPending}
-            isDisabled={isCreateEventPending}
+            isLoading={isCreateEventPending || isLoading}
+            isDisabled={isCreateEventPending || isLoading}
             onClick={() => createEventMutation()}
           >
             Create Event
@@ -52,8 +53,8 @@ export const EventsHistory = () => {
             return null
           })}
           <Button
-            isLoading={isCloseEventPending}
-            isDisabled={isCloseEventPending}
+            isLoading={isCloseEventPending || isLoading}
+            isDisabled={isCloseEventPending || isLoading}
             onClick={() => closeEventMutation()}
             variant={"secondary"}
           >

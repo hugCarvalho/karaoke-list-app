@@ -10,7 +10,7 @@ export const useCreateEvent = () => {
   return useMutation({
     mutationFn: createEvent,
     onSuccess: () => {
-      showSuccessToast("Event Created.", "The event has been added to your list.");
+      // showSuccessToast("Event Created.", "The event has been added to your list.");
       queryClient.invalidateQueries({ queryKey: [QUERIES.GET_EVENTS_LIST] });
     },
     onError: (error: Error) => {

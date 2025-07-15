@@ -25,10 +25,9 @@ const SongList = () => {
   const [artistFilterText, setArtistFilterText] = useState("");
   const [listName, setListName] = useState<ListType>(null);
 
-  const { data, isLoading, isFetching, isError, error } = useQuery<Song[]>({
+  const { data, isLoading, isFetching } = useQuery<Song[]>({
     queryKey: [QUERIES.SONGS_LIST],
     queryFn: getSongsList,
-    initialData: [],
   });
 
   const filteredSongs = useFilteredSongs({ data, songFilterText, artistFilterText, listName })
