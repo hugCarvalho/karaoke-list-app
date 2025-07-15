@@ -95,9 +95,9 @@ function TableBody({ sortedSongs, isLoading: isTableLoading, tableFontSize }: Ta
                 aria-label={`Mark ${song.title} as not available`}
               />
             </Td>
-            <Td fontSize={tableFontSize}>{song.plays}</Td>
+            <Td fontSize={tableFontSize} textAlign={"center"}>{song.plays}</Td>
             {/* ADD COUNT BUTTON */}
-            <Td fontSize={tableFontSize}>
+            <Td textAlign={"center"} fontSize={tableFontSize}>
               <Button
                 size={{ base: "xs", md: "sm" }}
                 onClick={() => updatePlayCountMutation(song)}
@@ -106,7 +106,7 @@ function TableBody({ sortedSongs, isLoading: isTableLoading, tableFontSize }: Ta
                 Add
               </Button>
             </Td>
-            <Td fontSize={tableFontSize}>{lastSangDate}</Td>
+            <Td fontSize={tableFontSize} textAlign={"center"}>{lastSangDate}</Td>
             {/* DELETE ICON */}
             <Td textAlign="center">
               <IconButton

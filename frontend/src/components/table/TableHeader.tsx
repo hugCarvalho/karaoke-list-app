@@ -50,8 +50,8 @@ export const TableHead = ({ sortConfig, requestSort, tableFontSize }: TableHeadP
         <Th fontSize={tableFontSize} minW={{ base: "15%", md: "auto" }}>Blacklist</Th>
         <Th fontSize={tableFontSize} minW={{ base: "15%", md: "auto" }}>N/A</Th>
         <Th fontSize={tableFontSize} minW={{ base: "15%", md: "auto" }}>Plays</Th>
-        <Th fontSize={tableFontSize} minW={{ base: "20%", md: "auto" }}>Add Play</Th>
-        <Th fontSize={tableFontSize} minW={{ base: "25%", md: "auto" }}>Last Sang</Th>
+        <Th fontSize={tableFontSize} textAlign="center" minW={{ base: "20%", md: "auto" }}>Add Play</Th>
+        <Th fontSize={tableFontSize} textAlign="center" minW={{ base: "25%", md: "auto" }}>Last Sang</Th>
         <Th fontSize={tableFontSize} textAlign="center" minW={{ base: "15%", md: "auto" }}>Delete</Th>
       </Tr>
     </Thead>
