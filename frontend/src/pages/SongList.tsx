@@ -8,6 +8,7 @@ import EmptyList from "../components/EmptyList";
 import PageWrapper from "../components/PageWrapper";
 import TableBody from "../components/table/TableBody";
 import { TableHead } from "../components/table/TableHeader";
+import TableSpinner from "../components/table/TableSpinner";
 import TableWrapper from "../components/table/TableWrapper";
 import { Song } from "../config/interfaces";
 import { ListType } from "../config/types";
@@ -41,9 +42,6 @@ const SongList = () => {
     setArtistFilterText("");
   };
 
-  if (data?.length === 0 && !isLoading && !isFetching) {
-    return <EmptyList />
-  }
   return (
     <PageWrapper>
       <VStack spacing={4} alignItems="stretch" >
@@ -103,8 +101,10 @@ const SongList = () => {
         </VStack>
         <TableWrapper>
           <TableHead sortConfig={sortConfig} requestSort={requestSort} tableFontSize={tableFontSize} />
-          <TableBody isLoading={isLoading} sortedSongs={sortedSongs} tableFontSize={tableFontSize} />
+          {isLoading && <TableSpinner />}
+          {!isLoading && data.length > 0 && <TableBody sortedSongs={sortedSongs} tableFontSize={tableFontSize} />}
         </TableWrapper>
+        {!isLoading && data.length === 0 && !isFetching && <EmptyList />}
       </VStack>
     </PageWrapper>
   );

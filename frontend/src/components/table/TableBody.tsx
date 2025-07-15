@@ -7,17 +7,15 @@ import { useDeleteSong } from '../../hooks/list/useDeleteSong';
 import { useUpdatePlayCount } from '../../hooks/list/useUpdatePlayCount';
 import { useUpdateSongListTypes } from '../../hooks/list/useUpdateSongListTypes';
 import { formatToGermanDate } from '../../utils/date';
-import TableSpinner from './TableSpinner';
 
 type TableBodyProps = {
   sortedSongs: Song[];
-  isLoading: boolean;
   tableFontSize: { base: string; md: string };
 };
 
 const checkBoxSize = { base: "sm", md: "md" };
 
-function TableBody({ sortedSongs, isLoading: isTableLoading, tableFontSize }: TableBodyProps) {
+function TableBody({ sortedSongs, tableFontSize }: TableBodyProps) {
   const { mutate: updatePlayCountMutation } = useUpdatePlayCount();
   const { mutate: updateListTypeMutation } = useUpdateSongListTypes();
   const { mutate: deleteSongMutation, isSuccess: isDeleteSongSuccess } = useDeleteSong();
@@ -43,8 +41,7 @@ function TableBody({ sortedSongs, isLoading: isTableLoading, tableFontSize }: Ta
 
   return (
     <Tbody>
-      {isTableLoading && <TableSpinner />}
-      {!isTableLoading && sortedSongs.map((song) => {
+      {sortedSongs.map((song) => {
         const lastEvent = [...song.events].reverse()[0];
         const lastSangDate = lastEvent ? formatToGermanDate(lastEvent.eventDate) : "-";
         const typeColor = song.blacklisted ? "red" : song.fav ? "lime" : song.inNextEventList ? "blue.300" : undefined;
