@@ -1,4 +1,4 @@
-import { Center, Spinner, Td, Tr, useMediaQuery } from "@chakra-ui/react";
+import { Center, Td, Tr, useMediaQuery } from "@chakra-ui/react";
 
 export default function TableSpinner() {
   const [isMobile] = useMediaQuery("(max-width: 768px)");
@@ -7,7 +7,7 @@ export default function TableSpinner() {
     <Tr>
       <Td colSpan={isMobile ? 3 : 6} textAlign="center">
         <Center>
-          <Spinner />
+          {/* <Spinner /> */}
         </Center>
       </Td>
     </Tr>

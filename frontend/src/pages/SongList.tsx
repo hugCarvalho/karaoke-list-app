@@ -1,5 +1,5 @@
 import { CloseIcon } from "@chakra-ui/icons";
-import { Center, HStack, IconButton, Input, InputGroup, InputRightElement, VStack } from "@chakra-ui/react";
+import { Box, Center, HStack, IconButton, Input, InputGroup, InputRightElement, Spinner, VStack } from "@chakra-ui/react";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { getSongsList } from "../api/api";
@@ -8,7 +8,6 @@ import EmptyList from "../components/EmptyList";
 import PageWrapper from "../components/PageWrapper";
 import TableBody from "../components/table/TableBody";
 import { TableHead } from "../components/table/TableHeader";
-import TableSpinner from "../components/table/TableSpinner";
 import TableWrapper from "../components/table/TableWrapper";
 import { Song } from "../config/interfaces";
 import { ListType } from "../config/types";
@@ -41,6 +40,7 @@ const SongList = () => {
     setArtistFilterText("");
   };
 
+  console.log('%c SongList.tsx - line: 44', 'color: white; background-color: #f58801;', isLoading, '<-isLoading', data, '<-data')
   return (
     <PageWrapper>
       <VStack spacing={4} alignItems="stretch" >
@@ -100,10 +100,10 @@ const SongList = () => {
         </VStack>
         <TableWrapper>
           <TableHead sortConfig={sortConfig} requestSort={requestSort} tableFontSize={tableFontSize} />
-          {isLoading && <TableSpinner />}
-          {!isLoading && data?.length > 0 && <TableBody sortedSongs={sortedSongs} tableFontSize={tableFontSize} />}
+          {data && <TableBody sortedSongs={sortedSongs} tableFontSize={tableFontSize} />}
         </TableWrapper>
-        {!isLoading && data?.length === 0 && !isFetching && <EmptyList />}
+        {isLoading && <Box style={{ textAlign: "center" }}> <Spinner /> </Box>}
+        {!isLoading && !data && !isFetching && <EmptyList />}
       </VStack>
     </PageWrapper>
   );
