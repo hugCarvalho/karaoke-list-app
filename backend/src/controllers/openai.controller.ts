@@ -55,28 +55,31 @@ export const getSongNameSuggestionHandler = catchErrors(async (req, res) => {
 
 export const getSongSuggestionsHandler = catchErrors(async (req, res) => {
   const { decade, genre, mood, duet, language } = req.body;
+  const allFieldsAreEmpty = !decade && !genre && !mood && !language && !duet;
 
-  if (!decade && !genre && !mood && !language && duet === false) {
+  if (allFieldsAreEmpty) {
     return res.status(400).json({ error: "At least one field must be chosen!" });
   }
 
   try {
     const songs = await searchForInspiration(decade, genre, language, mood, duet);
 
-    if (songs) {
-      try {
-        const songsArray = JSON.parse(songs as any);
+    try {
+      const parsedResponse = JSON.parse(songs);
 
-        res.status(200).json(songsArray);
-      } catch (error) {
-        console.error("Error parsing or formatting song list from OpenAI response:", error);
-        res.status(500).json({ error: "Failed to process song list from AI" });
+      // Ensure parsedResponse is an object and has a 'songs' array property
+      if (typeof parsedResponse !== 'object' || parsedResponse === null || !Array.isArray(parsedResponse.songs)) {
+        console.error("OpenAI response content is not in the expected { 'songs': [] } format:", parsedResponse);
+        return res.status(500).json({ error: "AI response format invalid or missing songs list." });
       }
-    } else {
-      res.status(500).json({ error: "Failed to retrieve song list from AI" });
+
+      res.status(OK).json(parsedResponse);
+    } catch (parseError) {
+      console.error("Error parsing song list JSON from OpenAI response:", parseError);
+      res.status(500).json({ error: "Failed to process song list from AI: Invalid JSON response." });
     }
-  } catch (error) {
-    console.error("Error in /songs route handler:", error);
-    res.status(500).json({ error: "Internal server error during song retrieval" });
+  } catch (apiCallError) {
+    console.error("Error in /songs route handler (OpenAI API call failed):", apiCallError);
+    res.status(500).json({ error: `Internal server error during song suggestion retrieval: ${apiCallError instanceof Error ? apiCallError.message : String(apiCallError)}` });
   }
 });
