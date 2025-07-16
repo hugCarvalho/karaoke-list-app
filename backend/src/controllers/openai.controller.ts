@@ -1,5 +1,5 @@
 import { OK } from "../constants/http";
-import { getPopularSongs, suggestArtistName, suggestSongName } from "../services/openai.service";
+import { getPopularSongs, searchForInspiration, suggestArtistName, suggestSongName } from "../services/openai.service";
 import catchErrors from "../utils/catchErrors";
 
 export const getPopularSongsHandler = catchErrors(async (req, res) => {
@@ -50,4 +50,33 @@ export const getSongNameSuggestionHandler = catchErrors(async (req, res) => {
   const suggestions = await suggestSongName(artist, song);
 
   return res.status(OK).json({ suggestions });
+});
+
+
+export const getSongSuggestionsHandler = catchErrors(async (req, res) => {
+  const { decade, genre, mood, duet, language } = req.body;
+
+  if (!decade && !genre && !mood && !language && duet === false) {
+    return res.status(400).json({ error: "At least one field must be chosen!" });
+  }
+
+  try {
+    const songs = await searchForInspiration(decade, genre, language, mood, duet);
+
+    if (songs) {
+      try {
+        const songsArray = JSON.parse(songs as any);
+
+        res.status(200).json(songsArray);
+      } catch (error) {
+        console.error("Error parsing or formatting song list from OpenAI response:", error);
+        res.status(500).json({ error: "Failed to process song list from AI" });
+      }
+    } else {
+      res.status(500).json({ error: "Failed to retrieve song list from AI" });
+    }
+  } catch (error) {
+    console.error("Error in /songs route handler:", error);
+    res.status(500).json({ error: "Internal server error during song retrieval" });
+  }
 });

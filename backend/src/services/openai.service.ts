@@ -145,3 +145,42 @@ export async function suggestSongName(artist: string, song: string): Promise<str
     return [];
   }
 }
+
+export async function searchForInspiration(decade: string, genre: string, language: string, mood: string, isDuet: boolean): Promise<string[]> {
+  console.log("decade", decade, "genre", genre, "language", language, "mood", mood, "isDuet", isDuet)
+  const prompt = ` I need songs to sing at karaoke. Search for 10 popular songs that match:
+  ${decade ? `${decade}, ` : ""}
+  ${genre ? `Genre: ${genre}, ` : ""}
+  ${language ? `Language: ${language}, ` : ""}
+  ${mood ? `Mood: ${mood}, ` : ""}
+  ${isDuet ? "has at least two main vocals" : "."}
+  Songs MUST be returned in JSON format with the following format:
+  {
+    "songs": [
+      {"artist": "Nirvana", "title": "Lithium", "year": 1991},
+      {"artist": "Queen", "title": "Under Pressure", "year": 1987}
+    ]
+  }
+  If no songs are found, return { "songs": [] }.
+  Do not return any explanation or extra text.
+  `;
+
+  try {
+    const response = await openai.chat.completions.create({
+      model: "gpt-4o-mini",
+      messages: [
+        { role: "user", content: prompt },
+      ],
+      max_tokens: 300,
+      temperature: 0.2,
+      response_format: { type: "json_object" },
+    });
+
+    const content = response.choices[0].message.content;
+    console.log("content", content)
+    return content as any
+  } catch (apiError) {
+    console.error(`Error from OpenAI API during songs suggestion: ${apiError}`);
+    return [];
+  }
+}
