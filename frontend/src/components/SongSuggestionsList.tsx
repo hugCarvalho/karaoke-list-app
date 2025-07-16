@@ -40,7 +40,7 @@ const SongSuggestionsList = ({ songs }: SongSuggestionsListProps) => {
                 size="sm"
                 colorScheme="green"
                 variant="solid"
-                onClick={() => null}
+                onClick={() => window.alert("This option will be implemented soon")}
               >
                 Add
               </Button>
