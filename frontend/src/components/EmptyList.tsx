@@ -1,15 +1,12 @@
-import { Center, Text } from '@chakra-ui/react';
-import PageWrapper from './PageWrapper';
+import { Box, Text } from '@chakra-ui/react';
 
 function EmptyList() {
   return (
-    <PageWrapper>
-      <Center p={4}>
-        <Text fontSize={"lg"} fontWeight={"bold"}>
-          Your list is empty!
-        </Text>
-      </Center>
-    </PageWrapper>
+    <Box>
+      <Text fontSize={"lg"} fontWeight={"bold"} textAlign={"center"} pt={8}>
+        Your list is empty!😧  Go add some songs!
+      </Text>
+    </Box>
   );
 }
 
