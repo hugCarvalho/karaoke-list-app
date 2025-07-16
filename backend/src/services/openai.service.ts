@@ -1,5 +1,10 @@
 import openai from '../config/openai';
 
+//TODO: check catch blocks to throw error.
+//TODO: remove extra empty spaces on prompts just in case
+//TODO: confirm max tokens
+//TODO: check for fn names
+
 /**
  * Fetches a list of popular songs by a given artist using OpenAI.
  * @param artist The artist's name.
@@ -146,25 +151,43 @@ export async function suggestSongName(artist: string, song: string): Promise<str
   }
 }
 
-export async function searchForInspiration(decade: string, genre: string, language: string, mood: string, isDuet: boolean): Promise<string[]> {
-  console.log("decade", decade, "genre", genre, "language", language, "mood", mood, "isDuet", isDuet)
-  const prompt = ` I need songs to sing at karaoke. Search for 10 popular songs that match:
-  ${decade ? `${decade}, ` : ""}
-  ${genre ? `Genre: ${genre}, ` : ""}
-  ${language ? `Language: ${language}, ` : ""}
-  ${mood ? `Mood: ${mood}, ` : ""}
-  ${isDuet ? "has at least two main vocals" : "."}
-  Songs MUST be returned in JSON format with the following format:
-  {
-    "songs": [
-      {"artist": "Nirvana", "title": "Lithium", "year": 1991},
-      {"artist": "Queen", "title": "Under Pressure", "year": 1987}
-    ]
-  }
-  If no songs are found, return { "songs": [] }.
-  Do not return any explanation or extra text.
-  `;
+/**
+ * Generates a list of popular karaoke song suggestions based on specified criteria
+ * using the OpenAI API. The function constructs a prompt to guide the AI in
+ * selecting songs that match the provided decade, genre, language, mood, and duet preference.
+ *
+ * The AI is instructed to return results in a strict JSON format containing an array of song objects.
+ *
+ * @param decade - The decade to filter songs by (e.g., "90's", "2000"). Can be an empty string if not specified.
+ * @param genre - The musical genre to filter songs by (e.g., "Rock", "Pop"). Can be an empty string if not specified.
+ * @param language - The language of the songs (e.g., "English", "Spanish"). Can be an empty string if not specified.
+ * @param mood - The mood of the songs (e.g., "Happy", "Melancholic"). Can be an empty string if not specified.
+ * @param isDuet - A boolean indicating whether the songs should have at least two main vocals.
+ * @returns A Promise that resolves to a JSON string containing an array of song objects.
+ * The format is `{"songs": [{"artist": "...", "title": "...", "year": ...}, ...]}`.
+ * Returns `{"songs": []}` as a JSON string if no songs are found by the AI.
+ * Returns an empty string `""` if the API call fails or the response cannot be retrieved/processed.
+ * Note: The `Promise<string>` return type reflects the raw JSON string content from OpenAI.
+ */
 
+export async function searchForInspiration(decade: string, genre: string, language: string, mood: string, isDuet: boolean): Promise<string> {
+  const prompt = `
+I need songs to sing at karaoke. Search for 10 popular songs that match:
+${decade ? `${decade}, ` : ""}
+${genre ? `Genre: ${genre}, ` : ""}
+${language ? `Language: ${language}, ` : ""}
+${mood ? `Mood: ${mood}, ` : ""}
+${isDuet ? "has at least two main vocals" : "."}
+Songs MUST be returned in JSON format with the following format:
+{
+  "songs": [
+    {"artist": "Nirvana", "title": "Lithium", "year": 1991},
+    {"artist": "Queen", "title": "Under Pressure", "year": 1987}
+  ]
+}.
+If no songs are found, return { "songs": [] }.
+Do not return any explanation or extra text.
+`
   try {
     const response = await openai.chat.completions.create({
       model: "gpt-4o-mini",
@@ -177,10 +200,9 @@ export async function searchForInspiration(decade: string, genre: string, langua
     });
 
     const content = response.choices[0].message.content;
-    console.log("content", content)
-    return content as any
+    return content
   } catch (apiError) {
     console.error(`Error from OpenAI API during songs suggestion: ${apiError}`);
-    return [];
+    throw new Error(`OpenAI API call failed: ${apiError instanceof Error ? apiError.message : String(apiError)}`);
   }
 }
