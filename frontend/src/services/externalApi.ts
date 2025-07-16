@@ -90,3 +90,24 @@ export async function getSongsFromOpenAI(artist: string) {
   const data = await response.json();
   return data.songs;
 }
+
+type SongSuggestions = { decade?: string; genre?: string; mood?: string; duet: boolean; language?: string; }
+
+export async function getSuggestionsFromOpenAI(formData: SongSuggestions) {
+  console.log("formData", formData)
+  const response = await fetch(`${import.meta.env.VITE_API_URL}/openai/ai-songs-suggestions`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(formData),
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(errorData.error || 'Failed to fetch songs');
+  }
+  const data = await response.json();
+  return data.songs;
+}
+

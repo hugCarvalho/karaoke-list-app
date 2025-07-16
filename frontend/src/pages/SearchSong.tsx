@@ -6,12 +6,14 @@ import {
   FormErrorMessage,
   FormLabel,
   Grid,
-  Select
+  Select, Text
 } from "@chakra-ui/react";
 import { useMutation } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import PageWrapper from "../components/PageWrapper";
+import SongSuggestionsList from "../components/SongSuggestionsList";
 import PageHeader from "../components/buttonGroups/Header";
+import { getSuggestionsFromOpenAI } from "../services/externalApi";
 
 const decades = [
   { label: "30's", value: "decade 1930" },
@@ -58,9 +60,58 @@ type FormValues = {
   language?: string;
 };
 
-const searchSongs = async (filters: any) => {
-  return new Promise((resolve) => setTimeout(() => resolve(filters), 1000));
-};
+const MOCK = [
+  {
+    "artist": "Nirvana",
+    "title": "Smells Like Teen Spirit",
+    "year": 1991
+  },
+  {
+    "artist": "TLC",
+    "title": "No Scrubs",
+    "year": 1999
+  },
+  {
+    "artist": "Britney Spears",
+    "title": "...Baby One More Time",
+    "year": 1998
+  },
+  {
+    "artist": "Backstreet Boys",
+    "title": "I Want It That Way",
+    "year": 1999
+  },
+  {
+    "artist": "Alanis Morissette",
+    "title": "You Oughta Know",
+    "year": 1995
+  },
+  {
+    "artist": "R.E.M.",
+    "title": "Losing My Religion",
+    "year": 1991
+  },
+  {
+    "artist": "Spice Girls",
+    "title": "Wannabe",
+    "year": 1996
+  },
+  {
+    "artist": "Whitney Houston",
+    "title": "I Will Always Love You",
+    "year": 1992
+  },
+  {
+    "artist": "Pearl Jam",
+    "title": "Alive",
+    "year": 1991
+  },
+  {
+    "artist": "Mariah Carey",
+    "title": "Fantasy",
+    "year": 1995
+  }
+]
 
 export const SearchSong = () => {
   const { clearErrors, setError, formState: { errors }, register, handleSubmit, reset } = useForm<FormValues>({
@@ -73,17 +124,18 @@ export const SearchSong = () => {
     },
   });
 
-  const { mutate, isPending } = useMutation({
-    mutationFn: searchSongs,
+  const { data, mutate, isPending } = useMutation({
+    mutationFn: getSuggestionsFromOpenAI,
     onSuccess: (data) => {
       console.log("Search result:", data);
     },
   });
 
   const onSubmit = (data: FormValues) => {
+    console.log('%c SearchSong.tsx - line: 81', 'color: white; background-color: #00cc29', data, '<-data')
     const { decade, genre, mood, duet, language } = data
     const isAllEmpty = !decade && !genre && !mood && !language && duet === false;
-    console.log('%c SearchSong.tsx - line: 86', 'color: white; background-color: #00cc29', isAllEmpty, '<-isAllEmpty')
+    // console.log('%c SearchSong.tsx - line: 86', 'color: white; background-color: #00cc29', isAllEmpty, '<-isAllEmpty')
     if (isAllEmpty) {
       setError("root", {
         type: "manual",
@@ -92,10 +144,9 @@ export const SearchSong = () => {
       return;
     };
     clearErrors("root");
-    //mutate(data);
+    mutate(data);
   }
-
-  console.log('%c SearchSong.tsx - line: 98', 'color: white; background-color: #f80303', errors?.root, '<-errors')
+  console.log('%c SearchSong.tsx - line: 149', 'color: white; background-color: #000000', data, '<-data')
   return (
     <PageWrapper>
       <PageHeader title="Search For Inspiration" tooltipLabel="Search for songs based on your preferences" />
@@ -173,6 +224,9 @@ export const SearchSong = () => {
           </Button>
         </Box>
       </form>
+
+      {data && data.length === 0 && <Text>No songs found. Try to use less filters</Text>}
+      {data && data.length > 0 && <SongSuggestionsList songs={data} />}
     </PageWrapper>
   );
 };
