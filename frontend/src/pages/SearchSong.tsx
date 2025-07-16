@@ -1,13 +1,4 @@
-import {
-  Box,
-  Button,
-  Checkbox,
-  FormControl,
-  FormErrorMessage,
-  FormLabel,
-  Grid,
-  Select, Text
-} from "@chakra-ui/react";
+import { Alert, AlertIcon, Box, Button, Checkbox, FormControl, FormErrorMessage, FormLabel, Grid, Select } from "@chakra-ui/react";
 import { useMutation } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import PageWrapper from "../components/PageWrapper";
@@ -36,7 +27,6 @@ const genres = [
   { label: "Reggae", value: "reggae" },
   { label: "Heavy Metal", value: "heavyMetal" },
 ]
-
 const language = [
   { label: "German", value: "german" },
   { label: "Spanish", value: "spanish" },
@@ -45,7 +35,6 @@ const language = [
   { label: "Italian", value: "italian" },
   { label: "English", value: "english" },
 ]
-
 const moods = [
   { label: "Happy", value: "happy" },
   { label: "Angry", value: "angry" },
@@ -53,90 +42,35 @@ const moods = [
 ]
 
 type FormValues = {
-  decade?: string;
-  genre?: string;
-  mood?: string;
+  decade: string;
+  genre: string;
+  mood: string;
   duet: boolean;
-  language?: string;
+  language: string;
 };
 
-const MOCK = [
-  {
-    "artist": "Nirvana",
-    "title": "Smells Like Teen Spirit",
-    "year": 1991
-  },
-  {
-    "artist": "TLC",
-    "title": "No Scrubs",
-    "year": 1999
-  },
-  {
-    "artist": "Britney Spears",
-    "title": "...Baby One More Time",
-    "year": 1998
-  },
-  {
-    "artist": "Backstreet Boys",
-    "title": "I Want It That Way",
-    "year": 1999
-  },
-  {
-    "artist": "Alanis Morissette",
-    "title": "You Oughta Know",
-    "year": 1995
-  },
-  {
-    "artist": "R.E.M.",
-    "title": "Losing My Religion",
-    "year": 1991
-  },
-  {
-    "artist": "Spice Girls",
-    "title": "Wannabe",
-    "year": 1996
-  },
-  {
-    "artist": "Whitney Houston",
-    "title": "I Will Always Love You",
-    "year": 1992
-  },
-  {
-    "artist": "Pearl Jam",
-    "title": "Alive",
-    "year": 1991
-  },
-  {
-    "artist": "Mariah Carey",
-    "title": "Fantasy",
-    "year": 1995
-  }
-]
+//TODO: style tooltip and update content
 
 export const SearchSong = () => {
-  const { clearErrors, setError, formState: { errors }, register, handleSubmit, reset } = useForm<FormValues>({
+  const { clearErrors, setError, formState: { errors }, register, handleSubmit } = useForm<FormValues>({
     defaultValues: {
-      decade: undefined,
-      genre: undefined,
-      mood: undefined,
+      decade: "",
+      genre: "",
+      mood: "",
       duet: false,
-      language: undefined,
+      language: "",
     },
   });
 
   const { data, mutate, isPending } = useMutation({
     mutationFn: getSuggestionsFromOpenAI,
-    onSuccess: (data) => {
-      console.log("Search result:", data);
-    },
   });
 
   const onSubmit = (data: FormValues) => {
-    console.log('%c SearchSong.tsx - line: 81', 'color: white; background-color: #00cc29', data, '<-data')
     const { decade, genre, mood, duet, language } = data
-    const isAllEmpty = !decade && !genre && !mood && !language && duet === false;
-    // console.log('%c SearchSong.tsx - line: 86', 'color: white; background-color: #00cc29', isAllEmpty, '<-isAllEmpty')
-    if (isAllEmpty) {
+    const areAllFieldsEmpty = !decade && !genre && !mood && !language && duet === false;
+
+    if (areAllFieldsEmpty) {
       setError("root", {
         type: "manual",
         message: "At least one field must be chosen!",
@@ -146,7 +80,7 @@ export const SearchSong = () => {
     clearErrors("root");
     mutate(data);
   }
-  console.log('%c SearchSong.tsx - line: 149', 'color: white; background-color: #000000', data, '<-data')
+
   return (
     <PageWrapper>
       <PageHeader title="Search For Inspiration" tooltipLabel="Search for songs based on your preferences" />
@@ -156,6 +90,7 @@ export const SearchSong = () => {
           gap={4}
           mb={4}
         >
+          {/* DECADE INPUT */}
           <FormControl>
             <FormLabel>Decade</FormLabel>
             <Select placeholder="Select decade" {...register("decade")}>
@@ -166,7 +101,7 @@ export const SearchSong = () => {
               ))}
             </Select>
           </FormControl>
-
+          {/*GENRE INPUT */}
           <FormControl>
             <FormLabel>Genre</FormLabel>
             <Select placeholder="Select genre" {...register("genre")}>
@@ -177,7 +112,7 @@ export const SearchSong = () => {
               ))}
             </Select>
           </FormControl>
-
+          {/* LANGUAGE INPUT */}
           <FormControl>
             <FormLabel>Language</FormLabel>
             <Select placeholder="Select language" {...register("language")}>
@@ -188,7 +123,7 @@ export const SearchSong = () => {
               ))}
             </Select>
           </FormControl>
-
+          {/* MOOD INPUT */}
           <FormControl>
             <FormLabel>Mood</FormLabel>
             <Select placeholder="Select mood" {...register("mood")}>
@@ -199,20 +134,20 @@ export const SearchSong = () => {
               ))}
             </Select>
           </FormControl>
-
         </Grid>
+        {/* DUET CHECKBOX */}
         <FormControl display="flex" alignItems="center" pb={2}>
           <Checkbox {...register("duet")}>Duet</Checkbox>
         </FormControl>
         {/* //ERROR FORM */}
         {errors?.root && (
           <FormControl isInvalid={true} >
-            <FormErrorMessage display="block" mb={2}> {/* Use display="block" to ensure visibility if not associated with a specific input */}
+            <FormErrorMessage display="block" mb={2}>
               {errors.root.message}
             </FormErrorMessage>
           </FormControl>
         )}
-
+        {/* SUBMIT BTN */}
         <Box>
           <Button
             type="submit"
@@ -224,8 +159,14 @@ export const SearchSong = () => {
           </Button>
         </Box>
       </form>
-
-      {data && data.length === 0 && <Text>No songs found. Try to use less filters</Text>}
+      {/* SONG SUGGESTIONS LIST - NO SONGS FOUND */}
+      {data && data.length === 0 &&
+        <Alert status="warning" mt={4} borderRadius="md">
+          <AlertIcon />
+          No songs found 😨! Try using fewer or different filters.
+        </Alert>
+      }
+      {/* SONG SUGGESTIONS LIST */}
       {data && data.length > 0 && <SongSuggestionsList songs={data} />}
     </PageWrapper>
   );
