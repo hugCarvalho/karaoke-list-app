@@ -3,14 +3,15 @@ import {
   Button,
   Checkbox,
   FormControl,
+  FormErrorMessage,
   FormLabel,
   Grid,
-  Heading,
   Select
 } from "@chakra-ui/react";
 import { useMutation } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import PageWrapper from "../components/PageWrapper";
+import PageHeader from "../components/buttonGroups/Header";
 
 const decades = [
   { label: "30's", value: "decade 1930" },
@@ -62,7 +63,7 @@ const searchSongs = async (filters: any) => {
 };
 
 export const SearchSong = () => {
-  const { register, handleSubmit, reset } = useForm<FormValues>({
+  const { clearErrors, setError, formState: { errors }, register, handleSubmit, reset } = useForm<FormValues>({
     defaultValues: {
       decade: undefined,
       genre: undefined,
@@ -80,17 +81,27 @@ export const SearchSong = () => {
   });
 
   const onSubmit = (data: FormValues) => {
-    console.log('%c SearchSong.tsx - line: 55 -->', 'color: white; background-color: #007acc', data, '<-data')
+    const { decade, genre, mood, duet, language } = data
+    const isAllEmpty = !decade && !genre && !mood && !language && duet === false;
+    console.log('%c SearchSong.tsx - line: 86', 'color: white; background-color: #00cc29', isAllEmpty, '<-isAllEmpty')
+    if (isAllEmpty) {
+      setError("root", {
+        type: "manual",
+        message: "At least one field must be chosen!",
+      });
+      return;
+    };
+    clearErrors("root");
     //mutate(data);
-  };
+  }
 
+  console.log('%c SearchSong.tsx - line: 98', 'color: white; background-color: #f80303', errors?.root, '<-errors')
   return (
     <PageWrapper>
-      <Heading size="md" mb={6} textAlign={"center"}>Search Songs</Heading>
-
+      <PageHeader title="Search For Inspiration" tooltipLabel="Search for songs based on your preferences" />
       <form onSubmit={handleSubmit(onSubmit)}>
         <Grid
-          templateColumns={{ base: "repeat(3, 1fr)", md: "repeat(2, 1fr)" }}
+          templateColumns={{ base: "repeat(2, 1fr)", md: "repeat(2, 1fr)" }}
           gap={4}
           mb={4}
         >
@@ -139,9 +150,17 @@ export const SearchSong = () => {
           </FormControl>
 
         </Grid>
-        <FormControl display="flex" alignItems="center">
+        <FormControl display="flex" alignItems="center" pb={2}>
           <Checkbox {...register("duet")}>Duet</Checkbox>
         </FormControl>
+        {/* //ERROR FORM */}
+        {errors?.root && (
+          <FormControl isInvalid={true} >
+            <FormErrorMessage display="block" mb={2}> {/* Use display="block" to ensure visibility if not associated with a specific input */}
+              {errors.root.message}
+            </FormErrorMessage>
+          </FormControl>
+        )}
 
         <Box>
           <Button
