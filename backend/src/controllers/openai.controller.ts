@@ -2,6 +2,8 @@ import { OK } from "../constants/http";
 import { getPopularSongs, searchForInspiration, suggestArtistName, suggestSongName } from "../services/openai.service";
 import catchErrors from "../utils/catchErrors";
 
+//TODO: improve typing
+
 export const getPopularSongsHandler = catchErrors(async (req, res) => {
   const { artist } = req.body;
 
