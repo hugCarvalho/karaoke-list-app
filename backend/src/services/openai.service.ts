@@ -176,7 +176,7 @@ ${decade ? `${decade}, ` : ""}
 ${genre ? `Genre: ${genre}, ` : ""}
 ${language ? `Language: ${language}, ` : ""}
 ${mood ? `Mood: ${mood}, ` : ""}
-${isDuet ? "has at least two main vocals" : "."}
+${isDuet ? "has at least two main vocals" : ""}.
 Songs MUST be returned in JSON format with the following format:
 {
   "songs": [
