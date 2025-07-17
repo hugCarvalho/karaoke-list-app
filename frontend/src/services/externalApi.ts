@@ -1,3 +1,7 @@
+import { SuggestedSongs } from "../config/types";
+
+//TODO: check try...catch blocks
+
 export const searchMusicBrainzArtist = async (artist: string) => {
   const artistSearchUrl = `https://musicbrainz.org/ws/2/artist/?query=artist:"${encodeURIComponent(artist)}"&fmt=json`;
 
@@ -90,3 +94,38 @@ export async function getSongsFromOpenAI(artist: string) {
   const data = await response.json();
   return data.songs;
 }
+
+type SongSuggestionsSelectors = { decade: string; genre: string; mood: string; duet: boolean; language: string; }
+
+export async function getSuggestionsFromOpenAI(formData: SongSuggestionsSelectors) {
+  try {
+    const response = await fetch(`${import.meta.env.VITE_API_URL}/openai/ai-songs-suggestions`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(formData),
+    });
+
+    if (!response.ok) {
+      let errorDetail = 'Failed to fetch songs due to server error.';
+      try {
+        const errorData = await response.json();
+        errorDetail = errorData.error || `Server responded with status ${response.status}.`;
+      } catch (jsonError) {
+        // If response is not JSON, or empty, use status text
+        errorDetail = `Server responded with status ${response.status}: ${response.statusText || 'Unknown error'}.`;
+      }
+      throw new Error(errorDetail);
+    }
+
+    const data: { songs: SuggestedSongs[] | [] } = await response.json();
+
+    return data.songs;
+
+  } catch (error) {
+    console.error("Error in getSuggestionsFromOpenAI:", error);
+    throw new Error(`Network or API call failed: ${error instanceof Error ? error.message : String(error)}`);
+  }
+}
+

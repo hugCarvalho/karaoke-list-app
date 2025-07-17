@@ -4,8 +4,6 @@ import { Navigate, Route, Routes, useLocation, useNavigate } from "react-router-
 import AppContainer from "./components/AppContainer";
 import { TokenRefreshClient } from "./config/apiClient";
 import AddSong from "./pages/AddSong";
-import SongList from "./pages/SongList";
-import SongsSang from "./pages/SongsSang";
 import ForgotPassword from "./pages/auth/ForgotPassword";
 import Login from "./pages/auth/Login";
 import Register from "./pages/auth/Register";
@@ -14,6 +12,9 @@ import VerifyEmail from "./pages/auth/VerifyEmail";
 import { EventsHistory } from "./pages/mainNavigation/EventsHistory";
 import Settings from "./pages/profile/Settings";
 import Statistics from "./pages/profile/Statistics";
+import { SearchSong } from "./pages/SearchSong";
+import SongList from "./pages/SongList";
+import SongsSang from "./pages/SongsSang";
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
@@ -72,6 +73,7 @@ function App() {
             <Route index element={<AddSong />} />
             <Route path="songs-sang" element={<SongsSang />} />
             <Route path="list" element={<SongList />} />
+            <Route path="search-song" element={<SearchSong />} />
             <Route path="history" element={<EventsHistory />} />
             <Route path="settings" element={<Settings />} />
             <Route path="statistics" element={<Statistics />} />
