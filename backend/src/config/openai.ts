@@ -1,4 +1,3 @@
-// src/config/openai.ts
 import OpenAI from "openai";
 
 const openaiApiKey = process.env.OPENAI_API_KEY;
