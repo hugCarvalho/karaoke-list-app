@@ -169,7 +169,6 @@ export async function suggestSongName(artist: string, song: string): Promise<str
  * Returns an empty string `""` if the API call fails or the response cannot be retrieved/processed.
  * Note: The `Promise<string>` return type reflects the raw JSON string content from OpenAI.
  */
-
 export async function searchForInspiration(decade: string, genre: string, language: string, mood: string, isDuet: boolean): Promise<string> {
   const prompt = `
 I need songs to sing at karaoke. Search for 10 popular songs that match:
