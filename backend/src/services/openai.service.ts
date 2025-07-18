@@ -52,7 +52,7 @@ export async function suggestArtistName(misspelledName: string): Promise<string[
 
   const prompt = `
 The following is a potentially misspelled artist or music group name: "${misspelledName}".
-Search for an artist name or group name that is similar to the misspelled name and return ALWAYS one to three suggestions,
+Search for an artist name or band name, whose names are phonetically/spelling-wise similar to the misspelled name and return ALWAYS one to three suggestions,
 depending on how good the hipothesis are, for the correct spelling or similar popular artist/group names.
 Return the suggestions as a JSON object with a single key "suggestions", whose value is a JSON array of strings.
 Do NOT include any other text, explanation, or formatting outside of this JSON object.
@@ -69,7 +69,7 @@ Example for "the bitels": {"suggestions": ["The Beatles", "Beatles", "The Byrds"
         { role: "user", content: prompt },
       ],
       max_tokens: 150, // Should be sufficient for a JSON object containing 3 short strings
-      temperature: 0.2, // Lower temperature for more factual and less creative suggestions
+      temperature: 0.3, // Lower temperature for more factual and less creative suggestions
       response_format: { type: "json_object" }, // Instructs the model to return a valid JSON object
     });
 
@@ -92,7 +92,7 @@ Example for "the bitels": {"suggestions": ["The Beatles", "Beatles", "The Byrds"
     return [];
   } catch (apiError) {
     console.error(`Error from OpenAI API during artist suggestion: ${apiError}`);
-    return [];
+    throw new Error(`OpenAI API call failed for artist suggestion: ${apiError instanceof Error ? apiError.message : String(apiError)}`);
   }
 }
 
@@ -152,8 +152,8 @@ B- a song that does not belong to this artist: "${artist}".
     }
     return [];
   } catch (apiError) {
-    console.error(`Error from OpenAI API during artist suggestion: ${apiError}`);
-    return [];
+    console.error(`Error from OpenAI API during song name suggestion: ${apiError}`);
+    throw new Error(`OpenAI API call failed for song name suggestion: ${apiError instanceof Error ? apiError.message : String(apiError)}`)
   }
 }
 
