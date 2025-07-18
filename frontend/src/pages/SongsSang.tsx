@@ -1,4 +1,4 @@
-import { Button, Center, Flex, FormControl, FormErrorMessage, FormLabel, HStack, Input, Spinner, Text, VStack } from "@chakra-ui/react";
+import { Button, Center, Flex, FormControl, FormErrorMessage, FormLabel, HStack, Spinner, Text, VStack } from "@chakra-ui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
@@ -11,7 +11,7 @@ import { AddToggleButtonGroup } from "../components/buttonGroups/AddToggleButton
 import CheckboxGroup from "../components/buttonGroups/CheckboxGroup";
 import PageHeader from "../components/buttonGroups/Header";
 import PageWrapper from "../components/PageWrapper";
-import { Option, SongsSangFormData, songsSangFormSchema } from "../config/formInterfaces";
+import { BaseSongFormData, baseSongFormSchema, Option } from "../config/formInterfaces";
 import { Data, KaraokeEvents } from "../config/interfaces";
 import { QUERIES } from "../constants/queries";
 import { useAddSong } from "../hooks/useAddSong";
@@ -21,7 +21,6 @@ import { useCreateEvent } from "../hooks/useCreateEvent";
 import { useFilteredSongOptions } from "../hooks/useFilteredSongOptions";
 import { isDataVerified } from "../services/externalApi";
 import { getArtistsSelectData, getSongsSelectData } from "../utils/artists";
-import { formatToGermanDate } from "../utils/date";
 import { capitalizeArtistNames } from "../utils/strings";
 
 const defaultValues = {
@@ -32,7 +31,6 @@ const defaultValues = {
   duet: false,
   inNextEventList: false,
   notAvailable: false,
-  location: "Monster Ronson",
   eventDate: new Date(),
   plays: 1
 }
@@ -42,8 +40,8 @@ const SongsSang = () => {
   const { showErrorToast } = useAppToast();
   const { mutate: createEventMutation, isPending: isCreateEventPending } = useCreateEvent();
   const { mutate: closeEventMutation, isPending: isCloseEventPending } = useCloseEvent();
-  const { register, handleSubmit, watch, reset, setValue, formState: { errors } } = useForm<SongsSangFormData>({
-    resolver: zodResolver(songsSangFormSchema),
+  const { register, handleSubmit, watch, reset, setValue, formState: { errors } } = useForm<BaseSongFormData>({
+    resolver: zodResolver(baseSongFormSchema),
     defaultValues,
   });
 
@@ -82,7 +80,7 @@ const SongsSang = () => {
       setSongOptions(songs)
     }
   }, [artistsDb])
-  const onSubmit = async (data: SongsSangFormData) => {
+  const onSubmit = async (data: BaseSongFormData) => {
     setTypoSuggestions(suggestionInitValue)
     setIsVerifying(true)
     try {
@@ -104,12 +102,8 @@ const SongsSang = () => {
       return;
     }
 
-    const eventData = {
-      location: data.location,
-      eventDate: data.eventDate
-    }
     const capitalizedArtistName = capitalizeArtistNames(data.artist)
-    const songData = { songId: uuid.v4(), events: [eventData], ...data, artist: capitalizedArtistName };
+    const songData = { songId: uuid.v4(), ...data, artist: capitalizedArtistName };
     addSongMutation(songData);
   };
 
@@ -201,21 +195,6 @@ const SongsSang = () => {
               {errors.title && (
                 <FormErrorMessage>{errors.title.message}</FormErrorMessage>
               )}
-            </FormControl>
-          </Flex>
-          {/* LOCATION     */}
-          <Flex direction={{ base: "column", md: "row" }} gap={4} mb={4}>
-            <FormControl isInvalid={!!errors.location}>
-              <FormLabel>Location</FormLabel>
-              <Input {...register("location")} placeholder="Location" />
-              {errors.location && (
-                <FormErrorMessage>{errors.location.message}</FormErrorMessage>
-              )}
-            </FormControl>
-            {/* EVENT DATE */}
-            <FormControl>
-              <FormLabel>Event Date</FormLabel>
-              <Input value={formatToGermanDate(new Date().toString())} isDisabled />
             </FormControl>
           </Flex>
           {/* CHECKBOXES GROUP */}

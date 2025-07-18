@@ -12,13 +12,6 @@ export const baseSongFormSchema = z.object({
 });
 export type BaseSongFormData = z.infer<typeof baseSongFormSchema>;
 
-export const songsSangFormSchema = baseSongFormSchema.extend({
-  location: z.string(),
-  eventDate: z.date(),
-});
-
-export type SongsSangFormData = z.infer<typeof songsSangFormSchema>;
-
 export type CheckboxGroup = "blacklisted" | "fav" | "inNextEventList" | "duet" | "notAvailable"
 
 export type Option = {
