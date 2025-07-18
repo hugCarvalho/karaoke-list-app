@@ -1,16 +1,16 @@
 import { Checkbox, Flex } from "@chakra-ui/react";
 import React from "react";
 import { UseFormRegister, UseFormSetValue } from "react-hook-form";
-import { SongsSangFormData } from "../../config/formInterfaces";
+import { BaseSongFormData } from "../../config/formInterfaces";
 
 type CheckboxGroupProps = {
-  register: UseFormRegister<SongsSangFormData | BaseSongFormData>; //TODO: change to generic
+  register: UseFormRegister<BaseSongFormData>;
   fav: boolean;
   blacklisted: boolean;
   inNextEventList: boolean;
   duet: boolean
   notAvailable: boolean
-  setValue: UseFormSetValue<SongsSangFormData | BaseSongFormData>;
+  setValue: UseFormSetValue<BaseSongFormData>;
 }
 
 const CheckboxGroup = ({ register, duet, fav, blacklisted, inNextEventList, notAvailable, setValue }: CheckboxGroupProps) => {
