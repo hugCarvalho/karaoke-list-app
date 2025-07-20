@@ -30,9 +30,6 @@ export const getSongsList = async (): Promise<Song[]> => API.get("/list");
 export const getArtistsDb = async () => {
   return API.get("/list/artists")
 };
-export const getEventsList = async (): Promise<KaraokeEvents[]> => {
-  return API.get("/list/events")
-};
 export const addSong = async (data: Song) => {
   return API.post("/list/add", data)
 };
@@ -55,9 +52,12 @@ export const deleteSongFromCurrentEvent = (data: { songId: string }) => {
   return API.delete(`/list/events/current/songs/${data.songId}`)
 };
 //Events
+export const getEventsList = async (): Promise<KaraokeEvents[]> => {
+  return API.get("/events/events")
+};
 export const createEvent = async () => {
-  return API.post("/list/add-event", null)
+  return API.post("/events/add-event", null)
 };
 export const closeEvent = async () => {
-  return API.post("/list/close-event", null)
+  return API.post("/events/close-event", null)
 };
