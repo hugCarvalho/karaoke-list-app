@@ -1,5 +1,5 @@
 import { OK } from "../constants/http";
-import { getPopularSongs, searchForInspiration, suggestArtistName, suggestSongName } from "../services/openai.service";
+import { getPopularSongsForArtist, searchForInspiration, suggestArtistName, suggestSongName } from "../services/openai.service";
 import catchErrors from "../utils/catchErrors";
 
 //TODO: improve typing
@@ -12,7 +12,7 @@ export const getPopularSongsHandler = catchErrors(async (req, res) => {
   }
 
   try {
-    const songsString = await getPopularSongs(artist);
+    const songsString = await getPopularSongsForArtist(artist);
 
     if (songsString) {
       try {

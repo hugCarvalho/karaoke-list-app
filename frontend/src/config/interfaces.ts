@@ -15,10 +15,10 @@ export interface Session {
   // expiresAt: Date
 }
 
-type EventData = {
-  location: string,
-  eventDate: string | null
-}
+// type EventData = {
+//   location: string,
+//   eventDate: string | null
+// }
 
 export interface Song {
   songId: string,
@@ -29,7 +29,6 @@ export interface Song {
   duet: boolean,
   inNextEventList: boolean,
   notAvailable: boolean,
-  events: EventData[],
   plays: number,
 }
 

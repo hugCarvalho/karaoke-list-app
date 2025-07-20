@@ -1,7 +1,6 @@
 import openai from '../config/openai';
 
 //TODO: check catch blocks to throw error.
-//TODO: remove extra empty spaces on prompts just in case
 //TODO: confirm max tokens
 //TODO: check for fn names
 
@@ -10,12 +9,13 @@ import openai from '../config/openai';
  * @param artist The artist's name.
  * @returns A promise that resolves to a string (JSON array) of song names, or null on error.
  */
-export async function getPopularSongs(artist: string) {
+export async function getPopularSongsForArtist(artist: string) {
+  //removed extra spaces from prompt just in case. Format looks odd but it's fine
   const prompt = `
-    Please list the 25 most popular songs by ${artist}.
-    The return value must be a an array of the names of the songs For example: ["No Surprises", "Creep", ...].
-    Do NOT include any introductory or concluding text, only the array.
-  `;
+Please list the 25 most popular songs by ${artist}.
+The return value must be a an array of the names of the songs For example: ["No Surprises", "Creep", ...].
+Do NOT include any introductory or concluding text, only the array.
+`;
 
   try {
     const response = await openai.chat.completions.create({
@@ -23,14 +23,20 @@ export async function getPopularSongs(artist: string) {
       messages: [
         { role: "user", content: prompt },
       ],
-      max_tokens: 500,
+      max_tokens: 350,
       temperature: 0.5,
     });
 
-    return response.choices[0].message.content;
+    const content = response.choices[0].message.content;
+    if (content === null) {
+      console.error("OpenAI API returned null content for popular songs.");
+      throw new Error("OpenAI API returned empty content for popular songs.");
+    }
+
+    return content;
   } catch (error) {
     console.error(`Error fetching popular songs from OpenAI: ${error}`);
-    return null;
+    throw new Error(`Failed to get popular songs for ${artist}: ${error instanceof Error ? error.message : String(error)}`)
   }
 }
 
@@ -45,15 +51,15 @@ export async function getPopularSongs(artist: string) {
 export async function suggestArtistName(misspelledName: string): Promise<string[]> {
 
   const prompt = `
-    The following is a potentially misspelled artist or music group name: "${misspelledName}".
-    Search for an artist name or group name that is similar to the misspelled name and return ALWAYS one to three suggestions,
-    depending on how good the hipothesis are, for the correct spelling or similar popular artist/group names.
-    Return the suggestions as a JSON object with a single key "suggestions", whose value is a JSON array of strings.
-    Do NOT include any other text, explanation, or formatting outside of this JSON object.
+The following is a potentially misspelled artist or music group name: "${misspelledName}".
+Search for an artist name or band name, whose names are phonetically/spelling-wise similar to the misspelled name and return ALWAYS one to three suggestions,
+depending on how good the hipothesis are, for the correct spelling or similar popular artist/group names.
+Return the suggestions as a JSON object with a single key "suggestions", whose value is a JSON array of strings.
+Do NOT include any other text, explanation, or formatting outside of this JSON object.
 
-    Example for "nivana": {"suggestions": ["Nirvana", "Aviana", "Nirvana (band)"]}
-    Example for "coldply": {"suggestions": ["Coldplay", "Kodaline", "Snow Patrol"]}
-    Example for "the bitels": {"suggestions": ["The Beatles", "Beatles", "The Byrds"]}
+Example for "nivana": {"suggestions": ["Nirvana", "Aviana", "Nirvana (band)"]}
+Example for "coldply": {"suggestions": ["Coldplay", "Kodaline", "Snow Patrol"]}
+Example for "the bitels": {"suggestions": ["The Beatles", "Beatles", "The Byrds"]}
   `;
 
   try {
@@ -63,7 +69,7 @@ export async function suggestArtistName(misspelledName: string): Promise<string[
         { role: "user", content: prompt },
       ],
       max_tokens: 150, // Should be sufficient for a JSON object containing 3 short strings
-      temperature: 0.2, // Lower temperature for more factual and less creative suggestions
+      temperature: 0.3, // Lower temperature for more factual and less creative suggestions
       response_format: { type: "json_object" }, // Instructs the model to return a valid JSON object
     });
 
@@ -86,7 +92,7 @@ export async function suggestArtistName(misspelledName: string): Promise<string[
     return [];
   } catch (apiError) {
     console.error(`Error from OpenAI API during artist suggestion: ${apiError}`);
-    return [];
+    throw new Error(`OpenAI API call failed for artist suggestion: ${apiError instanceof Error ? apiError.message : String(apiError)}`);
   }
 }
 
@@ -107,16 +113,16 @@ export async function suggestArtistName(misspelledName: string): Promise<string[
  */
 export async function suggestSongName(artist: string, song: string): Promise<string[]> {
   const prompt = `
-  "${song}" is either:
-  A- a potentially misspelled song name.
-  B- a song that does not belong to this artist: "${artist}".
-  1- Prioritize searching for matches within songs that belong to "${artist}" and
-    return ALWAYS a minimum of 1 suggestion and a max of 3 suggestions, depending on how good the hipothesis are.
-    Return data as a JSON object with a single key "suggestions",
-    whose value is a JSON array with the options, being the first one always the better match.
+"${song}" is either:
+A- a potentially misspelled song name.
+B- a song that does not belong to this artist: "${artist}".
+1- Prioritize searching for matches within songs that belong to "${artist}" and
+  return ALWAYS a minimum of 1 suggestion and a max of 3 suggestions, depending on how good the hipothesis are.
+  Return data as a JSON object with a single key "suggestions",
+  whose value is a JSON array with the options, being the first one always the better match.
 
-    Example for case 1, artist is "Nirvana" and song is "litium": {"suggestions": ["Lithium"]} -> it is a typo
-    Example for case 1, artist is "Queen" and song is "Under presure": {"suggestions": ["Under Pressure"]} -> it is a typo
+  Example for case 1, artist is "Nirvana" and song is "litium": {"suggestions": ["Lithium"]} -> it is a typo
+  Example for case 1, artist is "Queen" and song is "Under presure": {"suggestions": ["Under Pressure"]} -> it is a typo
   `;
 
   try {
@@ -146,8 +152,8 @@ export async function suggestSongName(artist: string, song: string): Promise<str
     }
     return [];
   } catch (apiError) {
-    console.error(`Error from OpenAI API during artist suggestion: ${apiError}`);
-    return [];
+    console.error(`Error from OpenAI API during song name suggestion: ${apiError}`);
+    throw new Error(`OpenAI API call failed for song name suggestion: ${apiError instanceof Error ? apiError.message : String(apiError)}`)
   }
 }
 

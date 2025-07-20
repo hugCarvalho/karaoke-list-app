@@ -7,8 +7,8 @@ const NavButtons = () => {
 
   const buttons = [
     { label: "ADD", path: "/", icon: "➕" },
-    { label: "LIST", path: "/list", icon: "📜" }, // 🗒🗓📜📃📑
-    { label: "SEARCH", path: "/search-song", icon: "🔍" }, // 🗒🗓📜📃📑
+    { label: "LIST", path: "/list", icon: "📜" },
+    { label: "SEARCH", path: "/search-song", icon: "👀" },
     { label: "HISTORY", path: "/history", icon: "📅" }, //🗞🗳🗃🗓🗂🗄🛎🎙🎚🎛🕰🛠🗡🛡🕳 📒📖
   ];
   return (
@@ -28,7 +28,7 @@ const NavButtons = () => {
             key={button.label}
             onClick={() => navigate(button.path)}
             variant={"solid"}
-            color={pathname === button.path || (pathname === "/songs-sang" && button.label === "ADD") ? "orange" : "inherit"} //TODO: decide wether to use path or state and update/fix code
+            color={pathname === button.path || (pathname === "/songs-sang" && button.label === "ADD") ? "orange" : "inherit"}
             px={{ base: 1, md: 4 }}
             py={{ base: 1, md: 2 }}
           >

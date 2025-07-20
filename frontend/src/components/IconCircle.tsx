@@ -18,6 +18,7 @@ export const IconCircle = () => {
       alignItems="center"
       justifyContent="center"
       zIndex="1"
+      boxShadow={"0px -1px 5px rgba(254, 254, 254, 0.877)"}
     >
       <Text fontSize="3xl" >🎤</Text>
     </Box>
