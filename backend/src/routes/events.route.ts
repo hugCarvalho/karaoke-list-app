@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { addEventsHandler, closeEventsHandler, getEventsListHandler } from "../controllers/songList.controller";
+import { addEventsHandler, closeEventsHandler, getEventsListHandler } from "../controllers/events.controller";
 
 const eventsRoutes = Router()
 
