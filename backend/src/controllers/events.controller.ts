@@ -2,7 +2,7 @@ import { INTERNAL_SERVER_ERROR, NOT_FOUND, OK } from "../constants/http";
 import List from "../models/song.model";
 import UserModel from "../models/user.model";
 import catchErrors from "../utils/catchErrors";
-//Events
+
 export const addEventsHandler = catchErrors(async (req, res) => {
   const newEvent = {
     location: "Monster Ronson",
