@@ -55,9 +55,13 @@ export const deleteSongFromCurrentEvent = (data: { songId: string }) => {
 export const getEventsList = async (): Promise<KaraokeEvents[]> => {
   return API.get("/events/events")
 };
-export const createEvent = async () => {
-  return API.post("/events/add-event", null)
+export const createEvent = async (payload: { location: string }) => {
+  return API.post("/events/add-event", payload)
 };
 export const closeEvent = async () => {
   return API.post("/events/close-event", null)
+};
+//Locations
+export const getLocationsDb = async (): Promise<string[]> => {
+  return API.get("/events/locations")
 };
