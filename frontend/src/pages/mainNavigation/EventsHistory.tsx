@@ -1,4 +1,4 @@
-import { Box, Button, Center, FormControl, FormErrorMessage, FormLabel, Spinner, Text, VStack } from "@chakra-ui/react";
+import { Box, Button, Center, FormControl, FormErrorMessage, FormLabel, Heading, Spinner, Text, VStack } from "@chakra-ui/react";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form"; // Import Controller
@@ -172,7 +172,7 @@ export const EventsHistory = () => {
       )}
       {eventsList && eventsList.filter(event => event.closed).length > 0 && (
         <VStack spacing={2} align="stretch">
-          <Text as="h3" size="lg" textAlign={"center"}>Events History</Text>
+          <Heading size="lg" textAlign={"center"}>Events History</Heading>
           {eventsList?.map((event: KaraokeEvents) => {
             if (event.closed) {
               return <EventCard key={event._id} event={event} />
