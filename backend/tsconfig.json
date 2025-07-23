@@ -19,7 +19,8 @@
   },
   "include": [
     "src/**/*",
-    "api/**/*"
+    "api/**/*",
+    "./index.d.ts"
   ],
   "exclude": [
     "node_modules"

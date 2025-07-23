@@ -57,8 +57,8 @@ const AddSong = () => {
   const { data: artistsDb, isLoading, isError, error } = useQuery({
     queryKey: [QUERIES.GET_ARTISTS_DB],
     queryFn: getArtistsDb,
-
   });
+
   const { options: filteredSongSelectOptions, isLoadingOpenAI } = useFilteredSongOptions({ songOptions: songOptions, artistOptionValue: artistOptionValue });
   const { mutate: addSongMutation, isPending } = useAddSong("list");
 
