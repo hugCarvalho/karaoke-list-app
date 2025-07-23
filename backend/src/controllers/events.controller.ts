@@ -1,4 +1,4 @@
-import mongoose from 'mongoose'; // Import mongoose to use mongoose.Types.ObjectId
+import mongoose from 'mongoose';
 import { INTERNAL_SERVER_ERROR, NOT_FOUND, OK } from "../constants/http";
 import LocationdbModel from '../models/locationsdb.model';
 import List from "../models/song.model";
@@ -48,6 +48,7 @@ export const addEventsHandler = catchErrors(async (req, res) => {
       });
     }
 
+    //Update the List document
     list.events.push(newEvent);
     await list.save();
 
