@@ -1,9 +1,10 @@
 import mongoose from 'mongoose'; // Import mongoose to use mongoose.Types.ObjectId
 import { INTERNAL_SERVER_ERROR, NOT_FOUND, OK } from "../constants/http";
-import LocationdbModel, { capitalizeWords } from '../models/locationsdb.model';
+import LocationdbModel from '../models/locationsdb.model';
 import List from "../models/song.model";
 import UserModel from "../models/user.model";
 import catchErrors from "../utils/catchErrors";
+import { capitalizeWords } from '../utils/strings';
 
 // ObjectId for single locations document
 const GLOBAL_LOCATIONS_DOC_ID = '6880de557f8a8353cd266150';
@@ -125,12 +126,10 @@ export const getLocationsHandler = catchErrors(async (req, res) => {
       return res.status(OK).json([]);
     }
 
-    // Return the locations array
     return res.status(OK).json(locationsDoc.locations);
 
   } catch (error: any) {
     console.error('Error retrieving locations:', error);
-    // Return an internal server error if something goes wrong during retrieval
     return res.status(INTERNAL_SERVER_ERROR).json({ success: false, message: 'Error retrieving locations.', error: error.message });
   }
 });

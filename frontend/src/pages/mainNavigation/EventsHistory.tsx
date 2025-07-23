@@ -43,8 +43,7 @@ export const EventsHistory = () => {
     queryFn: getLocationsDb,
   });
 
-  // No need to watch location directly if using Controller effectively for value
-  const { register, handleSubmit, watch, setValue, control, formState: { errors } } = useForm<FormValues>({ defaultValues });
+  const { handleSubmit, watch, setValue, control, formState: { errors } } = useForm<FormValues>({ defaultValues });
 
   // State to hold all available options for CreatableSelect
   const [locationOptions, setLocationOptions] = useState<OptionType[]>(() => [DEFAULT_LOCATION_OPTION]);
@@ -62,18 +61,15 @@ export const EventsHistory = () => {
 
       setLocationOptions(Array.from(uniqueOptionsMap.values()));
 
-      // Ensure the form's location value is set to the default if it's currently empty
-      // This handles cases where locationsDb loads after the component
-      if (!watch("location")) { // Check current form value, not watchedLocation state
+      if (!watch("location")) {
         setValue("location", DEFAULT_LOCATION_VALUE);
       }
     }
-  }, [locationsDb, setValue, watch]); // Added watch to dependencies for the check
+  }, [locationsDb, setValue, watch]);
 
   const isEventOpen = eventsList?.some((e: KaraokeEvents) => !e.closed) ?? false;
 
   const onSubmit = async (data: FormValues) => {
-    console.log('%c EventsHistory.tsx - line: 50 -->', 'color: white; background-color: #007acc', data, '<-data');
     createEventMutation(data);
   };
 
@@ -96,22 +92,21 @@ export const EventsHistory = () => {
             <form onSubmit={handleSubmit(onSubmit)} noValidate>
               <FormControl isInvalid={!!errors.location} isRequired>
                 <FormLabel htmlFor="location">Location</FormLabel>
-                <Controller // Use Controller to manage CreatableSelect
+                <Controller
                   name="location"
                   control={control}
-                  rules={{ required: "Location is required" }} // Apply validation rules here
+                  rules={{ required: "Location is required" }}
                   render={({ field }) => (
                     <CreatableSelect
-                      {...field} // Spreads name, onBlur, and ref
+                      {...field}
                       options={locationOptions}
-                      // Map the string value from react-hook-form to the { value, label } object for react-select
                       value={locationOptions.find(option => option.value === field.value) || null}
                       isLoading={isLocationsLoading}
                       placeholder="Type or select a location"
                       isClearable
                       onCreateOption={(inputValue) => {
                         const newOption: OptionType = { value: inputValue, label: inputValue };
-                        // Add the new option to the local state
+
                         setLocationOptions(prev => {
                           const existingValues = new Set(prev.map(o => o.value));
                           if (!existingValues.has(newOption.value)) {
@@ -120,11 +115,10 @@ export const EventsHistory = () => {
                           return prev;
                         });
                         // Update react-hook-form's value and trigger validation
-                        field.onChange(inputValue); // Use field.onChange
+                        field.onChange(inputValue);
                       }}
                       onChange={(option) => {
-                        // Update react-hook-form's value and trigger validation
-                        field.onChange(option ? option.value : ""); // Use field.onChange
+                        field.onChange(option ? option.value : "");
                       }}
                       styles={{
                         container: (base) => ({
