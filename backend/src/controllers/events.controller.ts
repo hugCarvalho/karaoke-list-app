@@ -1,11 +1,25 @@
+import mongoose from 'mongoose'; // Import mongoose to use mongoose.Types.ObjectId
 import { INTERNAL_SERVER_ERROR, NOT_FOUND, OK } from "../constants/http";
+import LocationdbModel, { capitalizeWords } from '../models/locationsdb.model';
 import List from "../models/song.model";
 import UserModel from "../models/user.model";
 import catchErrors from "../utils/catchErrors";
 
+// Define the fixed ObjectId for your single locations document
+// THIS MUST MATCH THE _id OF YOUR EXISTING DOCUMENT IN MONGODB
+const GLOBAL_LOCATIONS_DOC_ID = '6880de557f8a8353cd266150';
+
 export const addEventsHandler = catchErrors(async (req, res) => {
+  const { location: rawLocation } = req.body;
+
+  if (!rawLocation || typeof rawLocation !== 'string' || rawLocation.trim() === '') {
+    return res.status(400).json({ success: false, message: 'Location is required.' });
+  }
+
+  const processedLocation = capitalizeWords(rawLocation.trim());
+
   const newEvent = {
-    location: "Monster Ronson",
+    location: processedLocation,
     eventDate: Date.now(),
     songs: [],
     closed: false,
@@ -17,6 +31,13 @@ export const addEventsHandler = catchErrors(async (req, res) => {
     if (!user) {
       return res.status(NOT_FOUND).json({ success: false, message: 'User not found.' });
     }
+
+    // Update the locations document
+    // We are now targeting the existing ObjectId directly
+    await LocationdbModel.updateOne(
+      { _id: new mongoose.Types.ObjectId(GLOBAL_LOCATIONS_DOC_ID) }, // Use the actual ObjectId
+      { $addToSet: { locations: processedLocation } },
+    );
 
     let list = await List.findOne({ userId: user._id });
 
@@ -88,5 +109,30 @@ export const getEventsListHandler = catchErrors(async (req, res) => {
   } catch (error: any) {
     console.error('Error retrieving events:', error);
     return res.status(INTERNAL_SERVER_ERROR).json({ success: false, message: 'Error retrieving events.', error: error.message });
+  }
+});
+
+export const getLocationsHandler = catchErrors(async (req, res) => {
+  try {
+    // Find the single document containing all locations
+    // Cast the string ID to a Mongoose ObjectId
+    const locationsDoc = await LocationdbModel.findById(
+      new mongoose.Types.ObjectId(GLOBAL_LOCATIONS_DOC_ID)
+    );
+
+    // If the document is not found, it means the global locations list hasn't been initialized yet.
+    // In this case, return an empty array.
+    if (!locationsDoc) {
+      console.warn(`Global locations document with ID ${GLOBAL_LOCATIONS_DOC_ID} not found. Returning empty array.`);
+      return res.status(OK).json([]);
+    }
+
+    // Return the locations array
+    return res.status(OK).json(locationsDoc.locations);
+
+  } catch (error: any) {
+    console.error('Error retrieving locations:', error);
+    // Return an internal server error if something goes wrong during retrieval
+    return res.status(INTERNAL_SERVER_ERROR).json({ success: false, message: 'Error retrieving locations.', error: error.message });
   }
 });
