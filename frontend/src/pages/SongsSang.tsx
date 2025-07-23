@@ -3,6 +3,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
 import CreatableSelect from "react-select/creatable";
 import * as uuid from "uuid";
 import { getArtistsDb, getEventsList } from "../api/api";
@@ -17,7 +18,6 @@ import { QUERIES } from "../constants/queries";
 import { useAddSong } from "../hooks/useAddSong";
 import useAppToast from "../hooks/useAppToast";
 import { useCloseEvent } from "../hooks/useCloseEvent";
-import { useCreateEvent } from "../hooks/useCreateEvent";
 import { useFilteredSongOptions } from "../hooks/useFilteredSongOptions";
 import { isDataVerified } from "../services/externalApi";
 import { getArtistsSelectData, getSongsSelectData } from "../utils/artists";
@@ -38,13 +38,13 @@ const suggestionInitValue = { type: "", data: [] }
 
 const SongsSang = () => {
   const { showErrorToast } = useAppToast();
-  const { mutate: createEventMutation, isPending: isCreateEventPending } = useCreateEvent();
   const { mutate: closeEventMutation, isPending: isCloseEventPending } = useCloseEvent();
   const { register, handleSubmit, watch, reset, setValue, formState: { errors } } = useForm<BaseSongFormData>({
     resolver: zodResolver(baseSongFormSchema),
     defaultValues,
   });
 
+  const navigate = useNavigate();
   const fav = watch("fav");
   const blacklisted = watch("blacklisted");
   const duet = watch("duet");
@@ -113,7 +113,6 @@ const SongsSang = () => {
   return (
     <PageWrapper>
       <Center><AddToggleButtonGroup /></Center>
-
       <PageHeader
         title="Songs Sang"
         //TODO: tooltip format
@@ -128,9 +127,7 @@ const SongsSang = () => {
         <VStack spacing={4} align="center" mb={8}>
           <Text fontSize="lg">{!isEventOpen && "You have no events open. Create one?"}</Text>
           <Button
-            isLoading={isCreateEventPending}
-            isDisabled={isCreateEventPending}
-            onClick={() => createEventMutation()}
+            onClick={() => navigate("/history")}
           >
             Create Event
           </Button>
