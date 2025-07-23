@@ -1,6 +1,10 @@
-import { Button, Center, Heading, Spinner, Text, VStack } from "@chakra-ui/react";
+import { Box, Button, Center, FormControl, FormErrorMessage, FormLabel, Spinner, Text, VStack } from "@chakra-ui/react";
 import { useQuery } from "@tanstack/react-query";
-import { getEventsList } from "../../api/api";
+import { useEffect, useState } from "react";
+import { Controller, useForm } from "react-hook-form"; // Import Controller
+import CreatableSelect from 'react-select/creatable';
+
+import { getEventsList, getLocationsDb } from "../../api/api";
 import PageHeader from "../../components/buttonGroups/Header";
 import { EventCard } from "../../components/EventsCard";
 import PageWrapper from "../../components/PageWrapper";
@@ -9,43 +13,153 @@ import { QUERIES } from "../../constants/queries";
 import { useCloseEvent } from "../../hooks/useCloseEvent";
 import { useCreateEvent } from "../../hooks/useCreateEvent";
 
-//TODO: location
+interface OptionType {
+  value: string;
+  label: string;
+}
+
+type FormValues = {
+  location: string;
+};
+
+const DEFAULT_LOCATION_VALUE = "Monster Ronson";
+const DEFAULT_LOCATION_OPTION: OptionType = { value: DEFAULT_LOCATION_VALUE, label: DEFAULT_LOCATION_VALUE };
+
+const defaultValues: FormValues = {
+  location: DEFAULT_LOCATION_VALUE,
+};
+
 export const EventsHistory = () => {
   const { mutate: createEventMutation, isPending: isCreateEventPending } = useCreateEvent();
   const { mutate: closeEventMutation, isPending: isCloseEventPending } = useCloseEvent();
-  const { data: eventsList, isLoading } = useQuery<Data["events"]>({
+
+  const { data: eventsList, isLoading: isEventsLoading } = useQuery<Data["events"]>({
     queryKey: [QUERIES.GET_EVENTS_LIST],
     queryFn: getEventsList,
   });
 
+  const { data: locationsDb, isLoading: isLocationsLoading, isError: isLocationsError, error: locationsError } = useQuery<string[]>({
+    queryKey: [QUERIES.GET_LOCATIONS_DB],
+    queryFn: getLocationsDb,
+  });
+
+  // No need to watch location directly if using Controller effectively for value
+  const { register, handleSubmit, watch, setValue, control, formState: { errors } } = useForm<FormValues>({ defaultValues });
+
+  // State to hold all available options for CreatableSelect
+  const [locationOptions, setLocationOptions] = useState<OptionType[]>(() => [DEFAULT_LOCATION_OPTION]);
+
+  useEffect(() => {
+    if (locationsDb) {
+      const fetchedOptions = (locationsDb as string[]).map(loc => ({ value: loc, label: loc }));
+
+      const uniqueOptionsMap = new Map<string, OptionType>();
+      uniqueOptionsMap.set(DEFAULT_LOCATION_OPTION.value, DEFAULT_LOCATION_OPTION);
+
+      fetchedOptions.forEach(option => {
+        uniqueOptionsMap.set(option.value, option);
+      });
+
+      setLocationOptions(Array.from(uniqueOptionsMap.values()));
+
+      // Ensure the form's location value is set to the default if it's currently empty
+      // This handles cases where locationsDb loads after the component
+      if (!watch("location")) { // Check current form value, not watchedLocation state
+        setValue("location", DEFAULT_LOCATION_VALUE);
+      }
+    }
+  }, [locationsDb, setValue, watch]); // Added watch to dependencies for the check
+
   const isEventOpen = eventsList?.some((e: KaraokeEvents) => !e.closed) ?? false;
+
+  const onSubmit = async (data: FormValues) => {
+    console.log('%c EventsHistory.tsx - line: 50 -->', 'color: white; background-color: #007acc', data, '<-data');
+    createEventMutation(data);
+  };
 
   return (
     <PageWrapper>
       <PageHeader title="Performances" tooltipLabel="List of all your performances" />
       {
-        isLoading &&
+        isEventsLoading &&
         <Center py={10}>
           <Spinner size="xl" />
         </Center>
       }
       {/* OPEN EVENT */}
-      {!isLoading && !isEventOpen && (
+      {!isEventsLoading && !isEventOpen && (
         <VStack spacing={4} align="center" mb={8}>
-          <Text fontSize="lg">{!isEventOpen && "You have no events open. Create one?"}</Text>
-          <Button
-            isLoading={isCreateEventPending || isLoading}
-            isDisabled={isCreateEventPending || isLoading}
-            onClick={() => createEventMutation()}
+          <Text fontSize="lg">You have no events open. Create one?</Text>
+          <Box
+            width={{ base: "100%", md: "50%", lg: "40%" }}
           >
-            Create Event
-          </Button>
+            <form onSubmit={handleSubmit(onSubmit)} noValidate>
+              <FormControl isInvalid={!!errors.location} isRequired>
+                <FormLabel htmlFor="location">Location</FormLabel>
+                <Controller // Use Controller to manage CreatableSelect
+                  name="location"
+                  control={control}
+                  rules={{ required: "Location is required" }} // Apply validation rules here
+                  render={({ field }) => (
+                    <CreatableSelect
+                      {...field} // Spreads name, onBlur, and ref
+                      options={locationOptions}
+                      // Map the string value from react-hook-form to the { value, label } object for react-select
+                      value={locationOptions.find(option => option.value === field.value) || null}
+                      isLoading={isLocationsLoading}
+                      placeholder="Type or select a location"
+                      isClearable
+                      onCreateOption={(inputValue) => {
+                        const newOption: OptionType = { value: inputValue, label: inputValue };
+                        // Add the new option to the local state
+                        setLocationOptions(prev => {
+                          const existingValues = new Set(prev.map(o => o.value));
+                          if (!existingValues.has(newOption.value)) {
+                            return [...prev, newOption];
+                          }
+                          return prev;
+                        });
+                        // Update react-hook-form's value and trigger validation
+                        field.onChange(inputValue); // Use field.onChange
+                      }}
+                      onChange={(option) => {
+                        // Update react-hook-form's value and trigger validation
+                        field.onChange(option ? option.value : ""); // Use field.onChange
+                      }}
+                      styles={{
+                        container: (base) => ({
+                          ...base,
+                          minWidth: '150px',
+                        }),
+                        option: (base, state) => ({
+                          ...base,
+                          color: state.isSelected ? 'inherit' : 'gray',
+                        }),
+                      }}
+                    />
+                  )}
+                />
+                {errors.location && (
+                  <FormErrorMessage>{errors.location.message}</FormErrorMessage>
+                )}
+              </FormControl>
+
+              <Button
+                type="submit"
+                isLoading={isCreateEventPending || isEventsLoading || isLocationsLoading}
+                isDisabled={isCreateEventPending || isEventsLoading || isLocationsLoading}
+                mt={4}
+                width="full"
+              >
+                Create Event
+              </Button>
+            </form>
+          </Box>
         </VStack>
       )}
-      {/* CLOSE EVENT */}
       {isEventOpen && (
         <VStack spacing={4} mb={10}>
-          <Heading as="h2" size="md" color={"burlywood"}>Active Event</Heading>
+          <Text as="h2" size="md" color={"burlywood"}>Active Event</Text>
           {eventsList?.map((event: KaraokeEvents) => {
             if (!event.closed) {
               return <EventCard key={event._id} event={event} showDeleteButton={true} />
@@ -53,8 +167,8 @@ export const EventsHistory = () => {
             return null
           })}
           <Button
-            isLoading={isCloseEventPending || isLoading}
-            isDisabled={isCloseEventPending || isLoading}
+            isLoading={isCloseEventPending || isEventsLoading}
+            isDisabled={isCloseEventPending || isEventsLoading}
             onClick={() => closeEventMutation()}
             variant={"secondary"}
           >
@@ -64,7 +178,7 @@ export const EventsHistory = () => {
       )}
       {eventsList && eventsList.filter(event => event.closed).length > 0 && (
         <VStack spacing={2} align="stretch">
-          <Heading as="h3" size="lg" textAlign={"center"}>Events History</Heading>
+          <Text as="h3" size="lg" textAlign={"center"}>Events History</Text>
           {eventsList?.map((event: KaraokeEvents) => {
             if (event.closed) {
               return <EventCard key={event._id} event={event} />
