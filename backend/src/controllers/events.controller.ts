@@ -5,8 +5,7 @@ import List from "../models/song.model";
 import UserModel from "../models/user.model";
 import catchErrors from "../utils/catchErrors";
 
-// Define the fixed ObjectId for your single locations document
-// THIS MUST MATCH THE _id OF YOUR EXISTING DOCUMENT IN MONGODB
+// ObjectId for single locations document
 const GLOBAL_LOCATIONS_DOC_ID = '6880de557f8a8353cd266150';
 
 export const addEventsHandler = catchErrors(async (req, res) => {
@@ -33,9 +32,8 @@ export const addEventsHandler = catchErrors(async (req, res) => {
     }
 
     // Update the locations document
-    // We are now targeting the existing ObjectId directly
     await LocationdbModel.updateOne(
-      { _id: new mongoose.Types.ObjectId(GLOBAL_LOCATIONS_DOC_ID) }, // Use the actual ObjectId
+      { _id: new mongoose.Types.ObjectId(GLOBAL_LOCATIONS_DOC_ID) },
       { $addToSet: { locations: processedLocation } },
     );
 
