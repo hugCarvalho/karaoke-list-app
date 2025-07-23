@@ -9,7 +9,7 @@ export interface LocationsdbDocument extends Document {
  * but only if the word's length is greater than one.
  * "monster of a Ronson the One" -> "Monster Of a Ronson The One"
  */
-const capitalizeWords = (text: string): string => {
+export const capitalizeWords = (text: string): string => {
   if (!text) return '';
   return text.split(' ')
     .map(word => {
