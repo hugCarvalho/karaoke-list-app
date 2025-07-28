@@ -82,7 +82,7 @@ export const addOrUpdateSongHandler = catchErrors(async (req, res) => {
     );
 
     if (Boolean(existingSong)) {
-      return res.status(400).json({ success: false, message: 'Song already exists. Use lists instead' });
+      return res.status(400).json({ success: false, message: 'Song already exists in your list! Go to LIST and manage your song from there' });
     }
 
     list.songs.push(req.body);
