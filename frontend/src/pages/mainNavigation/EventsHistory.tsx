@@ -75,7 +75,7 @@ export const EventsHistory = () => {
 
   return (
     <PageWrapper>
-      <PageHeader title="Performances" tooltipLabel="List of all your performances" />
+      <PageHeader title="Performances" tooltipLabel="Lists all your performances and let's you create and close events. Once you create an event, you'll be able to add the songs you sang to it." />
       {
         isEventsLoading &&
         <Center py={10}>
@@ -153,7 +153,7 @@ export const EventsHistory = () => {
       )}
       {isEventOpen && (
         <VStack spacing={4} mb={10}>
-          <Text as="h2" size="md" color={"burlywood"}>Active Event</Text>
+          <Heading as="h2" size="md" color={"burlywood"}>Active Event</Heading>
           {eventsList?.map((event: KaraokeEvents) => {
             if (!event.closed) {
               return <EventCard key={event._id} event={event} showDeleteButton={true} />

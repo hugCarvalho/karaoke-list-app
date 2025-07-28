@@ -83,7 +83,7 @@ export const SearchSong = () => {
 
   return (
     <PageWrapper>
-      <PageHeader title="Search For Inspiration" tooltipLabel="Search for songs based on your preferences" />
+      <PageHeader title="Search For Inspiration" tooltipLabel="Search for songs based on your preferences. If no songs are returned, try selecting fewer filters." />
       <form onSubmit={handleSubmit(onSubmit)}>
         <Grid
           templateColumns={{ base: "repeat(2, 1fr)", md: "repeat(2, 1fr)" }}

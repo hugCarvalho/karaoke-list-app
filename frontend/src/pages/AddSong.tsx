@@ -106,9 +106,9 @@ const AddSong = () => {
 
   return (
     <PageWrapper>
+      {/* HEADER & TOGGLE BUTTON GROUP */}
+      <PageHeader title="Add Songs to List" tooltipLabel="Add NEW songs. Either ADD songs for a future reference (play count will be 0) or add SANG songs you've just sang directly to you current event (play count will be 1). If the song already exists, you must add a play using the LIST instead." />
       <Center><AddToggleButtonGroup /></Center>
-
-      <PageHeader title="Add Songs to List" tooltipLabel="Add songs to your list" />
 
       <form onSubmit={handleSubmit(onSubmit)} noValidate>
         <Flex direction={{ base: "column", md: "row" }} gap={4} mb={4}>

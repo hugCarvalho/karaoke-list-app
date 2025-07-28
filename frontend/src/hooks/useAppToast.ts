@@ -16,7 +16,7 @@ const useAppToast = () => {
       title,
       description,
       status: type,
-      duration: type === 'error' ? 5000 : (options?.duration || 3000),
+      duration: type === 'error' ? 5500 : (options?.duration || 3000),
       isClosable: true,
       ...options,
 
