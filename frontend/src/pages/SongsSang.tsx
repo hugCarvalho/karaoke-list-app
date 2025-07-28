@@ -112,12 +112,12 @@ const SongsSang = () => {
 
   return (
     <PageWrapper>
-      <Center><AddToggleButtonGroup /></Center>
       <PageHeader
         title="Songs Sang"
         //TODO: tooltip format
         tooltipLabel="1- Open an event. 2-Add new songs that have you sung 3-If song already exists, use lists instead 4- This will appear in the history 5- There can be only one event open at the same time."
       />
+      <Center><AddToggleButtonGroup /></Center>
       {showSpinner &&
         <Center>
           <Spinner />
