@@ -153,7 +153,7 @@ export const EventsHistory = () => {
       )}
       {isEventOpen && (
         <VStack spacing={4} mb={10}>
-          <Text as="h2" size="md" color={"burlywood"}>Active Event</Text>
+          <Heading as="h2" size="md" color={"burlywood"}>Active Event</Heading>
           {eventsList?.map((event: KaraokeEvents) => {
             if (!event.closed) {
               return <EventCard key={event._id} event={event} showDeleteButton={true} />
