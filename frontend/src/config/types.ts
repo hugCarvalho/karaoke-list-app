@@ -1,4 +1,4 @@
-export type ListType = "fav" | "blacklist" | "duet" | "nextEvent" | "notAvailable" | null
+export type ListType = "fav" | "whitelist" | "blacklist" | "duet" | "nextEvent" | "notAvailable" | null
 
 export type SuggestedSongs = {
   artist: string,
