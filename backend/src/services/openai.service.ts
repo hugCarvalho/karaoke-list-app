@@ -177,7 +177,7 @@ B- a song that does not belong to this artist: "${artist}".
  */
 export async function searchForInspiration(decade: string, genre: string, language: string, mood: string, isDuet: boolean): Promise<string> {
   const prompt = `
-I need songs to sing at karaoke. Search for 10 popular songs that match:
+I need songs to sing at karaoke. Search for 15 popular songs that match:
 ${decade ? `${decade}, ` : ""}
 ${genre ? `Genre: ${genre}, ` : ""}
 ${language ? `Language: ${language}, ` : ""}
@@ -199,12 +199,13 @@ Do not return any explanation or extra text.
       messages: [
         { role: "user", content: prompt },
       ],
-      max_tokens: 300,
-      temperature: 0.2,
+      max_tokens: 450,
+      temperature: 0.9,
       response_format: { type: "json_object" },
     });
 
     const content = response.choices[0].message.content;
+    console.log(content)
     return content
   } catch (apiError) {
     console.error(`Error from OpenAI API during songs suggestion: ${apiError}`);
