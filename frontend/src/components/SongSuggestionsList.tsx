@@ -15,6 +15,7 @@ const SongSuggestionsList = ({ songs }: SongSuggestionsListProps) => {
     <Box mt={8}>
       <Heading size="md" mb={4} textAlign={"center"}>
         Suggested Songs
+        <Text as="span" fontSize={"sm"}>{" "}({songs?.length})</Text>
       </Heading>
       <VStack align="stretch" spacing={2}>
         {songs?.map((song, index) => (
