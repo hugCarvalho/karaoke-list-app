@@ -205,7 +205,6 @@ Do not return any explanation or extra text.
     });
 
     const content = response.choices[0].message.content;
-    console.log(content)
     return content
   } catch (apiError) {
     console.error(`Error from OpenAI API during songs suggestion: ${apiError}`);
