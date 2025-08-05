@@ -30,8 +30,8 @@ const defaultValues: FormValues = {
 };
 
 export const EventsHistory = () => {
-  const { mutate: createEventMutation, isPending: isCreateEventPending } = useCreateEvent();
-  const { mutate: closeEventMutation, isPending: isCloseEventPending } = useCloseEvent();
+  const { mutate: createEventMutation, isPending: isCreateEventPending, isSuccess: isCreateEventSuccess, reset: resetCreateEvent } = useCreateEvent();
+  const { mutate: closeEventMutation, isPending: isCloseEventPending, isSuccess: isCloseEventSuccess, reset: resetCloseEvent } = useCloseEvent();
 
   const { data: eventsList, isLoading: isEventsLoading } = useQuery<Data["events"]>({
     queryKey: [QUERIES.GET_EVENTS_LIST],
@@ -68,6 +68,15 @@ export const EventsHistory = () => {
   }, [locationsDb, setValue, watch]);
 
   const isEventOpen = eventsList?.some((e: KaraokeEvents) => !e.closed) ?? false;
+
+  useEffect(() => {
+    if (isCreateEventSuccess) {
+      resetCreateEvent();
+    }
+    if (isCloseEventSuccess) {
+      resetCloseEvent();
+    }
+  }, [isEventOpen]);
 
   const onSubmit = async (data: FormValues) => {
     createEventMutation(data);
@@ -140,8 +149,8 @@ export const EventsHistory = () => {
 
               <Button
                 type="submit"
-                isLoading={isCreateEventPending || isEventsLoading || isLocationsLoading}
-                isDisabled={isCreateEventPending || isEventsLoading || isLocationsLoading}
+                isLoading={isCreateEventPending || isEventsLoading || isLocationsLoading || isCreateEventSuccess}
+                isDisabled={isCreateEventPending || isEventsLoading || isLocationsLoading || isCreateEventSuccess}
                 mt={4}
                 width="full"
               >
@@ -151,6 +160,7 @@ export const EventsHistory = () => {
           </Box>
         </VStack>
       )}
+      {/* CLOSE EVENT */}
       {isEventOpen && (
         <VStack spacing={4} mb={10}>
           <Heading as="h2" size="md" color={"burlywood"}>Active Event</Heading>
@@ -161,8 +171,8 @@ export const EventsHistory = () => {
             return null
           })}
           <Button
-            isLoading={isCloseEventPending || isEventsLoading}
-            isDisabled={isCloseEventPending || isEventsLoading}
+            isLoading={isCloseEventPending || isEventsLoading || isCloseEventSuccess}
+            isDisabled={isCloseEventPending || isEventsLoading || isCloseEventSuccess}
             onClick={() => closeEventMutation()}
             variant={"secondary"}
           >
