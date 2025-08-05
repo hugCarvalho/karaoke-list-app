@@ -39,6 +39,7 @@ const moods = [
   { label: "Happy", value: "happy" },
   { label: "Angry", value: "angry" },
   { label: "Melancholic", value: "melancholic" },
+  { label: "Energetic", value: "energetic" },
 ]
 
 type FormValues = {

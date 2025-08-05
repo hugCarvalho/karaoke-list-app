@@ -10,6 +10,7 @@ export const ListsToggleGroup = ({ listName, setListName }: Props) => {
   const isAll = listName === null;
   const isFav = listName === "fav";
   const isBlacklist = listName === "blacklist";
+  const isWhitelist = listName === "whitelist";
   const isDuet = listName === "duet";
   const isNextEvent = listName === "nextEvent";
   const isNotAvailable = listName === "notAvailable";
@@ -18,6 +19,7 @@ export const ListsToggleGroup = ({ listName, setListName }: Props) => {
     { label: "All", path: "", icon: "📜", active: isAll, action: () => setListName(null) },
     { label: "Fav", path: "", icon: "⭐", active: isFav, action: () => setListName("fav") },
     { label: "Duet", path: "", icon: "🎤", active: isDuet, action: () => setListName("duet") },
+    { label: "Whitelist", path: "", icon: "", active: isWhitelist, action: () => setListName("whitelist") },
     { label: "Blacklist", path: "", icon: "", active: isBlacklist, action: () => setListName("blacklist") },
     { label: "N/A", path: "", icon: "🚫", active: isNotAvailable, action: () => setListName("notAvailable") },
     { label: "Next", path: "", icon: "⏭️", active: isNextEvent, action: () => setListName("nextEvent") },

@@ -25,6 +25,8 @@ export const useFilteredSongs = ({ data, songFilterText, artistFilterText, listN
       currentFilteredList = data.filter((song) => song.inNextEventList);
     } else if (listName === "notAvailable") {
       currentFilteredList = data.filter((song) => song.notAvailable);
+    } else if (listName === "whitelist") {
+      currentFilteredList = data.filter((song) => !song.blacklisted);
     } else {
       currentFilteredList = data.filter((song) => !song.notAvailable);
     }

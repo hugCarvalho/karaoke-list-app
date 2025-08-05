@@ -1,4 +1,4 @@
-import { Button, ButtonGroup, Flex } from "@chakra-ui/react";
+import { Button, ButtonGroup, Flex, Text } from "@chakra-ui/react";
 import { useLocation, useNavigate } from "react-router-dom";
 
 const NavButtons = () => {
@@ -29,13 +29,13 @@ const NavButtons = () => {
             onClick={() => navigate(button.path)}
             variant={"solid"}
             color={pathname === button.path || (pathname === "/songs-sang" && button.label === "ADD") ? "orange" : "inherit"}
-            px={{ base: 1, md: 4 }}
-            py={{ base: 1, md: 2 }}
+            px={{ base: 3, md: 4 }}
+            py={{ base: 2, md: 2 }}
           >
             {`${button.label}`}
-            <span style={{ fontSize: "16px", paddingLeft: "3px" }} aria-hidden="true">
+            <Text as="span" display={{ base: "none", md: "inline" }} fontSize="16px" paddingLeft="3px" aria-hidden="true">
               {` ${button.icon}`}
-            </span>
+            </Text>
           </Button>
         })}
       </ButtonGroup>

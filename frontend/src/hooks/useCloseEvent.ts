@@ -10,7 +10,7 @@ export const useCloseEvent = () => {
   return useMutation({
     mutationFn: () => closeEvent(),
     onSuccess: () => {
-      showSuccessToast("Event Closed.", "The event has been successfully closed.");
+      // showSuccessToast("Event Closed.", "The event has been successfully closed.");
       queryClient.invalidateQueries({ queryKey: [QUERIES.GET_EVENTS_LIST] });
     },
     onError: (error: Error) => {
