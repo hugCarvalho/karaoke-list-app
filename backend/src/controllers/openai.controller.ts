@@ -8,28 +8,41 @@ export const getPopularSongsHandler = catchErrors(async (req, res) => {
   const { artist } = req.body;
 
   if (!artist) {
-    return res.status(400).json({ error: "artist is required in the request body" });
+    return res.status(400).json({ error: "Artist is required" });
   }
 
   try {
     const songsString = await getPopularSongsForArtist(artist);
 
-    if (songsString) {
-      try {
-        const songsArray = JSON.parse(songsString);
-        // Manipulating data here to the desired format because AI takes longer when it has to provide it itself
-        const formattedSongs = songsArray.map((song: string) => ({ value: song, label: song }));
-
-        res.status(200).json({ songs: formattedSongs });
-      } catch (error) {
-        console.error("Error parsing or formatting song list from OpenAI response:", error);
-        res.status(500).json({ error: "Failed to process song list from AI" });
-      }
-    } else {
-      res.status(500).json({ error: "Failed to retrieve song list from AI" });
+    if (!songsString) {
+      return res.status(500).json({ error: "No response from AI" });
     }
+
+    // 1. Parse the string into an object
+    const parsedData = JSON.parse(songsString);
+
+    // 2. Safely extract the array.
+    // We check for .songs (what we asked for) or .list just in case.
+    const songsArray = Array.isArray(parsedData)
+      ? parsedData
+      : (parsedData.songs || parsedData.list || []);
+
+    // 3. Check if we actually got an array to map over
+    if (!Array.isArray(songsArray)) {
+      console.error("AI did not return an array. Data received:", parsedData);
+      return res.status(500).json({ error: "AI returned invalid data format" });
+    }
+
+    // 4. Map the data for the frontend
+    const formattedSongs = songsArray.map((song: string) => ({
+      value: song,
+      label: song
+    }));
+
+    res.status(200).json({ songs: formattedSongs });
+
   } catch (error) {
-    console.error("Error in /songs route handler:", error);
+    console.error("Detailed Error in getPopularSongsHandler:", error);
     res.status(500).json({ error: "Internal server error during song retrieval" });
   }
 });

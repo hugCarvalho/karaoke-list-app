@@ -1,42 +1,47 @@
-import openai from '../config/openai';
+import Groq from "groq-sdk";
 
-//TODO: check catch blocks to throw error.
-//TODO: confirm max tokens
-//TODO: check for fn names
+// Initialize with your API Key (Add GROQ_API_KEY to your backend .env)
+const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
 
 /**
  * Fetches a list of popular songs by a given artist using OpenAI.
  * @param artist The artist's name.
  * @returns A promise that resolves to a string (JSON array) of song names, or null on error.
  */
-export async function getPopularSongsForArtist(artist: string) {
-  //removed extra spaces from prompt just in case. Format looks odd but it's fine
-  const prompt = `
-Please list the 25 most popular songs by ${artist}.
-The return value must be a an array of the names of the songs For example: ["No Surprises", "Creep", ...].
-Do NOT include any introductory or concluding text, only the array.
-`;
 
+
+export async function getPopularSongsForArtist(artist: string) {
+  console.log("------------RUNNING GROK ------------------")
   try {
-    const response = await openai.chat.completions.create({
-      model: "gpt-4o-mini",
+    const chatCompletion = await groq.chat.completions.create({
+      // "llama-3.3-70b-versatile" is the current 2026 workhorse for Groq
       messages: [
-        { role: "user", content: prompt },
+        {
+          role: "system",
+          content: "You are a music database. Respond only with a JSON array of strings containing song titles. No prose, no markdown blocks."
+        },
+        {
+          role: "user",
+          content: `List the 10 most popular songs by ${artist}. Return a JSON object with a 'songs' key containing an array of strings.`
+        }
       ],
-      max_tokens: 350,
-      temperature: 0.5,
+      model: "llama-3.3-70b-versatile",
+      // Setting temperature to 0 makes the list more consistent/factual
+      temperature: 0,
+      // Ensure the model knows we want JSON
+      response_format: { type: "json_object" }
     });
 
-    const content = response.choices[0].message.content;
-    if (content === null) {
-      console.error("OpenAI API returned null content for popular songs.");
-      throw new Error("OpenAI API returned empty content for popular songs.");
+    const content = chatCompletion.choices[0]?.message?.content;
+    console.log("CONNTENT:", content)
+    if (!content) {
+      throw new Error("Groq returned an empty response.");
     }
 
     return content;
   } catch (error) {
-    console.error(`Error fetching popular songs from OpenAI: ${error}`);
-    throw new Error(`Failed to get popular songs for ${artist}: ${error instanceof Error ? error.message : String(error)}`)
+    console.error(`Groq API Error: ${error}`);
+    throw new Error(`Failed to fetch songs for ${artist} via Groq.`);
   }
 }
 
@@ -49,11 +54,9 @@ Do NOT include any introductory or concluding text, only the array.
  * Returns an empty array if the API call fails or the response cannot be parsed correctly.
  */
 export async function suggestArtistName(misspelledName: string): Promise<string[]> {
-
   const prompt = `
 The following is a potentially misspelled artist or music group name: "${misspelledName}".
-Search for an artist name or band name, whose names are phonetically/spelling-wise similar to the misspelled name and return ALWAYS one to three suggestions,
-depending on how good the hipothesis are, for the correct spelling or similar popular artist/group names.
+Search for an artist name or band name, whose names are phonetically/spelling-wise similar to the misspelled name and return ALWAYS one to three suggestions for the correct spelling.
 Return the suggestions as a JSON object with a single key "suggestions", whose value is a JSON array of strings.
 Do NOT include any other text, explanation, or formatting outside of this JSON object.
 
@@ -63,39 +66,38 @@ Example for "the bitels": {"suggestions": ["The Beatles", "Beatles", "The Byrds"
   `;
 
   try {
-    const response = await openai.chat.completions.create({
-      model: "gpt-4o-mini",
+    const response = await groq.chat.completions.create({
+      model: "llama-3.3-70b-versatile",
       messages: [
         { role: "user", content: prompt },
       ],
-      max_tokens: 150, // Should be sufficient for a JSON object containing 3 short strings
-      temperature: 0.3, // Lower temperature for more factual and less creative suggestions
-      response_format: { type: "json_object" }, // Instructs the model to return a valid JSON object
+      max_tokens: 150,
+      temperature: 0.3,
+      response_format: { type: "json_object" },
     });
 
     const content = response.choices[0].message.content;
+
     if (content) {
       try {
         const parsedObject = JSON.parse(content);
+
         // Ensure the parsed object has the 'suggestions' key and it's an array
         if (parsedObject && Array.isArray(parsedObject.suggestions)) {
-          // Filter to ensure all elements are strings and limit to max 3
           return parsedObject.suggestions
             .filter((s: any) => typeof s === 'string')
             .slice(0, 3);
         }
       } catch (parseError) {
-        console.error(`Error parsing OpenAI response for suggestions (content: "${content}"):`, parseError);
+        console.error(`Error parsing Groq response for suggestions (content: "${content}"):`, parseError);
       }
     }
-    // Return an empty array if content is null, parsing fails, or the format is incorrect
     return [];
   } catch (apiError) {
-    console.error(`Error from OpenAI API during artist suggestion: ${apiError}`);
-    throw new Error(`OpenAI API call failed for artist suggestion: ${apiError instanceof Error ? apiError.message : String(apiError)}`);
+    console.error(`Error from Groq API during artist suggestion: ${apiError}`);
+    throw new Error(`Groq API call failed for artist suggestion: ${apiError instanceof Error ? apiError.message : String(apiError)}`);
   }
 }
-
 /**
  * Generates suggestions for a song name, specifically focusing on correcting typos or finding matches
  * within the context of the provided artist. It prioritizes finding accurate matches
@@ -116,47 +118,58 @@ export async function suggestSongName(artist: string, song: string): Promise<str
 "${song}" is either:
 A- a potentially misspelled song name.
 B- a song that does not belong to this artist: "${artist}".
-1- Prioritize searching for matches within songs that belong to "${artist}" and
-  return ALWAYS a minimum of 1 suggestion and a max of 3 suggestions, depending on how good the hipothesis are.
-  Return data as a JSON object with a single key "suggestions",
-  whose value is a JSON array with the options, being the first one always the better match.
 
-  Example for case 1, artist is "Nirvana" and song is "litium": {"suggestions": ["Lithium"]} -> it is a typo
-  Example for case 1, artist is "Queen" and song is "Under presure": {"suggestions": ["Under Pressure"]} -> it is a typo
+Task:
+1- Prioritize searching for matches within songs that belong to "${artist}".
+2- Return ALWAYS a minimum of 1 suggestion and a max of 3 suggestions.
+3- Return data as a JSON object with a single key "suggestions", whose value is a JSON array.
+4- The first element must always be the best match.
+
+Examples:
+- Artist "Nirvana", Song "litium": {"suggestions": ["Lithium"]}
+- Artist "Queen", Song "Under presure": {"suggestions": ["Under Pressure"]}
   `;
 
   try {
-    const response = await openai.chat.completions.create({
-      model: "gpt-4o-mini",
+    const response = await groq.chat.completions.create({
+      model: "llama-3.3-70b-versatile",
       messages: [
-        { role: "user", content: prompt },
+        {
+          role: "system",
+          content: "You are a music database assistant. You must only output valid JSON."
+        },
+        {
+          role: "user",
+          content: prompt
+        },
       ],
       max_tokens: 150,
-      temperature: 0.2,
+      temperature: 0.2, // Low temperature is perfect here for factual corrections
       response_format: { type: "json_object" },
     });
 
     const content = response.choices[0].message.content;
+
     if (content) {
       try {
         const parsedObject = JSON.parse(content);
-        // TODO: to utils
+
+        // Safety check for the 'suggestions' key
         if (parsedObject && Array.isArray(parsedObject.suggestions)) {
           return parsedObject.suggestions
             .filter((s: any) => typeof s === 'string')
             .slice(0, 3);
         }
       } catch (parseError) {
-        console.error(`Error parsing OpenAI response for suggestions (content: "${content}"):`, parseError);
+        console.error(`Error parsing Groq response for song suggestions (content: "${content}"):`, parseError);
       }
     }
     return [];
   } catch (apiError) {
-    console.error(`Error from OpenAI API during song name suggestion: ${apiError}`);
-    throw new Error(`OpenAI API call failed for song name suggestion: ${apiError instanceof Error ? apiError.message : String(apiError)}`)
+    console.error(`Error from Groq API during song name suggestion: ${apiError}`);
+    throw new Error(`Groq API call failed for song name suggestion: ${apiError instanceof Error ? apiError.message : String(apiError)}`);
   }
 }
-
 /**
  * Generates a list of popular karaoke song suggestions based on specified criteria
  * using the OpenAI API. The function constructs a prompt to guide the AI in
@@ -175,39 +188,62 @@ B- a song that does not belong to this artist: "${artist}".
  * Returns an empty string `""` if the API call fails or the response cannot be retrieved/processed.
  * Note: The `Promise<string>` return type reflects the raw JSON string content from OpenAI.
  */
-export async function searchForInspiration(decade: string, genre: string, language: string, mood: string, isDuet: boolean): Promise<string> {
+export async function searchForInspiration(
+  decade: string,
+  genre: string,
+  language: string,
+  mood: string,
+  isDuet: boolean
+): Promise<string> {
+
   const prompt = `
 I need songs to sing at karaoke. Search for 15 popular songs that match:
-${decade ? `${decade}, ` : ""}
+${decade ? `Decade: ${decade}, ` : ""}
 ${genre ? `Genre: ${genre}, ` : ""}
 ${language ? `Language: ${language}, ` : ""}
 ${mood ? `Mood: ${mood}, ` : ""}
-${isDuet ? "has at least two main vocals" : ""}.
-Songs MUST be returned in JSON format with the following format:
+${isDuet ? "The song MUST be a duet (has at least two main vocals)" : ""}.
+
+Return the songs as a JSON object with the following structure:
 {
   "songs": [
-    {"artist": "Nirvana", "title": "Lithium", "year": 1991},
-    {"artist": "Queen", "title": "Under Pressure", "year": 1987}
+    {"artist": "Artist Name", "title": "Song Title", "year": 1990},
+    ...
   ]
-}.
+}
 If no songs are found, return { "songs": [] }.
 Do not return any explanation or extra text.
-`
+`;
+
   try {
-    const response = await openai.chat.completions.create({
-      model: "gpt-4o-mini",
+    const response = await groq.chat.completions.create({
+      // Using 70B here is better for "Inspiration" because it has a
+      // deeper knowledge of obscure songs than the 8B model.
+      model: "llama-3.3-70b-versatile",
       messages: [
-        { role: "user", content: prompt },
+        {
+          role: "system",
+          content: "You are a professional Karaoke DJ. You only respond with valid JSON."
+        },
+        {
+          role: "user",
+          content: prompt
+        },
       ],
-      max_tokens: 450,
-      temperature: 0.9,
+      max_tokens: 800, // Increased slightly to accommodate 15 full objects
+      temperature: 0.9, // Kept high for variety in suggestions
       response_format: { type: "json_object" },
     });
 
     const content = response.choices[0].message.content;
-    return content
+
+    if (!content) {
+      throw new Error("Groq returned an empty response.");
+    }
+
+    return content;
   } catch (apiError) {
-    console.error(`Error from OpenAI API during songs suggestion: ${apiError}`);
-    throw new Error(`OpenAI API call failed: ${apiError instanceof Error ? apiError.message : String(apiError)}`);
+    console.error(`Error from Groq API during inspiration search: ${apiError}`);
+    throw new Error(`Groq API call failed: ${apiError instanceof Error ? apiError.message : String(apiError)}`);
   }
 }
