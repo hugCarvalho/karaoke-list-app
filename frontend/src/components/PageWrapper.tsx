@@ -11,7 +11,7 @@ const PageWrapper = ({ children }: { children: ReactNode }) => {
       <Container
         maxW="container.xl"
         flex="1"
-        p={5}
+        p={2}
         pt={20}
       >
         {children}
