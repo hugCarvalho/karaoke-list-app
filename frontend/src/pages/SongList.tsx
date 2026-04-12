@@ -1,11 +1,10 @@
 import { CloseIcon } from "@chakra-ui/icons";
-import { Box, Center, HStack, IconButton, Input, InputGroup, InputRightElement, Spinner, VStack } from "@chakra-ui/react";
+import { Box, Center, Container, HStack, IconButton, Input, InputGroup, InputRightElement, Spinner, VStack } from "@chakra-ui/react";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { getSongsList } from "../api/api";
 import { ListsToggleGroup } from "../components/buttonGroups/ListsToggleGroup";
 import EmptyList from "../components/EmptyList";
-import PageWrapper from "../components/PageWrapper";
 import TableBody from "../components/table/TableBody";
 import { TableHead } from "../components/table/TableHeader";
 import TableWrapper from "../components/table/TableWrapper";
@@ -41,14 +40,19 @@ const SongList = () => {
   };
 
   return (
-    <PageWrapper>
+    <Container
+      maxW="container.xl"
+      flex="1"
+      // p={1}
+      pt={"50px"}
+    >
       <VStack spacing={4} alignItems="stretch" >
-        <VStack position={"sticky"} top={`${header + extraPadding}px`} zIndex={10} background={"#19202c"} spacing={3} p={3} >
+        <VStack position={"sticky"} top={`${header + extraPadding}px`} zIndex={10} background={"#19202c"} spacing={3} p={3}>
           {/* SUB LISTS NAVIGATION BAR  */}
           <Center>
             <ListsToggleGroup listName={listName} setListName={setListName} />
           </Center>
-          <HStack spacing={4}>
+          <HStack spacing={3}>
             {/* FILTER BY ARTIST INPUT */}
             <InputGroup>
               <Input
@@ -104,7 +108,7 @@ const SongList = () => {
         {isLoading && <Box style={{ textAlign: "center" }}> <Spinner /> </Box>}
         {!isLoading && !data && !isFetching && <EmptyList />}
       </VStack>
-    </PageWrapper>
+    </Container>
   );
 };
 
