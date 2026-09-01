@@ -1,3 +1,4 @@
+//SongList.tsx
 import { CloseIcon } from "@chakra-ui/icons";
 import { Box, Center, Container, HStack, IconButton, Input, InputGroup, InputRightElement, Spinner, VStack } from "@chakra-ui/react";
 import { useQuery } from "@tanstack/react-query";
@@ -6,7 +7,7 @@ import { getSongsList } from "../api/api";
 import { ListsToggleGroup } from "../components/buttonGroups/ListsToggleGroup";
 import EmptyList from "../components/EmptyList";
 import TableBody from "../components/table/TableBody";
-import { TableHead } from "../components/table/TableHeader";
+import { TableHeader } from "../components/table/TableHeader";
 import TableWrapper from "../components/table/TableWrapper";
 import { Song } from "../config/interfaces";
 import { ListType } from "../config/types";
@@ -38,7 +39,7 @@ const SongList = () => {
   const handleClearArtistFilter = () => {
     setArtistFilterText("");
   };
-
+  console.log('%c SongList.tsx - line: 41', 'color: white; background-color: #00cc29', data, '<-data')
   return (
     <Container
       maxW="container.xl"
@@ -102,7 +103,7 @@ const SongList = () => {
           </HStack>
         </VStack>
         <TableWrapper>
-          <TableHead sortConfig={sortConfig} requestSort={requestSort} tableFontSize={tableFontSize} />
+          <TableHeader sortConfig={sortConfig} requestSort={requestSort} tableFontSize={tableFontSize} />
           {data && <TableBody sortedSongs={sortedSongs} tableFontSize={tableFontSize} />}
         </TableWrapper>
         {isLoading && <Box style={{ textAlign: "center" }}> <Spinner /> </Box>}

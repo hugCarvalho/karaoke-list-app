@@ -14,7 +14,7 @@ const stickyStyles = {
   bg: "#19202c", // MUST be opaque, otherwise text will overlap
   // borderBottom: "1px solid #333" // Optional: gives it a nice clean edge
 };
-export const TableHead = ({ sortConfig, requestSort, tableFontSize }: TableHeadProps) => {
+export const TableHeader = ({ sortConfig, requestSort, tableFontSize }: TableHeadProps) => {
   return (
     <Thead sx={stickyStyles}>
       <Tr>

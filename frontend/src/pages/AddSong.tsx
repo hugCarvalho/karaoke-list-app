@@ -9,7 +9,6 @@ import { getArtistsDb } from "../api/api";
 import { AlertSuggestions } from "../components/AlertSuggestions";
 import { AddToggleButtonGroup } from "../components/buttonGroups/AddToggleButtonGroup";
 import CheckboxGroup from "../components/buttonGroups/CheckboxGroup";
-import PageHeader from "../components/buttonGroups/Header";
 import PageWrapper from "../components/PageWrapper";
 import { BaseSongFormData, baseSongFormSchema, Option } from "../config/formInterfaces";
 import { QUERIES } from "../constants/queries";
@@ -107,7 +106,7 @@ const AddSong = () => {
   return (
     <PageWrapper>
       {/* HEADER & TOGGLE BUTTON GROUP */}
-      <PageHeader title="Add Songs to List" tooltipLabel="Add NEW songs. Either ADD songs for a future reference (play count will be 0) or add SANG songs you've just sang directly to you current event (play count will be 1). If the song already exists, you must add a play using the LIST instead." />
+
       <Center><AddToggleButtonGroup /></Center>
 
       <form onSubmit={handleSubmit(onSubmit)} noValidate>
