@@ -1,0 +1,215 @@
+Date : 2026-09-08 17:57:09
+Directory : /home/hugo/Documents/coding_2025/karaoke-list-app
+Total : 140 files,  20028 codes, 705 comments, 1411 blanks, all 22144 lines
+
+Languages
++--------------------+------------+------------+------------+------------+------------+
+| language           | files      | code       | comment    | blank      | total      |
++--------------------+------------+------------+------------+------------+------------+
+| JSON               |          5 |     12,906 |          0 |          5 |     12,911 |
+| TypeScript JSX     |         48 |      4,296 |        351 |        786 |      5,433 |
+| TypeScript         |         77 |      2,571 |        212 |        575 |      3,358 |
+| YAML               |          2 |         56 |          2 |         16 |         74 |
+| Markdown           |          1 |         54 |          0 |          7 |         61 |
+| JSON with Comments |          2 |         51 |         94 |          2 |        147 |
+| JavaScript         |          3 |         51 |         12 |          4 |         67 |
+| HTML               |          1 |         42 |         34 |         16 |         92 |
+| Dotenv             |          1 |          1 |          0 |          0 |          1 |
++--------------------+------------+------------+------------+------------+------------+
+
+Directories
++-----------------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| path                                                                                                            | files      | code       | comment    | blank      | total      |
++-----------------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| .                                                                                                               |        140 |     20,028 |        705 |      1,411 |     22,144 |
+| . (Files)                                                                                                       |          1 |         54 |          0 |          7 |         61 |
+| .github                                                                                                         |          1 |         28 |          1 |          8 |         37 |
+| .github/workflows                                                                                               |          1 |         28 |          1 |          8 |         37 |
+| backend                                                                                                         |         45 |      4,911 |        144 |        355 |      5,410 |
+| backend (Files)                                                                                                 |          4 |      3,380 |          3 |          6 |      3,389 |
+| backend/api                                                                                                     |          1 |         53 |          4 |         12 |         69 |
+| backend/src                                                                                                     |         40 |      1,478 |        137 |        337 |      1,952 |
+| backend/src/config                                                                                              |          2 |         16 |          0 |          5 |         21 |
+| backend/src/constants                                                                                           |          5 |         50 |          0 |         12 |         62 |
+| backend/src/controllers                                                                                         |          7 |        582 |         51 |        148 |        781 |
+| backend/src/middleware                                                                                          |          2 |         59 |          2 |         15 |         76 |
+| backend/src/models                                                                                              |          6 |        170 |          5 |         36 |        211 |
+| backend/src/routes                                                                                              |          6 |         50 |          7 |         23 |         80 |
+| backend/src/services                                                                                            |          2 |        376 |         62 |         52 |        490 |
+| backend/src/utils                                                                                               |         10 |        175 |         10 |         46 |        231 |
+| frontend                                                                                                        |         93 |     15,035 |        560 |      1,041 |     16,636 |
+| frontend (Files)                                                                                                |          8 |      9,661 |        137 |         23 |      9,821 |
+| frontend/.github                                                                                                |          1 |         28 |          1 |          8 |         37 |
+| frontend/.github/workflows                                                                                      |          1 |         28 |          1 |          8 |         37 |
+| frontend/public                                                                                                 |          1 |         19 |          0 |          1 |         20 |
+| frontend/src                                                                                                    |         80 |      5,084 |        387 |        951 |      6,422 |
+| frontend/src (Files)                                                                                            |          3 |        108 |          1 |         12 |        121 |
+| frontend/src/api                                                                                                |          2 |         61 |          2 |          7 |         70 |
+| frontend/src/components                                                                                         |         19 |        955 |         25 |        104 |      1,084 |
+| frontend/src/components (Files)                                                                                 |         10 |        447 |         12 |         50 |        509 |
+| frontend/src/components/buttonGroups                                                                            |          5 |        224 |          0 |         25 |        249 |
+| frontend/src/components/stats                                                                                   |          1 |         96 |          9 |         12 |        117 |
+| frontend/src/components/table                                                                                   |          3 |        188 |          4 |         17 |        209 |
+| frontend/src/config                                                                                             |          6 |        135 |         11 |         29 |        175 |
+| frontend/src/constants                                                                                          |          3 |         10 |          0 |          2 |         12 |
+| frontend/src/hooks                                                                                              |         23 |      1,697 |        201 |        458 |      2,356 |
+| frontend/src/hooks (Files)                                                                                      |         13 |        840 |        112 |        235 |      1,187 |
+| frontend/src/hooks/list                                                                                         |         10 |        857 |         89 |        223 |      1,169 |
+| frontend/src/pages                                                                                              |         16 |      1,883 |        132 |        286 |      2,301 |
+| frontend/src/pages (Files)                                                                                      |          4 |        677 |         25 |         51 |        753 |
+| frontend/src/pages/auth                                                                                         |          7 |        753 |         92 |        153 |        998 |
+| frontend/src/pages/mainNavigation                                                                               |          2 |        371 |         15 |         72 |        458 |
+| frontend/src/pages/profile                                                                                      |          3 |         82 |          0 |         10 |         92 |
+| frontend/src/services                                                                                           |          1 |        105 |          6 |         22 |        133 |
+| frontend/src/theme                                                                                              |          3 |         63 |          0 |         13 |         76 |
+| frontend/src/utils                                                                                              |          4 |         67 |          9 |         18 |         94 |
+| frontend/tests                                                                                                  |          3 |        243 |         35 |         58 |        336 |
+| frontend/tests/utils                                                                                            |          3 |        243 |         35 |         58 |        336 |
++-----------------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+
+Files
++-----------------------------------------------------------------------------------------------------------------+--------------------+------------+------------+------------+------------+
+| filename                                                                                                        | language           | code       | comment    | blank      | total      |
++-----------------------------------------------------------------------------------------------------------------+--------------------+------------+------------+------------+------------+
+| /home/hugo/Documents/coding_2025/karaoke-list-app/.github/workflows/main.yml                                    | YAML               |         28 |          1 |          8 |         37 |
+| /home/hugo/Documents/coding_2025/karaoke-list-app/backend/api/index.ts                                          | TypeScript         |         53 |          4 |         12 |         69 |
+| /home/hugo/Documents/coding_2025/karaoke-list-app/backend/index.d.ts                                            | TypeScript         |          9 |          0 |          3 |         12 |
+| /home/hugo/Documents/coding_2025/karaoke-list-app/backend/package-lock.json                                     | JSON               |      3,304 |          0 |          1 |      3,305 |
+| /home/hugo/Documents/coding_2025/karaoke-list-app/backend/package.json                                          | JSON               |         42 |          0 |          1 |         43 |
+| /home/hugo/Documents/coding_2025/karaoke-list-app/backend/src/config/db.ts                                      | TypeScript         |         12 |          0 |          2 |         14 |
+| /home/hugo/Documents/coding_2025/karaoke-list-app/backend/src/config/resend.ts                                  | TypeScript         |          4 |          0 |          3 |          7 |
+| /home/hugo/Documents/coding_2025/karaoke-list-app/backend/src/constants/appErrorCode.ts                         | TypeScript         |          4 |          0 |          2 |          6 |
+| /home/hugo/Documents/coding_2025/karaoke-list-app/backend/src/constants/audience.ts                             | TypeScript         |          5 |          0 |          2 |          7 |
+| /home/hugo/Documents/coding_2025/karaoke-list-app/backend/src/constants/env.ts                                  | TypeScript         |         15 |          0 |          4 |         19 |
+| /home/hugo/Documents/coding_2025/karaoke-list-app/backend/src/constants/http.ts                                 | TypeScript         |         21 |          0 |          2 |         23 |
+| /home/hugo/Documents/coding_2025/karaoke-list-app/backend/src/constants/verificationCodeType.ts                 | TypeScript         |          5 |          0 |          2 |          7 |
+| /home/hugo/Documents/coding_2025/karaoke-list-app/backend/src/controllers/auth.controller.ts                    | TypeScript         |         69 |          3 |         18 |         90 |
+| /home/hugo/Documents/coding_2025/karaoke-list-app/backend/src/controllers/auth.schemas.ts                       | TypeScript         |         21 |          0 |          7 |         28 |
+| /home/hugo/Documents/coding_2025/karaoke-list-app/backend/src/controllers/events.controller.ts                  | TypeScript         |         98 |          7 |         32 |        137 |
+| /home/hugo/Documents/coding_2025/karaoke-list-app/backend/src/controllers/openai.controller.ts                  | TypeScript         |         65 |         11 |         25 |        101 |
+| /home/hugo/Documents/coding_2025/karaoke-list-app/backend/src/controllers/session.controller.ts                 | TypeScript         |         38 |          2 |          4 |         44 |
+| /home/hugo/Documents/coding_2025/karaoke-list-app/backend/src/controllers/songList.controller.ts                | TypeScript         |        282 |         27 |         60 |        369 |
+| /home/hugo/Documents/coding_2025/karaoke-list-app/backend/src/controllers/user.controller.ts                    | TypeScript         |          9 |          1 |          2 |         12 |
+| /home/hugo/Documents/coding_2025/karaoke-list-app/backend/src/middleware/authenticate.ts                        | TypeScript         |         25 |          2 |          5 |         32 |
+| /home/hugo/Documents/coding_2025/karaoke-list-app/backend/src/middleware/errorHandler.ts                        | TypeScript         |         34 |          0 |         10 |         44 |
+| /home/hugo/Documents/coding_2025/karaoke-list-app/backend/src/models/artistdb.model.ts                          | TypeScript         |         19 |          0 |          5 |         24 |
+| /home/hugo/Documents/coding_2025/karaoke-list-app/backend/src/models/locationsdb.model.ts                       | TypeScript         |         20 |          4 |          7 |         31 |
+| /home/hugo/Documents/coding_2025/karaoke-list-app/backend/src/models/session.model.ts                           | TypeScript         |         28 |          0 |          4 |         32 |
+| /home/hugo/Documents/coding_2025/karaoke-list-app/backend/src/models/song.model.ts                              | TypeScript         |         37 |          1 |          8 |         46 |
+| /home/hugo/Documents/coding_2025/karaoke-list-app/backend/src/models/user.model.ts                              | TypeScript         |         41 |          0 |          8 |         49 |
+| /home/hugo/Documents/coding_2025/karaoke-list-app/backend/src/models/verificationCode.model.ts                  | TypeScript         |         25 |          0 |          4 |         29 |
+| /home/hugo/Documents/coding_2025/karaoke-list-app/backend/src/routes/auth.route.ts                              | TypeScript         |         11 |          1 |          4 |         16 |
+| /home/hugo/Documents/coding_2025/karaoke-list-app/backend/src/routes/events.route.ts                            | TypeScript         |          8 |          1 |          3 |         12 |
+| /home/hugo/Documents/coding_2025/karaoke-list-app/backend/src/routes/list.route.ts                              | TypeScript         |         12 |          1 |          3 |         16 |
+| /home/hugo/Documents/coding_2025/karaoke-list-app/backend/src/routes/openai.route.ts                            | TypeScript         |          8 |          2 |          5 |         15 |
+| /home/hugo/Documents/coding_2025/karaoke-list-app/backend/src/routes/session.route.ts                           | TypeScript         |          6 |          1 |          4 |         11 |
+| /home/hugo/Documents/coding_2025/karaoke-list-app/backend/src/routes/user.route.ts                              | TypeScript         |          5 |          1 |          4 |         10 |
+| /home/hugo/Documents/coding_2025/karaoke-list-app/backend/src/services/auth.service.ts                          | TypeScript         |        195 |          9 |         35 |        239 |
+| /home/hugo/Documents/coding_2025/karaoke-list-app/backend/src/services/openai.service.ts                        | TypeScript         |        181 |         53 |         17 |        251 |
+| /home/hugo/Documents/coding_2025/karaoke-list-app/backend/src/utils/AppError.ts                                 | TypeScript         |         12 |          0 |          3 |         15 |
+| /home/hugo/Documents/coding_2025/karaoke-list-app/backend/src/utils/appAssert.ts                                | TypeScript         |         17 |          3 |          3 |         23 |
+| /home/hugo/Documents/coding_2025/karaoke-list-app/backend/src/utils/bcrypt.ts                                   | TypeScript         |          5 |          0 |          3 |          8 |
+| /home/hugo/Documents/coding_2025/karaoke-list-app/backend/src/utils/catchErrors.ts                              | TypeScript         |         11 |          1 |          4 |         16 |
+| /home/hugo/Documents/coding_2025/karaoke-list-app/backend/src/utils/cookies.ts                                  | TypeScript         |         34 |          1 |          8 |         43 |
+| /home/hugo/Documents/coding_2025/karaoke-list-app/backend/src/utils/date.ts                                     | TypeScript         |          6 |          0 |          6 |         12 |
+| /home/hugo/Documents/coding_2025/karaoke-list-app/backend/src/utils/emailTemplates.ts                           | TypeScript         |         10 |          0 |          2 |         12 |
+| /home/hugo/Documents/coding_2025/karaoke-list-app/backend/src/utils/jwt.ts                                      | TypeScript         |         49 |          0 |         11 |         60 |
+| /home/hugo/Documents/coding_2025/karaoke-list-app/backend/src/utils/sendMail.ts                                 | TypeScript         |         20 |          0 |          5 |         25 |
+| /home/hugo/Documents/coding_2025/karaoke-list-app/backend/src/utils/strings.ts                                  | TypeScript         |         11 |          5 |          1 |         17 |
+| /home/hugo/Documents/coding_2025/karaoke-list-app/backend/tsconfig.json                                         | JSON with Comments |         25 |          3 |          1 |         29 |
+| /home/hugo/Documents/coding_2025/karaoke-list-app/frontend/.eslintrc.cjs                                        | JavaScript         |         30 |          0 |          1 |         31 |
+| /home/hugo/Documents/coding_2025/karaoke-list-app/frontend/.github/workflows/ci.yml                             | YAML               |         28 |          1 |          8 |         37 |
+| /home/hugo/Documents/coding_2025/karaoke-list-app/frontend/index.html                                           | HTML               |         42 |         34 |         16 |         92 |
+| /home/hugo/Documents/coding_2025/karaoke-list-app/frontend/jest.config.cjs                                      | JavaScript         |         12 |         10 |          1 |         23 |
+| /home/hugo/Documents/coding_2025/karaoke-list-app/frontend/package-lock.json                                    | JSON               |      9,493 |          0 |          1 |      9,494 |
+| /home/hugo/Documents/coding_2025/karaoke-list-app/frontend/package.json                                         | JSON               |         48 |          0 |          1 |         49 |
+| /home/hugo/Documents/coding_2025/karaoke-list-app/frontend/public/site.webmanifest                              | JSON               |         19 |          0 |          1 |         20 |
+| /home/hugo/Documents/coding_2025/karaoke-list-app/frontend/sample.env                                           | Dotenv             |          1 |          0 |          0 |          1 |
+| /home/hugo/Documents/coding_2025/karaoke-list-app/frontend/src/App.tsx                                          | TypeScript JSX     |         89 |          1 |          9 |         99 |
+| /home/hugo/Documents/coding_2025/karaoke-list-app/frontend/src/api/api.ts                                       | TypeScript         |         60 |          2 |          6 |         68 |
+| /home/hugo/Documents/coding_2025/karaoke-list-app/frontend/src/api/http.ts                                      | TypeScript         |          1 |          0 |          1 |          2 |
+| /home/hugo/Documents/coding_2025/karaoke-list-app/frontend/src/components/AlertSuggestions.tsx                  | TypeScript JSX     |         48 |          0 |          5 |         53 |
+| /home/hugo/Documents/coding_2025/karaoke-list-app/frontend/src/components/AppContainer.tsx                      | TypeScript JSX     |         14 |          0 |          3 |         17 |
+| /home/hugo/Documents/coding_2025/karaoke-list-app/frontend/src/components/EmptyList.tsx                         | TypeScript JSX     |         11 |          0 |          3 |         14 |
+| /home/hugo/Documents/coding_2025/karaoke-list-app/frontend/src/components/EventsCard.tsx                        | TypeScript JSX     |        121 |         10 |         17 |        148 |
+| /home/hugo/Documents/coding_2025/karaoke-list-app/frontend/src/components/IconCircle.tsx                        | TypeScript JSX     |         23 |          1 |          3 |         27 |
+| /home/hugo/Documents/coding_2025/karaoke-list-app/frontend/src/components/PageWrapper.tsx                       | TypeScript JSX     |         21 |          0 |          3 |         24 |
+| /home/hugo/Documents/coding_2025/karaoke-list-app/frontend/src/components/ResetPasswordForm.tsx                 | TypeScript JSX     |         83 |          0 |          2 |         85 |
+| /home/hugo/Documents/coding_2025/karaoke-list-app/frontend/src/components/SessionCard.tsx                       | TypeScript JSX     |         41 |          0 |          4 |         45 |
+| /home/hugo/Documents/coding_2025/karaoke-list-app/frontend/src/components/SongSuggestionsList.tsx               | TypeScript JSX     |         52 |          0 |          5 |         57 |
+| /home/hugo/Documents/coding_2025/karaoke-list-app/frontend/src/components/UserMenu.tsx                          | TypeScript JSX     |         33 |          1 |          5 |         39 |
+| /home/hugo/Documents/coding_2025/karaoke-list-app/frontend/src/components/buttonGroups/AddToggleButtonGroup.tsx | TypeScript JSX     |         39 |          0 |          5 |         44 |
+| /home/hugo/Documents/coding_2025/karaoke-list-app/frontend/src/components/buttonGroups/CheckboxGroup.tsx        | TypeScript JSX     |         76 |          0 |          7 |         83 |
+| /home/hugo/Documents/coding_2025/karaoke-list-app/frontend/src/components/buttonGroups/Header.tsx               | TypeScript JSX     |         24 |          0 |          4 |         28 |
+| /home/hugo/Documents/coding_2025/karaoke-list-app/frontend/src/components/buttonGroups/ListsToggleGroup.tsx     | TypeScript JSX     |         42 |          0 |          5 |         47 |
+| /home/hugo/Documents/coding_2025/karaoke-list-app/frontend/src/components/buttonGroups/NavButtonGroup.tsx       | TypeScript JSX     |         43 |          0 |          4 |         47 |
+| /home/hugo/Documents/coding_2025/karaoke-list-app/frontend/src/components/stats/MostSangBarChart.tsx            | TypeScript JSX     |         96 |          9 |         12 |        117 |
+| /home/hugo/Documents/coding_2025/karaoke-list-app/frontend/src/components/table/TableBody.tsx                   | TypeScript JSX     |        112 |          2 |         12 |        126 |
+| /home/hugo/Documents/coding_2025/karaoke-list-app/frontend/src/components/table/TableHeader.tsx                 | TypeScript JSX     |         60 |          2 |          3 |         65 |
+| /home/hugo/Documents/coding_2025/karaoke-list-app/frontend/src/components/table/TableWrapper.tsx                | TypeScript JSX     |         16 |          0 |          2 |         18 |
+| /home/hugo/Documents/coding_2025/karaoke-list-app/frontend/src/config/actions.ts                                | TypeScript         |         18 |          0 |          2 |         20 |
+| /home/hugo/Documents/coding_2025/karaoke-list-app/frontend/src/config/apiClient.ts                              | TypeScript         |         33 |          5 |          7 |         45 |
+| /home/hugo/Documents/coding_2025/karaoke-list-app/frontend/src/config/formInterfaces.ts                         | TypeScript         |         22 |          0 |          5 |         27 |
+| /home/hugo/Documents/coding_2025/karaoke-list-app/frontend/src/config/interfaces.ts                             | TypeScript         |         47 |          6 |         10 |         63 |
+| /home/hugo/Documents/coding_2025/karaoke-list-app/frontend/src/config/queryClient.ts                            | TypeScript         |          9 |          0 |          3 |         12 |
+| /home/hugo/Documents/coding_2025/karaoke-list-app/frontend/src/config/types.ts                                  | TypeScript         |          6 |          0 |          2 |          8 |
+| /home/hugo/Documents/coding_2025/karaoke-list-app/frontend/src/constants/email.ts                               | TypeScript         |          2 |          0 |          0 |          2 |
+| /home/hugo/Documents/coding_2025/karaoke-list-app/frontend/src/constants/http.ts                                | TypeScript         |          1 |          0 |          1 |          2 |
+| /home/hugo/Documents/coding_2025/karaoke-list-app/frontend/src/constants/queries.ts                             | TypeScript         |          7 |          0 |          1 |          8 |
+| /home/hugo/Documents/coding_2025/karaoke-list-app/frontend/src/hooks/list/useDelete.test.tsx                    | TypeScript JSX     |         88 |         12 |         29 |        129 |
+| /home/hugo/Documents/coding_2025/karaoke-list-app/frontend/src/hooks/list/useDeleteSong.ts                      | TypeScript         |         20 |          0 |          4 |         24 |
+| /home/hugo/Documents/coding_2025/karaoke-list-app/frontend/src/hooks/list/useFilteredSong.test.tsx              | TypeScript JSX     |        183 |         23 |         47 |        253 |
+| /home/hugo/Documents/coding_2025/karaoke-list-app/frontend/src/hooks/list/useFilteredSongs.ts                   | TypeScript         |         36 |          0 |          7 |         43 |
+| /home/hugo/Documents/coding_2025/karaoke-list-app/frontend/src/hooks/list/useSortableList.test.tsx              | TypeScript JSX     |        129 |         27 |         35 |        191 |
+| /home/hugo/Documents/coding_2025/karaoke-list-app/frontend/src/hooks/list/useSortableList.ts                    | TypeScript         |         25 |          1 |          6 |         32 |
+| /home/hugo/Documents/coding_2025/karaoke-list-app/frontend/src/hooks/list/useUpdatePlayCount.test.tsx           | TypeScript JSX     |        158 |         11 |         40 |        209 |
+| /home/hugo/Documents/coding_2025/karaoke-list-app/frontend/src/hooks/list/useUpdatePlayCount.ts                 | TypeScript         |         57 |          4 |         11 |         72 |
+| /home/hugo/Documents/coding_2025/karaoke-list-app/frontend/src/hooks/list/useUpdateSongListTypes.test.tsx       | TypeScript JSX     |        122 |          8 |         34 |        164 |
+| /home/hugo/Documents/coding_2025/karaoke-list-app/frontend/src/hooks/list/useUpdateSongListTypes.ts             | TypeScript         |         39 |          3 |         10 |         52 |
+| /home/hugo/Documents/coding_2025/karaoke-list-app/frontend/src/hooks/useAddSong.test.tsx                        | TypeScript JSX     |        166 |         29 |         54 |        249 |
+| /home/hugo/Documents/coding_2025/karaoke-list-app/frontend/src/hooks/useAddSong.ts                              | TypeScript         |         22 |          0 |          5 |         27 |
+| /home/hugo/Documents/coding_2025/karaoke-list-app/frontend/src/hooks/useAppToast.ts                             | TypeScript         |         31 |          1 |          7 |         39 |
+| /home/hugo/Documents/coding_2025/karaoke-list-app/frontend/src/hooks/useAuth.test.tsx                           | TypeScript JSX     |         77 |          1 |         21 |         99 |
+| /home/hugo/Documents/coding_2025/karaoke-list-app/frontend/src/hooks/useAuth.ts                                 | TypeScript         |         25 |          0 |          3 |         28 |
+| /home/hugo/Documents/coding_2025/karaoke-list-app/frontend/src/hooks/useCloseEvent.test.tsx                     | TypeScript JSX     |        112 |         31 |         39 |        182 |
+| /home/hugo/Documents/coding_2025/karaoke-list-app/frontend/src/hooks/useCloseEvent.ts                           | TypeScript         |         20 |          1 |          3 |         24 |
+| /home/hugo/Documents/coding_2025/karaoke-list-app/frontend/src/hooks/useCreateEvent.test.tsx                    | TypeScript JSX     |         65 |          4 |         19 |         88 |
+| /home/hugo/Documents/coding_2025/karaoke-list-app/frontend/src/hooks/useCreateEvent.ts                          | TypeScript         |         20 |          1 |          4 |         25 |
+| /home/hugo/Documents/coding_2025/karaoke-list-app/frontend/src/hooks/useDeleteSession.ts                        | TypeScript         |         16 |          0 |          4 |         20 |
+| /home/hugo/Documents/coding_2025/karaoke-list-app/frontend/src/hooks/useFilteredSongOptions.test.tsx            | TypeScript JSX     |        222 |         43 |         60 |        325 |
+| /home/hugo/Documents/coding_2025/karaoke-list-app/frontend/src/hooks/useFilteredSongOptions.ts                  | TypeScript         |         51 |          1 |         11 |         63 |
+| /home/hugo/Documents/coding_2025/karaoke-list-app/frontend/src/hooks/useSessions.ts                             | TypeScript         |         13 |          0 |          5 |         18 |
+| /home/hugo/Documents/coding_2025/karaoke-list-app/frontend/src/main.tsx                                         | TypeScript JSX     |         18 |          0 |          2 |         20 |
+| /home/hugo/Documents/coding_2025/karaoke-list-app/frontend/src/pages/AddSong.tsx                                | TypeScript JSX     |        184 |          2 |         19 |        205 |
+| /home/hugo/Documents/coding_2025/karaoke-list-app/frontend/src/pages/SearchSong.tsx                             | TypeScript JSX     |        156 |         10 |          9 |        175 |
+| /home/hugo/Documents/coding_2025/karaoke-list-app/frontend/src/pages/SongList.tsx                               | TypeScript JSX     |        104 |          5 |          8 |        117 |
+| /home/hugo/Documents/coding_2025/karaoke-list-app/frontend/src/pages/SongsSang.tsx                              | TypeScript JSX     |        233 |          8 |         15 |        256 |
+| /home/hugo/Documents/coding_2025/karaoke-list-app/frontend/src/pages/auth/ForgotPassword.tsx                    | TypeScript JSX     |         94 |          0 |          7 |        101 |
+| /home/hugo/Documents/coding_2025/karaoke-list-app/frontend/src/pages/auth/Login.tsx                             | TypeScript JSX     |        117 |         10 |          8 |        135 |
+| /home/hugo/Documents/coding_2025/karaoke-list-app/frontend/src/pages/auth/Register.tsx                          | TypeScript JSX     |        136 |         13 |          9 |        158 |
+| /home/hugo/Documents/coding_2025/karaoke-list-app/frontend/src/pages/auth/ResetPassword.tsx                     | TypeScript JSX     |         39 |          0 |          3 |         42 |
+| /home/hugo/Documents/coding_2025/karaoke-list-app/frontend/src/pages/auth/VerifyEmail.tsx                       | TypeScript JSX     |         52 |          0 |          3 |         55 |
+| /home/hugo/Documents/coding_2025/karaoke-list-app/frontend/src/pages/auth/login.test.tsx                        | TypeScript JSX     |        155 |         58 |         68 |        281 |
+| /home/hugo/Documents/coding_2025/karaoke-list-app/frontend/src/pages/auth/register.test.tsx                     | TypeScript JSX     |        160 |         11 |         55 |        226 |
+| /home/hugo/Documents/coding_2025/karaoke-list-app/frontend/src/pages/mainNavigation/EventsHistory.test.tsx      | TypeScript JSX     |        200 |         11 |         50 |        261 |
+| /home/hugo/Documents/coding_2025/karaoke-list-app/frontend/src/pages/mainNavigation/EventsHistory.tsx           | TypeScript JSX     |        171 |          4 |         22 |        197 |
+| /home/hugo/Documents/coding_2025/karaoke-list-app/frontend/src/pages/profile/Profile.tsx                        | TypeScript JSX     |         33 |          0 |          2 |         35 |
+| /home/hugo/Documents/coding_2025/karaoke-list-app/frontend/src/pages/profile/Settings.tsx                       | TypeScript JSX     |         27 |          0 |          3 |         30 |
+| /home/hugo/Documents/coding_2025/karaoke-list-app/frontend/src/pages/profile/Statistics.tsx                     | TypeScript JSX     |         22 |          0 |          5 |         27 |
+| /home/hugo/Documents/coding_2025/karaoke-list-app/frontend/src/services/externalApi.ts                          | TypeScript         |        105 |          6 |         22 |        133 |
+| /home/hugo/Documents/coding_2025/karaoke-list-app/frontend/src/setupTests.ts                                    | TypeScript         |          1 |          0 |          1 |          2 |
+| /home/hugo/Documents/coding_2025/karaoke-list-app/frontend/src/theme/buttonTheme.ts                             | TypeScript         |         31 |          0 |          5 |         36 |
+| /home/hugo/Documents/coding_2025/karaoke-list-app/frontend/src/theme/index.ts                                   | TypeScript         |         25 |          0 |          5 |         30 |
+| /home/hugo/Documents/coding_2025/karaoke-list-app/frontend/src/theme/linkTheme.ts                               | TypeScript         |          7 |          0 |          3 |         10 |
+| /home/hugo/Documents/coding_2025/karaoke-list-app/frontend/src/utils/artists.ts                                 | TypeScript         |         16 |          0 |          6 |         22 |
+| /home/hugo/Documents/coding_2025/karaoke-list-app/frontend/src/utils/date.ts                                    | TypeScript         |         10 |          0 |          1 |         11 |
+| /home/hugo/Documents/coding_2025/karaoke-list-app/frontend/src/utils/navigation.ts                              | TypeScript         |          4 |          0 |          3 |          7 |
+| /home/hugo/Documents/coding_2025/karaoke-list-app/frontend/src/utils/strings.ts                                 | TypeScript         |         37 |          9 |          8 |         54 |
+| /home/hugo/Documents/coding_2025/karaoke-list-app/frontend/tests/utils/artists.test.ts                          | TypeScript         |        140 |         17 |         33 |        190 |
+| /home/hugo/Documents/coding_2025/karaoke-list-app/frontend/tests/utils/helpers.test.ts                          | TypeScript         |         74 |         14 |         18 |        106 |
+| /home/hugo/Documents/coding_2025/karaoke-list-app/frontend/tests/utils/test-utils.tsx                           | TypeScript JSX     |         29 |          4 |          7 |         40 |
+| /home/hugo/Documents/coding_2025/karaoke-list-app/frontend/tsconfig.json                                        | JSON with Comments |         26 |         91 |          1 |        118 |
+| /home/hugo/Documents/coding_2025/karaoke-list-app/frontend/vite.config.js                                       | JavaScript         |          9 |          2 |          2 |         13 |
+| /home/hugo/Documents/coding_2025/karaoke-list-app/readme.md                                                     | Markdown           |         54 |          0 |          7 |         61 |
+| Total                                                                                                           |                    |     20,028 |        705 |      1,411 |     22,144 |
++-----------------------------------------------------------------------------------------------------------------+--------------------+------------+------------+------------+------------+

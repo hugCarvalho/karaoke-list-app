@@ -69,7 +69,7 @@ const SongsSang = () => {
     queryFn: getEventsList,
   });
   const { mutate: addSongMutation, isPending } = useAddSong("event");
-  const { options: filteredSongSelectOptions, isLoadingOpenAI } = useFilteredSongOptions({ songOptions: songOptions, artistOptionValue: artistOptionValue });
+  const { options: filteredSongSelectOptions, isLoadingOpenAI, openAIError } = useFilteredSongOptions({ songOptions: songOptions, artistOptionValue: artistOptionValue });
 
   useEffect(() => {
     if (artistsDb?.data) {
@@ -80,6 +80,18 @@ const SongsSang = () => {
       setSongOptions(songs)
     }
   }, [artistsDb])
+
+  // 2. Trigger toast when openAIError updates
+  useEffect(() => {
+    if (openAIError) {
+      const message =
+        openAIError instanceof Error
+          ? openAIError.message
+          : "Failed to fetch songs for artist";
+      showErrorToast("AI Fetch Error", message);
+    }
+  }, [openAIError, showErrorToast]);
+
   const onSubmit = async (data: BaseSongFormData) => {
     setTypoSuggestions(suggestionInitValue)
     setIsVerifying(true)

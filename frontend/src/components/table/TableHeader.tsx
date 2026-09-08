@@ -1,3 +1,4 @@
+//frontend/src/components/table/TableHeader.tsx
 import { TriangleDownIcon, TriangleUpIcon } from "@chakra-ui/icons";
 import { IconButton, Th, Thead, Tr } from "@chakra-ui/react";
 import { SortConfig } from "../../config/formInterfaces";

@@ -1,0 +1,2 @@
+- provide imports in 1 line
+- provide components with props in 1 line instead of multiline

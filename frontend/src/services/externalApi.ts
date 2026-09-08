@@ -1,6 +1,7 @@
+//frontend/src/services/externalApi.ts
 import { SuggestedSongs } from "../config/types";
 
-//TODO: check try...catch blocks
+
 
 export const searchMusicBrainzArtist = async (artist: string) => {
   const artistSearchUrl = `https://musicbrainz.org/ws/2/artist/?query=artist:"${encodeURIComponent(artist)}"&fmt=json`;

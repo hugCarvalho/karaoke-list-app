@@ -11,23 +11,26 @@ type UseFilteredSongOptionsProps = {
 type UseFilteredSongOptionsReturn = {
   options: Option[];
   isLoadingOpenAI: boolean;
+  openAIError: Error | null;
 };
 
-export const useFilteredSongOptions = ({
-  songOptions,
-  artistOptionValue,
-}: UseFilteredSongOptionsProps): UseFilteredSongOptionsReturn => {
+export const useFilteredSongOptions = ({ songOptions, artistOptionValue }: UseFilteredSongOptionsProps): UseFilteredSongOptionsReturn => {
 
-  const { data: backendSongOptions, isLoading: isLoadingOpenAI } = useQuery<Option[]>({
+  const { data: backendSongOptions, isLoading: isLoadingOpenAI, error } = useQuery<Option[]>({
     queryKey: ['songs', artistOptionValue?.value],
     queryFn: async () => {
       if (!artistOptionValue?.value) {
         return [];
       }
-      return getSongsFromOpenAI(artistOptionValue.value);
+      const songs = await getSongsFromOpenAI(artistOptionValue.value);
+      // Ensure backend array string response maps properly to Option interface
+      return songs.map((song: string | Option) =>
+        typeof song === 'string' ? { value: song, label: song } : song
+      );
     },
     enabled: !!artistOptionValue?.value,
     staleTime: Infinity,
+    retry: false, // Prevent repeating requests on API failure
   });
 
   const filteredAndUniqueOptions = useMemo(() => {
@@ -54,5 +57,6 @@ export const useFilteredSongOptions = ({
   return {
     options: filteredAndUniqueOptions,
     isLoadingOpenAI: isLoadingOpenAI,
+    openAIError: error as Error | null,
   };
 };
