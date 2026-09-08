@@ -3,7 +3,7 @@ import Groq from "groq-sdk";
 // Initialize with your API Key (Add GROQ_API_KEY to your backend .env)
 const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
 // const apiModel = 'openai/gpt-oss-20b'
-const apiModel = 'openai/gpt-toss-20b'
+const apiModel = 'openai/gpt-oss-20b'
 /**
  * Fetches a list of popular songs by a given artist using OpenAI.
  * @param artist The artist's name.
