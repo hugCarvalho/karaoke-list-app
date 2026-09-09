@@ -42,6 +42,7 @@ export const getPopularSongsHandler = catchErrors(async (req, res) => {
     res.status(200).json({ songs: formattedSongs });
 
   } catch (error) {
+    // console.log("Failed Generation:", error.error?.failed_generation);
     console.error("Detailed Error in getPopularSongsHandler:", error);
     res.status(500).json({ error: "Internal server error during song retrieval" });
   }

@@ -24,7 +24,13 @@ export const isDataVerified = async (song: string, artist: string) => {
   const searchUrl = `https://musicbrainz.org/ws/2/recording/?query=recording:"${encodeURIComponent(song)}" AND artist:"${encodeURIComponent(artist)}"&fmt=json`;
   //1- Checks to see if there is a match in musicbrainz
   try {
-    const response = await fetch(searchUrl);
+    const response = await fetch(searchUrl, {
+      headers: {
+        // MusicBrainz requires a unique User-Agent to avoid 503 rate-limiting/blocking
+        'User-Agent': 'karaoke-list-app.onrender.com ( contact@mywebsite.com )',
+        'Accept': 'application/json'
+      }
+    });
     if (!response.ok) {
       throw new Error(`MusicBrainz search API error: ${response.status}`);
     }

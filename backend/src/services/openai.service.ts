@@ -15,11 +15,10 @@ export async function getPopularSongsForArtist(artist: string) {
   console.log("-------RUNNING GROQ: getPopularSongsForArtist----------")
   try {
     const chatCompletion = await groq.chat.completions.create({
-      // "llama-3.3-70b-versatile" is the current 2026 workhorse for Groq
       messages: [
         {
           role: "system",
-          content: "You are a music database. Respond only with a JSON array of strings containing song titles. No prose, no markdown blocks."
+          content: "You are a music database assistant. Respond strictly with a valid JSON object containing a 'songs' key whose value is an array of song titles. Do not output prose or markdown."
         },
         {
           role: "user",
@@ -27,6 +26,7 @@ export async function getPopularSongsForArtist(artist: string) {
         }
       ],
       model: apiModel,
+      max_tokens: 1000,
       // Setting temperature to 0 makes the list more consistent/factual
       temperature: 0,
       // Ensure the model knows we want JSON
@@ -41,7 +41,7 @@ export async function getPopularSongsForArtist(artist: string) {
 
     return content;
   } catch (error) {
-    console.error(`Groq API Error: ${error}`);
+    console.error(`Groq API Error in getPopularSongsForArtist: ${error}`);
     throw new Error(`Failed to fetch songs for ${artist} via Groq.`);
   }
 }
@@ -72,7 +72,7 @@ Example for "the bitels": {"suggestions": ["The Beatles", "Beatles", "The Byrds"
       messages: [
         { role: "user", content: prompt },
       ],
-      max_tokens: 150,
+      max_tokens: 800,
       temperature: 0.3,
       response_format: { type: "json_object" },
     });
@@ -167,7 +167,7 @@ Examples:
     }
     return [];
   } catch (apiError) {
-    console.log("Failed Generation:", apiError.error?.failed_generation);
+    // console.log("Failed Generation:", apiError.?failed_generation);
     console.error(`Error from Groq API during song name suggestion: ${apiError}`);
     throw new Error(`Groq API call failed for song name suggestion: ${apiError instanceof Error ? apiError.message : String(apiError)}`);
   }
