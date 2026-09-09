@@ -1,3 +1,4 @@
+// backend/src/services/openai.service.ts
 import Groq from "groq-sdk";
 
 // Initialize with your API Key (Add GROQ_API_KEY to your backend .env)
@@ -10,38 +11,37 @@ const apiModel = 'openai/gpt-oss-20b'
  * @returns A promise that resolves to a string (JSON array) of song names, or null on error.
  */
 
-
 export async function getPopularSongsForArtist(artist: string) {
-  console.log("------------RUNNING GROK ------------------")
+  console.log("------------RUNNING GROK ------------------");
   try {
     const chatCompletion = await groq.chat.completions.create({
-      // apiModel is the current 2026 workhorse for Groq
       messages: [
         {
           role: "system",
-          content: "You are a music database. Respond only with a JSON array of strings containing song titles. No prose, no markdown blocks."
+          content:
+            "You are a music database API assistant. Respond strictly with a valid JSON object containing a 'songs' key whose value is an array of strings.",
         },
         {
           role: "user",
-          content: `List the 10 most popular songs by ${artist}. Return a JSON object with a 'songs' key containing an array of strings.`
-        }
+          content: `List the 10 most popular songs by ${artist}. Return a JSON object with a 'songs' key containing an array of strings.`,
+        },
       ],
-      model: apiModel,
-      // Setting temperature to 0 makes the list more consistent/factual
-      temperature: 0,
-      // Ensure the model knows we want JSON
-      response_format: { type: "json_object" }
+      model: apiModel, // Reverted to your existing defined apiModel variable
+      temperature: 0.1,
+      max_tokens: 500,
+      response_format: { type: "json_object" },
     });
 
     const content = chatCompletion.choices[0]?.message?.content;
-    console.log("CONNTENT:", content)
+    console.log("RAW CONTENT:", content);
+
     if (!content) {
       throw new Error("Groq returned an empty response.");
     }
 
     return content;
-  } catch (error) {
-    console.error(`Groq API Error: ${error}`);
+  } catch (error: any) {
+    console.error("GROQ API ERROR:", error);
     throw new Error(`Failed to fetch songs for ${artist} via Groq.`);
   }
 }
@@ -70,6 +70,10 @@ Example for "the bitels": {"suggestions": ["The Beatles", "Beatles", "The Byrds"
     const response = await groq.chat.completions.create({
       model: apiModel,
       messages: [
+        {
+          role: "system",
+          content: "You are a music database assistant. You must respond strictly with a valid JSON object containing a 'suggestions' key."
+        },
         { role: "user", content: prompt },
       ],
       max_tokens: 150,

@@ -21,29 +21,30 @@ export const getPopularSongsHandler = catchErrors(async (req, res) => {
     // 1. Parse the string into an object
     const parsedData = JSON.parse(songsString);
 
-    // 2. Safely extract the array.
-    // We check for .songs (what we asked for) or .list just in case.
+    // 2. Safely extract the array
     const songsArray = Array.isArray(parsedData)
       ? parsedData
-      : (parsedData.songs || parsedData.list || []);
+      : parsedData.songs || parsedData.list || [];
 
-    // 3. Check if we actually got an array to map over
+    // 3. Verify array format
     if (!Array.isArray(songsArray)) {
       console.error("AI did not return an array. Data received:", parsedData);
       return res.status(500).json({ error: "AI returned invalid data format" });
     }
 
-    // 4. Map the data for the frontend
+    // 4. Map the data for the frontend select options
     const formattedSongs = songsArray.map((song: string) => ({
       value: song,
-      label: song
+      label: song,
     }));
 
     res.status(200).json({ songs: formattedSongs });
-
   } catch (error) {
     console.error("Detailed Error in getPopularSongsHandler:", error);
-    res.status(500).json({ error: "Internal server error during song retrieval" });
+    // Send the actual error message back to the frontend
+    const errorMessage =
+      error instanceof Error ? error.message : "Internal server error during song retrieval";
+    res.status(500).json({ error: errorMessage });
   }
 });
 
