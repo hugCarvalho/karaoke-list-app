@@ -3,15 +3,16 @@ import Groq from "groq-sdk";
 // Initialize with your API Key (Add GROQ_API_KEY to your backend .env)
 const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
 
+// const apiModel = 'qwen/qwen3.6-27b'
+const apiModel = 'openai/gpt-oss-120b'
+
 /**
  * Fetches a list of popular songs by a given artist using OpenAI.
  * @param artist The artist's name.
  * @returns A promise that resolves to a string (JSON array) of song names, or null on error.
  */
-
-
 export async function getPopularSongsForArtist(artist: string) {
-  console.log("------------RUNNING GROK ------------------")
+  console.log("-------RUNNING GROQ: getPopularSongsForArtist----------")
   try {
     const chatCompletion = await groq.chat.completions.create({
       // "llama-3.3-70b-versatile" is the current 2026 workhorse for Groq
@@ -25,7 +26,7 @@ export async function getPopularSongsForArtist(artist: string) {
           content: `List the 10 most popular songs by ${artist}. Return a JSON object with a 'songs' key containing an array of strings.`
         }
       ],
-      model: "llama-3.3-70b-versatile",
+      model: apiModel,
       // Setting temperature to 0 makes the list more consistent/factual
       temperature: 0,
       // Ensure the model knows we want JSON
@@ -67,7 +68,7 @@ Example for "the bitels": {"suggestions": ["The Beatles", "Beatles", "The Byrds"
 
   try {
     const response = await groq.chat.completions.create({
-      model: "llama-3.3-70b-versatile",
+      model: apiModel,
       messages: [
         { role: "user", content: prompt },
       ],
@@ -132,7 +133,7 @@ Examples:
 
   try {
     const response = await groq.chat.completions.create({
-      model: "llama-3.3-70b-versatile",
+      model: apiModel,
       messages: [
         {
           role: "system",
@@ -143,7 +144,7 @@ Examples:
           content: prompt
         },
       ],
-      max_tokens: 150,
+      max_tokens: 1000,
       temperature: 0.2, // Low temperature is perfect here for factual corrections
       response_format: { type: "json_object" },
     });
@@ -166,6 +167,7 @@ Examples:
     }
     return [];
   } catch (apiError) {
+    console.log("Failed Generation:", apiError.error?.failed_generation);
     console.error(`Error from Groq API during song name suggestion: ${apiError}`);
     throw new Error(`Groq API call failed for song name suggestion: ${apiError instanceof Error ? apiError.message : String(apiError)}`);
   }
@@ -219,7 +221,7 @@ Do not return any explanation or extra text.
     const response = await groq.chat.completions.create({
       // Using 70B here is better for "Inspiration" because it has a
       // deeper knowledge of obscure songs than the 8B model.
-      model: "llama-3.3-70b-versatile",
+      model: apiModel,
       messages: [
         {
           role: "system",
@@ -230,7 +232,7 @@ Do not return any explanation or extra text.
           content: prompt
         },
       ],
-      max_tokens: 800, // Increased slightly to accommodate 15 full objects
+      max_tokens: 1000, // Increased slightly to accommodate 15 full objects
       temperature: 0.9, // Kept high for variety in suggestions
       response_format: { type: "json_object" },
     });
