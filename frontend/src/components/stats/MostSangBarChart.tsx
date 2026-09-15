@@ -6,7 +6,7 @@ interface SongPlayData {
   title: string;
   plays: number;
 }
-const topCount = 10;
+const topCount = 20;
 
 interface CustomYAxisTickProps {
   x: number;
@@ -87,7 +87,7 @@ const MostSangBarChart = ({ data }: { data: Song[] }) => {
   }, [data, topCount]);
 
   return (
-    <ResponsiveContainer width="100%" maxHeight={500}>
+    <ResponsiveContainer width="100%" maxHeight={900}>
       <BarChart
         data={mostSangData}
         margin={{ top: 10, right: 0, left: 20, bottom: 5 }}
