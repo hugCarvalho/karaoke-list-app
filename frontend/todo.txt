@@ -1,0 +1,4 @@
+- sort by date of last sang song
+- increase n° song stats
+- try a new signup
+- implement pagination?! (discuss first)
