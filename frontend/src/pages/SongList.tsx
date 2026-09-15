@@ -53,6 +53,7 @@ const SongList = () => {
             <ListsToggleGroup listName={listName} setListName={setListName} />
           </Center>
           <HStack spacing={3}>
+
             {/* FILTER BY ARTIST INPUT */}
             <InputGroup>
               <Input
@@ -76,6 +77,7 @@ const SongList = () => {
                 </InputRightElement>
               )}
             </InputGroup>
+
             {/* FILTER BY SONG INPUT */}
             <InputGroup>
               <Input
@@ -101,10 +103,13 @@ const SongList = () => {
             </InputGroup>
           </HStack>
         </VStack>
+
+        {/* SONGLIST */}
         <TableWrapper>
           <TableHead sortConfig={sortConfig} requestSort={requestSort} tableFontSize={tableFontSize} />
           {data && <TableBody sortedSongs={sortedSongs} tableFontSize={tableFontSize} />}
         </TableWrapper>
+
         {isLoading && <Box style={{ textAlign: "center" }}> <Spinner /> </Box>}
         {!isLoading && !data && !isFetching && <EmptyList />}
       </VStack>
