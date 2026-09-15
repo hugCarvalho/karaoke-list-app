@@ -182,7 +182,7 @@ export const EventsHistory = () => {
       )}
       {eventsList && eventsList.filter(event => event.closed).length > 0 && (
         <VStack spacing={2} align="stretch">
-          <Heading size="lg" textAlign={"center"}>Events History</Heading>
+          <Heading size="lg" textAlign={"center"}>Events History ({eventsList?.length})</Heading>
           {eventsList?.map((event: KaraokeEvents) => {
             if (event.closed) {
               return <EventCard key={event._id} event={event} />
