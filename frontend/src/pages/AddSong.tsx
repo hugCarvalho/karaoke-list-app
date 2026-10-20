@@ -18,7 +18,7 @@ import useAppToast from "../hooks/useAppToast";
 import { useFilteredSongOptions } from "../hooks/useFilteredSongOptions";
 import { isDataVerified } from "../services/externalApi";
 import { getArtistsSelectData, getSongsSelectData } from "../utils/artists";
-import { capitalizeArtistNames } from "../utils/strings";
+import { capitalizeText } from "../utils/strings";
 
 const defaultValues = {
   title: "",
@@ -75,6 +75,7 @@ const AddSong = () => {
   const onSubmit = async (data: BaseSongFormData) => {
     setTypoSuggestions(suggestionInitValue)
     setIsVerifying(true)
+
     try {
       const res = await isDataVerified(data.title, data.artist)
       setIsVerifying(false)
@@ -99,8 +100,10 @@ const AddSong = () => {
       location: "",
       eventDate: null
     }
-    const capitalizedArtistName = capitalizeArtistNames(data.artist)
-    const songData = { songId: uuid.v4(), events: [eventData], ...data, artist: capitalizedArtistName };
+    const capitalizedArtistName = capitalizeText(data.artist)
+    const capitalizedSongName = capitalizeText(data.title)
+
+    const songData = { songId: uuid.v4(), events: [eventData], ...data, artist: capitalizedArtistName, title: capitalizedSongName };
     addSongMutation(songData);
   }
 

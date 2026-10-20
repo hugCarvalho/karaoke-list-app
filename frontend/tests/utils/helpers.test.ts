@@ -1,27 +1,27 @@
-import { capitalizeArtistNames, capitalizeSongNames } from '../../src/utils/strings';
+import { capitalizeSongNames, capitalizeText } from '../../src/utils/strings';
 
 describe('capitalizeArtistName', () => {
   it('should capitalize the first letter of each word', () => {
-    expect(capitalizeArtistNames('talking heads')).toBe('Talking Heads');
-    expect(capitalizeArtistNames('the beatles')).toBe('The Beatles');
-    expect(capitalizeArtistNames('a quick brown fox')).toBe('A Quick Brown Fox');
+    expect(capitalizeText('talking heads')).toBe('Talking Heads');
+    expect(capitalizeText('the beatles')).toBe('The Beatles');
+    expect(capitalizeText('a quick brown fox')).toBe('A Quick Brown Fox');
   });
 
   it('should handle extra spaces correctly', () => {
-    expect(capitalizeArtistNames('  Pink  Floyd  ')).toBe('Pink Floyd');
-    expect(capitalizeArtistNames('  the   who  ')).toBe('The Who');
+    expect(capitalizeText('  Pink  Floyd  ')).toBe('Pink Floyd');
+    expect(capitalizeText('  the   who  ')).toBe('The Who');
   });
 
   it('should handle empty strings', () => {
-    expect(capitalizeArtistNames('')).toBe('');
+    expect(capitalizeText('')).toBe('');
   });
 
   it('should handle single-word input', () => {
-    expect(capitalizeArtistNames('Elvis')).toBe('Elvis');
+    expect(capitalizeText('Elvis')).toBe('Elvis');
   });
 
   it('should handle already capitalized input', () => {
-    expect(capitalizeArtistNames('Talking Heads')).toBe('Talking Heads');
+    expect(capitalizeText('Talking Heads')).toBe('Talking Heads');
   });
 });
 

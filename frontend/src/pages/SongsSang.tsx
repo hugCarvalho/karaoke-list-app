@@ -21,7 +21,7 @@ import { useCloseEvent } from "../hooks/useCloseEvent";
 import { useFilteredSongOptions } from "../hooks/useFilteredSongOptions";
 import { isDataVerified } from "../services/externalApi";
 import { getArtistsSelectData, getSongsSelectData } from "../utils/artists";
-import { capitalizeArtistNames } from "../utils/strings";
+import { capitalizeText } from "../utils/strings";
 
 const defaultValues = {
   title: "",
@@ -102,7 +102,7 @@ const SongsSang = () => {
       return;
     }
 
-    const capitalizedArtistName = capitalizeArtistNames(data.artist)
+    const capitalizedArtistName = capitalizeText(data.artist)
     const songData = { songId: uuid.v4(), ...data, artist: capitalizedArtistName };
     addSongMutation(songData);
   };

@@ -164,7 +164,7 @@ export const EventsHistory = () => {
       {/* CLOSE EVENT */}
       {isEventOpen && (
         <VStack spacing={4} mb={10}>
-          <Heading as="h2" size="md" color={"burlywood"}>Active Event</Heading>
+          <Heading size="md" color={"burlywood"}>Active Event</Heading>
           {eventsList?.map((event: KaraokeEvents) => {
             if (!event.closed) {
               return <EventCard key={event._id} event={event} showDeleteButton={true} />
