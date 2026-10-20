@@ -1,11 +1,12 @@
 // src/components/table/TableBody.tsx
 import { DeleteIcon } from '@chakra-ui/icons';
 import { Button, Checkbox, IconButton, Tbody, Td, Tr } from '@chakra-ui/react';
+import { useQuery } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { getEventsList } from '../../api/api';
 import { CheckboxGroup } from '../../config/formInterfaces';
 import { Data, Song } from '../../config/interfaces';
-import queryClient from '../../config/queryClient';
 import { QUERIES } from '../../constants/queries';
 import { useDeleteSong } from '../../hooks/list/useDeleteSong';
 import { useUpdatePlayCount } from '../../hooks/list/useUpdatePlayCount';
@@ -24,6 +25,11 @@ function TableBody({ sortedSongs, tableFontSize }: TableBodyProps) {
   const navigate = useNavigate();
   const [isNoEventModalOpen, setIsNoEventModalOpen] = useState(false);
   const [songToDeleteId, setSongToDeleteId] = useState<string | null>(null);
+
+  const { data: eventsList, isLoading: isEventsLoading } = useQuery<Data["events"]>({
+    queryKey: [QUERIES.GET_EVENTS_LIST],
+    queryFn: getEventsList,
+  });
 
   const { mutate: updatePlayCountMutation } = useUpdatePlayCount();
   const { mutate: updateListTypeMutation } = useUpdateSongListTypes();
@@ -47,19 +53,22 @@ function TableBody({ sortedSongs, tableFontSize }: TableBodyProps) {
   };
 
   const handleAddPlayClick = (songData: Song) => {
-    console.log("handleAddPlayClick", songData);
-    const events = queryClient.getQueryData<Data["events"]>([QUERIES.GET_EVENTS_LIST]);
+    // const events = queryClient.getQueryData<Data["events"]>([QUERIES.GET_EVENTS_LIST]);
+    console.log("BOOLEANS", eventsList);
 
     // Check if there is at least one open event
-    const hasOpenEvent = events?.some((event) => !event.closed);
-
-    if (!hasOpenEvent) {
-      setIsNoEventModalOpen(true);
-      return;
+    if (Boolean(eventsList)) {
+      const hasOpenEvent = eventsList?.some((event) => !event.closed);
+      if (!hasOpenEvent) {
+        setIsNoEventModalOpen(true);
+        return;
+      }
     }
 
     updatePlayCountMutation(songData);
   };
+
+  console.log("sortedSongs", sortedSongs);
 
   return (
     <>
