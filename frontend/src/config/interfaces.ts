@@ -14,36 +14,38 @@ export interface Session {
   createdAt: Date
   // expiresAt: Date
 }
-
-// type EventData = {
-//   location: string,
-//   eventDate: string | null
-// }
-
+//SONG
 export interface Song {
-  songId: string,
-  title: string,
   artist: string,
-  fav: boolean,
   blacklisted: boolean,
   duet: boolean,
+  events: SongEvents[],
+  fav: boolean,
   inNextEventList: boolean,
   notAvailable: boolean,
   plays: number,
+  songId: string,
+  title: string,
 }
 
-export type EventSongData = {
+type SongEvents = {
+  _id: string,
+  location: string,
+  eventDate: string
+}
+
+//KARAOKE HISTORY EVENTS
+export type KaraokeEvents = {
+  _id: string,
+  closed: boolean,
+  eventDate: Date,
+  location: string
+  songs: EventHistorySong[] | [],
+}
+type EventHistorySong = {
   _id: string,
   artist: string,
   name: string
-}
-
-export type KaraokeEvents = {
-  _id: string,
-  eventDate: Date,
-  closed: boolean,
-  songs: EventSongData[] | [],
-  location: string
 }
 
 export interface Data {

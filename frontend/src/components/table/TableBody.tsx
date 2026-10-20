@@ -53,19 +53,22 @@ function TableBody({ sortedSongs, tableFontSize }: TableBodyProps) {
   };
 
   const handleAddPlayClick = (songData: Song) => {
-    // const events = queryClient.getQueryData<Data["events"]>([QUERIES.GET_EVENTS_LIST]);
-    console.log("BOOLEANS", eventsList);
-
     // Check if there is at least one open event
-    if (Boolean(eventsList)) {
-      const hasOpenEvent = eventsList?.some((event) => !event.closed);
-      if (!hasOpenEvent) {
-        setIsNoEventModalOpen(true);
-        return;
-      }
+    // if (Boolean(eventsList)) {
+    //   const hasOpenEvent = eventsList?.at(-1) ? !eventsList.at(-1)?.closed : false;
+    //   if (!hasOpenEvent) {
+    //     setIsNoEventModalOpen(true);
+    //     return;
+    //   }
+    // }
+    const hasOpenEvent = eventsList?.some((event) => !event.closed) ?? false;
+
+    if (!hasOpenEvent) {
+      setIsNoEventModalOpen(true)
+      return
     }
 
-    updatePlayCountMutation(songData);
+    updatePlayCountMutation(songData)
   };
 
   console.log("sortedSongs", sortedSongs);
@@ -77,6 +80,7 @@ function TableBody({ sortedSongs, tableFontSize }: TableBodyProps) {
         onClose={() => setIsNoEventModalOpen(false)}
         onConfirm={() => navigate("/history")}
       />
+
       <Tbody>
         {sortedSongs.map((song) => {
           const lastEvent = [...song.events].reverse()[0];

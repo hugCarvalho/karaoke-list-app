@@ -3,12 +3,11 @@ import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form"; // Import Controller
 import CreatableSelect from 'react-select/creatable';
-
 import { getEventsList, getLocationsDb } from "../../api/api";
 import PageHeader from "../../components/buttonGroups/Header";
 import { EventCard } from "../../components/EventsCard";
 import PageWrapper from "../../components/PageWrapper";
-import { Data, KaraokeEvents } from "../../config/interfaces";
+import { KaraokeEvents } from "../../config/interfaces";
 import { QUERIES } from "../../constants/queries";
 import { useCloseEvent } from "../../hooks/useCloseEvent";
 import { useCreateEvent } from "../../hooks/useCreateEvent";
@@ -33,7 +32,7 @@ export const EventsHistory = () => {
   const { mutate: createEventMutation, isPending: isCreateEventPending, isSuccess: isCreateEventSuccess, reset: resetCreateEvent } = useCreateEvent();
   const { mutate: closeEventMutation, isPending: isCloseEventPending, isSuccess: isCloseEventSuccess, reset: resetCloseEvent } = useCloseEvent();
 
-  const { data: eventsList, isLoading: isEventsLoading } = useQuery<Data["events"]>({
+  const { data: eventsList, isLoading: isEventsLoading } = useQuery<KaraokeEvents[]>({
     queryKey: [QUERIES.GET_EVENTS_LIST],
     queryFn: getEventsList,
   });
@@ -81,6 +80,8 @@ export const EventsHistory = () => {
   const onSubmit = async (data: FormValues) => {
     createEventMutation(data);
   };
+
+  console.log('%c EventsHistory.tsx - line: 85', 'color: white; background-color: #f58801;', eventsList, '<-eventsList')
 
   return (
     <PageWrapper>

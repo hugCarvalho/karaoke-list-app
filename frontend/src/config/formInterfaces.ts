@@ -21,6 +21,6 @@ export type Option = {
 }
 
 export type SortConfig = {
-  key: "title" | "artist" | "plays"
+  key: "title" | "artist" | "plays" | "lastSang"
   direction: "ascending" | "descending"
 };

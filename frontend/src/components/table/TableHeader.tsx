@@ -1,3 +1,4 @@
+//frontend/src/components/table/TableHeader.tsx
 import { TriangleDownIcon, TriangleUpIcon } from "@chakra-ui/icons";
 import { IconButton, Th, Thead, Tr } from "@chakra-ui/react";
 import { SortConfig } from "../../config/formInterfaces";
@@ -14,7 +15,8 @@ const stickyStyles = {
   bg: "#19202c", // MUST be opaque, otherwise text will overlap
   // borderBottom: "1px solid #333" // Optional: gives it a nice clean edge
 };
-export const TableHead = ({ sortConfig, requestSort, tableFontSize }: TableHeadProps) => {
+export const TableHeader = ({ sortConfig, requestSort, tableFontSize }: TableHeadProps) => {
+
   return (
     <Thead sx={stickyStyles}>
       <Tr>
@@ -54,7 +56,10 @@ export const TableHead = ({ sortConfig, requestSort, tableFontSize }: TableHeadP
           />
         </Th>
         <Th fontSize={tableFontSize} textAlign="center" minW={{ base: "20%", md: "auto" }}>Add Play</Th>
-        <Th fontSize={tableFontSize} textAlign="center" minW={{ base: "25%", md: "auto" }}>Last Sang</Th>
+        <Th fontSize={tableFontSize} textAlign="center" minW={{ base: "25%", md: "auto" }}>
+          Last Sang
+          <IconButton aria-label="Sort by Last Sang" icon={sortConfig.key === "lastSang" && sortConfig.direction !== "ascending" ? <TriangleUpIcon /> : <TriangleDownIcon />} onClick={() => requestSort("lastSang")} size="xs" variant="ghost" />
+        </Th>
         <Th fontSize={tableFontSize} textAlign="center" minW={{ base: "15%", md: "auto" }}>Delete</Th>
       </Tr>
     </Thead>
