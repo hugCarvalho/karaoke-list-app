@@ -19,7 +19,7 @@ import { useAddSong } from "../hooks/useAddSong";
 import useAppToast from "../hooks/useAppToast";
 import { useCloseEvent } from "../hooks/useCloseEvent";
 import { useFilteredSongOptions } from "../hooks/useFilteredSongOptions";
-import { isDataVerified } from "../services/externalApi";
+import { useSongVerification } from "../hooks/useSongVerification";
 import { getArtistsSelectData, getSongsSelectData } from "../utils/artists";
 import { capitalizeText } from "../utils/strings";
 
@@ -34,11 +34,13 @@ const defaultValues = {
   eventDate: new Date(),
   plays: 1
 }
-const suggestionInitValue = { type: "", data: [] }
+
 
 const SongsSang = () => {
   const { showErrorToast } = useAppToast();
-  const { mutate: closeEventMutation, isPending: isCloseEventPending } = useCloseEvent();
+  const { mutate: closeEventMutation, isPending: isCloseEventPending } = useCloseEvent()
+  const { isVerifying, typoSuggestions, verifyData } = useSongVerification();
+
   const { register, handleSubmit, watch, reset, setValue, formState: { errors } } = useForm<BaseSongFormData>({
     resolver: zodResolver(baseSongFormSchema),
     defaultValues,
@@ -50,9 +52,6 @@ const SongsSang = () => {
   const duet = watch("duet");
   const inNextEventList = watch("inNextEventList");
   const notAvailable = watch("notAvailable");
-
-  const [isVerifying, setIsVerifying] = useState<boolean>(false);
-  const [typoSuggestions, setTypoSuggestions] = useState(suggestionInitValue);
 
   //Select Options
   const [artistOptions, setArtistOptions] = useState<Option[]>([]);
@@ -80,30 +79,15 @@ const SongsSang = () => {
       setSongOptions(songs)
     }
   }, [artistsDb])
+
   const onSubmit = async (data: BaseSongFormData) => {
-    setTypoSuggestions(suggestionInitValue)
-    setIsVerifying(true)
-    try {
-      const res = await isDataVerified(data.title, data.artist)
-      setIsVerifying(false)
-      if (res?.verified === false) {
-        if (res.type === "artist") {
-          setTypoSuggestions({ type: "artist", data: res.suggestions })
-          return
-        }
-        if (res.type === "song") {
-          setTypoSuggestions({ type: "song", data: res.suggestions })
-        }
-        return
-      }
-    } catch (verificationError) {
-      setIsVerifying(false)
-      showErrorToast("Verification failed.", "An unexpected error occurred during verification.");
-      return;
-    }
+    const isValid = await verifyData(data.title, data.artist);
+    if (!isValid) return
 
     const capitalizedArtistName = capitalizeText(data.artist)
-    const songData = { songId: uuid.v4(), ...data, artist: capitalizedArtistName };
+    const capitalizedSongName = capitalizeText(data.title)
+
+    const songData = { ...data, songId: uuid.v4(), artist: capitalizedArtistName, title: capitalizedSongName };
     addSongMutation(songData);
   };
 

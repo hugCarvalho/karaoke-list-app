@@ -16,7 +16,7 @@ import { QUERIES } from "../constants/queries";
 import { useAddSong } from "../hooks/useAddSong";
 import useAppToast from "../hooks/useAppToast";
 import { useFilteredSongOptions } from "../hooks/useFilteredSongOptions";
-import { isDataVerified } from "../services/externalApi";
+import { useSongVerification } from "../hooks/useSongVerification";
 import { getArtistsSelectData, getSongsSelectData } from "../utils/artists";
 import { capitalizeText } from "../utils/strings";
 
@@ -46,8 +46,6 @@ const AddSong = () => {
   const inNextEventList = watch("inNextEventList");
   const notAvailable = watch("notAvailable");
 
-  const [isVerifying, setIsVerifying] = useState<boolean>(false);
-  const [typoSuggestions, setTypoSuggestions] = useState(suggestionInitValue);
   //Select Options
   const [artistOptions, setArtistOptions] = useState<Option[]>([]);
   const [songOptions, setSongOptions] = useState<Option[]>([]);
@@ -61,6 +59,7 @@ const AddSong = () => {
 
   const { options: filteredSongSelectOptions, isLoadingOpenAI } = useFilteredSongOptions({ songOptions: songOptions, artistOptionValue: artistOptionValue });
   const { mutate: addSongMutation, isPending } = useAddSong("list");
+  const { isVerifying, typoSuggestions, verifyData } = useSongVerification();
 
   useEffect(() => {
     if (artistsDb?.data) {
@@ -72,41 +71,25 @@ const AddSong = () => {
     }
   }, [artistsDb])
 
+
   const onSubmit = async (data: BaseSongFormData) => {
-    setTypoSuggestions(suggestionInitValue)
-    setIsVerifying(true)
+    const isValid = await verifyData(data.title, data.artist);
+    if (!isValid) return
 
-    try {
-      const res = await isDataVerified(data.title, data.artist)
-      setIsVerifying(false)
-      if (res?.verified === false) {
-        if (res.type === "artist") {
-          setTypoSuggestions({ type: "artist", data: res.suggestions })
-          return
-        }
-        if (res.type === "song") {
-          setTypoSuggestions({ type: "song", data: res.suggestions })
-        }
-        return
-      }
-
-    } catch (verificationError) {
-      setIsVerifying(false)
-      showErrorToast("Verification failed.", "An unexpected error occurred during verification.");
-      return;
-    }
-
-    const eventData = {
-      location: "",
-      eventDate: null
-    }
     const capitalizedArtistName = capitalizeText(data.artist)
     const capitalizedSongName = capitalizeText(data.title)
 
-    const songData = { songId: uuid.v4(), events: [eventData], ...data, artist: capitalizedArtistName, title: capitalizedSongName };
-    // console.log('%c AddSong.tsx - line: 107', 'color: white; background-color: #f58899;', songData, '<-songData')
+    const songData = {
+      ...data,
+      songId: uuid.v4(),
+      events: [{ location: "", eventDate: null }],
+      artist: capitalizedArtistName,
+      title: capitalizedSongName,
+    };
+
+    console.log('%c AddSong.tsx - line: 107', 'color: white; background-color: #f58899;', songData, '<-songData')
     addSongMutation(songData);
-  }
+  };
 
   return (
     <PageWrapper>
