@@ -104,6 +104,7 @@ const AddSong = () => {
     const capitalizedSongName = capitalizeText(data.title)
 
     const songData = { songId: uuid.v4(), events: [eventData], ...data, artist: capitalizedArtistName, title: capitalizedSongName };
+    // console.log('%c AddSong.tsx - line: 107', 'color: white; background-color: #f58899;', songData, '<-songData')
     addSongMutation(songData);
   }
 

@@ -29,7 +29,7 @@ export interface Song {
 }
 
 type SongEvents = {
-  _id: string,
+  _id?: string,
   location: string,
   eventDate: string
 }
