@@ -19,7 +19,7 @@ export interface Song {
   artist: string,
   blacklisted: boolean,
   duet: boolean,
-  events: SongEvents[],
+  events?: SongEvents[],
   fav: boolean,
   inNextEventList: boolean,
   notAvailable: boolean,
@@ -27,7 +27,6 @@ export interface Song {
   songId: string,
   title: string,
 }
-
 type SongEvents = {
   _id?: string,
   location: string,
