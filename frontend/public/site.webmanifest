@@ -1,6 +1,7 @@
 {
-  "name": "",
-  "short_name": "",
+  "name": "Karaoke List App",
+  "short_name": "Karaoke List",
+  "start_url": "/",
   "icons": [
     {
       "src": "/android-chrome-192x192.png",
@@ -13,7 +14,7 @@
       "type": "image/png"
     }
   ],
-  "theme_color": "#000",
-  "background_color": "#000",
+  "theme_color": "#19202c",
+  "background_color": "#19202c",
   "display": "standalone"
 }
