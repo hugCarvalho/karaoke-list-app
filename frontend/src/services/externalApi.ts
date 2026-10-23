@@ -84,7 +84,7 @@ export const isDataVerified = async (song: string, artist: string) => {
 };
 
 //Suggestions for inputs when adding a song
-export async function getSongsFromOpenAI(artist: string) {
+export async function getSongsFromAI(artist: string) {
   const response = await fetch(`${import.meta.env.VITE_API_URL}/openai/ai-songs`, {
     method: 'POST',
     headers: {
@@ -103,7 +103,7 @@ export async function getSongsFromOpenAI(artist: string) {
 
 type SongSuggestionsSelectors = { decade: string; genre: string; mood: string; duet: boolean; language: string; }
 
-export async function getArtistsFromOpenAI(song: string) {
+export async function getArtistsFromAI(song: string) {
   const response = await fetch(`${import.meta.env.VITE_API_URL}/openai/ai-artists`, {
     method: 'POST',
     headers: {
@@ -131,7 +131,7 @@ export async function getArtistsFromOpenAI(song: string) {
 }
 
 //For Inspirations
-export async function getSuggestionsFromOpenAI(formData: SongSuggestionsSelectors) {
+export async function getSuggestionsFromAI(formData: SongSuggestionsSelectors) {
   try {
     const response = await fetch(`${import.meta.env.VITE_API_URL}/openai/ai-songs-suggestions`, {
       method: 'POST',

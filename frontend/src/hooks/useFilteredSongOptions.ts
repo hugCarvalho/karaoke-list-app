@@ -2,7 +2,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
 import { Option } from '../config/formInterfaces';
-import { getSongsFromOpenAI } from '../services/externalApi';
+import { getSongsFromAI } from '../services/externalApi';
 
 type UseFilteredSongOptionsProps = {
   songOptions: Option[];
@@ -26,7 +26,7 @@ export const useFilteredSongOptions = ({
       if (!artistOptionValue?.value) {
         return [];
       }
-      return getSongsFromOpenAI(artistOptionValue.value);
+      return getSongsFromAI(artistOptionValue.value);
     },
     enabled: !!artistOptionValue?.value,
     staleTime: Infinity,
