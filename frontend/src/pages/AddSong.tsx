@@ -14,7 +14,6 @@ import PageWrapper from "../components/PageWrapper";
 import { BaseSongFormData, baseSongFormSchema, Option } from "../config/formInterfaces";
 import { QUERIES } from "../constants/queries";
 import { useAddSong } from "../hooks/useAddSong";
-import useAppToast from "../hooks/useAppToast";
 import { useFilteredSongOptions } from "../hooks/useFilteredSongOptions";
 import { useSongVerification } from "../hooks/useSongVerification";
 import { getArtistsSelectData, getSongsSelectData } from "../utils/artists";
@@ -31,14 +30,8 @@ const defaultValues = {
   plays: 0
 }
 
-const suggestionInitValue = { type: "", data: [] }
-
 const AddSong = () => {
-  const { showErrorToast } = useAppToast();
-  const { register, handleSubmit, watch, setValue, formState: { errors } } = useForm<BaseSongFormData>({
-    resolver: zodResolver(baseSongFormSchema),
-    defaultValues,
-  });
+  const { register, handleSubmit, watch, setValue, formState: { errors } } = useForm<BaseSongFormData>({ resolver: zodResolver(baseSongFormSchema), defaultValues });
 
   const fav = watch("fav");
   const blacklisted = watch("blacklisted");
