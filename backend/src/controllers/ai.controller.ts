@@ -1,6 +1,6 @@
 //backend/api/controllers/openai.controller.ts
 import { OK } from "../constants/http";
-import { getArtistsForSong, getPopularSongsForArtist, searchForInspiration, suggestArtistName, suggestSongName } from "../services/openai.service";
+import { getArtistsForSong, getPopularSongsForArtist, searchForInspiration, suggestArtistName, suggestSongName } from "../services/ai.service";
 import catchErrors from "../utils/catchErrors";
 
 export const getPopularSongsHandler = catchErrors(async (req, res) => {
@@ -83,17 +83,17 @@ export const getSongSuggestionsHandler = catchErrors(async (req, res) => {
 
       // Ensure parsedResponse is an object and has a 'songs' array property
       if (typeof parsedResponse !== 'object' || parsedResponse === null || !Array.isArray(parsedResponse.songs)) {
-        console.error("OpenAI response content is not in the expected { 'songs': [] } format:", parsedResponse);
+        console.error("AI response content is not in the expected { 'songs': [] } format:", parsedResponse);
         return res.status(500).json({ error: "AI response format invalid or missing songs list." });
       }
 
       res.status(OK).json(parsedResponse);
     } catch (parseError) {
-      console.error("Error parsing song list JSON from OpenAI response:", parseError);
+      console.error("Error parsing song list JSON from AI response:", parseError);
       res.status(500).json({ error: "Failed to process song list from AI: Invalid JSON response." });
     }
   } catch (apiCallError) {
-    console.error("Error in /songs route handler (OpenAI API call failed):", apiCallError);
+    console.error("Error in /songs route handler (AI API call failed):", apiCallError);
     res.status(500).json({ error: `Internal server error during song suggestion retrieval: ${apiCallError instanceof Error ? apiCallError.message : String(apiCallError)}` });
   }
 });
