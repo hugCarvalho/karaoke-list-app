@@ -1,3 +1,4 @@
+//backend/src/services/ai.service.ts
 import Groq from "groq-sdk";
 
 // Initialize with your API Key (Add GROQ_API_KEY to your backend .env)
@@ -7,7 +8,7 @@ const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
 const apiModel = 'openai/gpt-oss-120b'
 
 /**
- * Fetches a list of popular songs by a given artist using OpenAI.
+ * Fetches a list of popular songs by a given artist using AI.
  * @param artist The artist's name.
  * @returns A promise that resolves to a string (JSON array) of song names, or null on error.
  */
@@ -46,8 +47,39 @@ export async function getPopularSongsForArtist(artist: string) {
   }
 }
 
+export async function getArtistsForSong(song: string) {
+  try {
+    const chatCompletion = await groq.chat.completions.create({
+      messages: [
+        {
+          role: "system",
+          content:
+            "You are a music database API assistant. You must respond strictly with a valid JSON object containing an 'artists' key whose value is an array of artist or band name strings that have performed or released a song with the given title.",
+        },
+        {
+          role: "user",
+          content: `List up to 10 popular artists or bands who have released a song titled "${song}". Return a JSON object with an 'artists' key containing an array of strings.`,
+        },
+      ],
+      model: apiModel,
+      temperature: 0,
+      response_format: { type: "json_object" },
+    });
+
+    const content = chatCompletion.choices[0]?.message?.content;
+    if (!content) {
+      throw new Error("Groq returned an empty response.");
+    }
+
+    return content;
+  } catch (error) {
+    console.error(`Groq API Error: ${error}`);
+    throw new Error(`Failed to fetch artists for song "${song}" via Groq.`);
+  }
+}
+
 /**
- * Generates suggestions for a misspelled artist/group name using the OpenAI API.
+ * Generates suggestions for a misspelled artist/group name using the AI API.
  * It aims to return exactly 3 suggestions for common misspellings or similar popular names.
  *
  * @param misspelledName The potentially misspelled artist or group name (e.g., "Nivana").
@@ -62,7 +94,7 @@ Return the suggestions as a JSON object with a single key "suggestions", whose v
 Do NOT include any other text, explanation, or formatting outside of this JSON object.
 
 Example for "nivana": {"suggestions": ["Nirvana", "Aviana", "Nirvana (band)"]}
-Example for "coldply": {"suggestions": ["Coldplay", "Kodaline", "Snow Patrol"]}
+Example for "coldply": {"suggestions": ["Coldplay"]}
 Example for "the bitels": {"suggestions": ["The Beatles", "Beatles", "The Byrds"]}
   `;
 
@@ -104,7 +136,7 @@ Example for "the bitels": {"suggestions": ["The Beatles", "Beatles", "The Byrds"
  * within the context of the provided artist. It prioritizes finding accurate matches
  * for the given artist's discography.
  *
- * This function uses the OpenAI API to analyze the provided song and artist names.
+ * This function uses the AI API to analyze the provided song and artist names.
  *
  * @param artist The name of the artist to which the song is associated.
  * @param song The song name, which may be misspelled or potentially an incorrect song for the artist.
@@ -174,7 +206,7 @@ Examples:
 }
 /**
  * Generates a list of popular karaoke song suggestions based on specified criteria
- * using the OpenAI API. The function constructs a prompt to guide the AI in
+ * using the AI API. The function constructs a prompt to guide the AI in
  * selecting songs that match the provided decade, genre, language, mood, and duet preference.
  *
  * The AI is instructed to return results in a strict JSON format containing an array of song objects.
@@ -188,7 +220,7 @@ Examples:
  * The format is `{"songs": [{"artist": "...", "title": "...", "year": ...}, ...]}`.
  * Returns `{"songs": []}` as a JSON string if no songs are found by the AI.
  * Returns an empty string `""` if the API call fails or the response cannot be retrieved/processed.
- * Note: The `Promise<string>` return type reflects the raw JSON string content from OpenAI.
+ * Note: The `Promise<string>` return type reflects the raw JSON string content from AI.
  */
 export async function searchForInspiration(
   decade: string,

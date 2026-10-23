@@ -2,7 +2,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
 import { Option } from '../config/formInterfaces';
-import { getSongsFromOpenAI } from '../services/externalApi';
+import { getSongsFromAI } from '../services/externalApi';
 
 type UseFilteredSongOptionsProps = {
   songOptions: Option[];
@@ -12,6 +12,7 @@ type UseFilteredSongOptionsProps = {
 type UseFilteredSongOptionsReturn = {
   options: Option[];
   isLoadingOpenAI: boolean;
+  openAIError: Error | null
 };
 
 export const useFilteredSongOptions = ({
@@ -19,13 +20,13 @@ export const useFilteredSongOptions = ({
   artistOptionValue,
 }: UseFilteredSongOptionsProps): UseFilteredSongOptionsReturn => {
 
-  const { data: backendSongOptions, isLoading: isLoadingOpenAI } = useQuery<Option[]>({
+  const { data: backendSongOptions, isLoading: isLoadingOpenAI, error: openAIError } = useQuery<Option[]>({
     queryKey: ['songs', artistOptionValue?.value],
     queryFn: async () => {
       if (!artistOptionValue?.value) {
         return [];
       }
-      return getSongsFromOpenAI(artistOptionValue.value);
+      return getSongsFromAI(artistOptionValue.value);
     },
     enabled: !!artistOptionValue?.value,
     staleTime: Infinity,
@@ -55,5 +56,6 @@ export const useFilteredSongOptions = ({
   return {
     options: filteredAndUniqueOptions,
     isLoadingOpenAI: isLoadingOpenAI,
+    openAIError: openAIError as Error | null,
   };
 };

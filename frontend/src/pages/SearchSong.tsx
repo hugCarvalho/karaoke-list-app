@@ -4,7 +4,7 @@ import { useForm } from "react-hook-form";
 import PageWrapper from "../components/PageWrapper";
 import SongSuggestionsList from "../components/SongSuggestionsList";
 import PageHeader from "../components/buttonGroups/Header";
-import { getSuggestionsFromOpenAI } from "../services/externalApi";
+import { getSuggestionsFromAI } from "../services/externalApi";
 
 const decades = [
   { label: "30's", value: "decade 1930" },
@@ -64,7 +64,7 @@ export const SearchSong = () => {
   });
 
   const { data, mutate, isPending } = useMutation({
-    mutationFn: getSuggestionsFromOpenAI,
+    mutationFn: getSuggestionsFromAI,
   });
 
   const onSubmit = (data: FormValues) => {

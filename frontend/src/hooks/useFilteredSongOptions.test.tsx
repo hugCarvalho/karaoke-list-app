@@ -4,14 +4,14 @@ import { useFilteredSongOptions } from './useFilteredSongOptions'; // Adjust the
 
 // Mock external dependencies
 import { Option } from '../config/formInterfaces'; // Ensure Option type is correctly imported
-import { getSongsFromOpenAI } from '../services/externalApi';
+import { getSongsFromAI } from '../services/externalApi';
 
 jest.mock('../services/externalApi', () => ({
   getSongsFromOpenAI: jest.fn(),
 }));
 
 // Cast the mocked function for easier Jest mock usage
-const mockGetSongsFromOpenAI = getSongsFromOpenAI as jest.Mock;
+const mockGetSongsFromOpenAI = getSongsFromAI as jest.Mock;
 
 describe('useFilteredSongOptions', () => {
   let queryClient: QueryClient;
