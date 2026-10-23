@@ -1,3 +1,4 @@
+//backend/src/services/openai.service.ts
 import Groq from "groq-sdk";
 
 // Initialize with your API Key (Add GROQ_API_KEY to your backend .env)
@@ -46,6 +47,37 @@ export async function getPopularSongsForArtist(artist: string) {
   }
 }
 
+export async function getArtistsForSong(song: string) {
+  try {
+    const chatCompletion = await groq.chat.completions.create({
+      messages: [
+        {
+          role: "system",
+          content:
+            "You are a music database API assistant. You must respond strictly with a valid JSON object containing an 'artists' key whose value is an array of artist or band name strings that have performed or released a song with the given title.",
+        },
+        {
+          role: "user",
+          content: `List up to 10 popular artists or bands who have released a song titled "${song}". Return a JSON object with an 'artists' key containing an array of strings.`,
+        },
+      ],
+      model: apiModel,
+      temperature: 0,
+      response_format: { type: "json_object" },
+    });
+
+    const content = chatCompletion.choices[0]?.message?.content;
+    if (!content) {
+      throw new Error("Groq returned an empty response.");
+    }
+
+    return content;
+  } catch (error) {
+    console.error(`Groq API Error: ${error}`);
+    throw new Error(`Failed to fetch artists for song "${song}" via Groq.`);
+  }
+}
+
 /**
  * Generates suggestions for a misspelled artist/group name using the OpenAI API.
  * It aims to return exactly 3 suggestions for common misspellings or similar popular names.
@@ -62,7 +94,7 @@ Return the suggestions as a JSON object with a single key "suggestions", whose v
 Do NOT include any other text, explanation, or formatting outside of this JSON object.
 
 Example for "nivana": {"suggestions": ["Nirvana", "Aviana", "Nirvana (band)"]}
-Example for "coldply": {"suggestions": ["Coldplay", "Kodaline", "Snow Patrol"]}
+Example for "coldply": {"suggestions": ["Coldplay"]}
 Example for "the bitels": {"suggestions": ["The Beatles", "Beatles", "The Byrds"]}
   `;
 

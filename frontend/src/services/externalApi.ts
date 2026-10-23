@@ -83,6 +83,7 @@ export const isDataVerified = async (song: string, artist: string) => {
   return { type: "song", status: "success", verified: false, suggestions };
 };
 
+//Suggestions for inputs when adding a song
 export async function getSongsFromOpenAI(artist: string) {
   const response = await fetch(`${import.meta.env.VITE_API_URL}/openai/ai-songs`, {
     method: 'POST',
@@ -102,6 +103,34 @@ export async function getSongsFromOpenAI(artist: string) {
 
 type SongSuggestionsSelectors = { decade: string; genre: string; mood: string; duet: boolean; language: string; }
 
+export async function getArtistsFromOpenAI(song: string) {
+  const response = await fetch(`${import.meta.env.VITE_API_URL}/openai/ai-artists`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ song: song }),
+  });
+
+  if (!response.ok) {
+    let errorMessage = `Server error ${response.status}`;
+    try {
+      const errorData = await response.json();
+      errorMessage =
+        typeof errorData.error === 'string'
+          ? errorData.error
+          : errorData.error?.message || errorData.message || JSON.stringify(errorData.error);
+    } catch {
+      errorMessage = response.statusText || errorMessage;
+    }
+    throw new Error(errorMessage);
+  }
+
+  const data = await response.json();
+  return data.artists; // Assuming backend returns { artists: [...] }
+}
+
+//For Inspirations
 export async function getSuggestionsFromOpenAI(formData: SongSuggestionsSelectors) {
   try {
     const response = await fetch(`${import.meta.env.VITE_API_URL}/openai/ai-songs-suggestions`, {

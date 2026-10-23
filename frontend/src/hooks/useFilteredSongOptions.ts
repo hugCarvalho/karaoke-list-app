@@ -12,6 +12,7 @@ type UseFilteredSongOptionsProps = {
 type UseFilteredSongOptionsReturn = {
   options: Option[];
   isLoadingOpenAI: boolean;
+  openAIError: Error | null
 };
 
 export const useFilteredSongOptions = ({
@@ -19,7 +20,7 @@ export const useFilteredSongOptions = ({
   artistOptionValue,
 }: UseFilteredSongOptionsProps): UseFilteredSongOptionsReturn => {
 
-  const { data: backendSongOptions, isLoading: isLoadingOpenAI } = useQuery<Option[]>({
+  const { data: backendSongOptions, isLoading: isLoadingOpenAI, error: openAIError } = useQuery<Option[]>({
     queryKey: ['songs', artistOptionValue?.value],
     queryFn: async () => {
       if (!artistOptionValue?.value) {
@@ -55,5 +56,6 @@ export const useFilteredSongOptions = ({
   return {
     options: filteredAndUniqueOptions,
     isLoadingOpenAI: isLoadingOpenAI,
+    openAIError: openAIError as Error | null,
   };
 };

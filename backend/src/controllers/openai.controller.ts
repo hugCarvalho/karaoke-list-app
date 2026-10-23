@@ -1,8 +1,7 @@
+//backend/api/controllers/openai.controller.ts
 import { OK } from "../constants/http";
-import { getPopularSongsForArtist, searchForInspiration, suggestArtistName, suggestSongName } from "../services/openai.service";
+import { getArtistsForSong, getPopularSongsForArtist, searchForInspiration, suggestArtistName, suggestSongName } from "../services/openai.service";
 import catchErrors from "../utils/catchErrors";
-
-//TODO: improve typing
 
 export const getPopularSongsHandler = catchErrors(async (req, res) => {
   const { artist } = req.body;
@@ -68,7 +67,6 @@ export const getSongNameSuggestionHandler = catchErrors(async (req, res) => {
   return res.status(OK).json({ suggestions });
 });
 
-
 export const getSongSuggestionsHandler = catchErrors(async (req, res) => {
   const { decade, genre, mood, duet, language } = req.body;
   const allFieldsAreEmpty = !decade && !genre && !mood && !language && !duet;
@@ -97,5 +95,44 @@ export const getSongSuggestionsHandler = catchErrors(async (req, res) => {
   } catch (apiCallError) {
     console.error("Error in /songs route handler (OpenAI API call failed):", apiCallError);
     res.status(500).json({ error: `Internal server error during song suggestion retrieval: ${apiCallError instanceof Error ? apiCallError.message : String(apiCallError)}` });
+  }
+});
+
+export const getArtistsForSongHandler = catchErrors(async (req, res) => {
+  const { song } = req.body;
+
+  if (!song) {
+    return res.status(400).json({ error: "Song title is required" });
+  }
+
+  try {
+    const artistsString = await getArtistsForSong(song);
+
+    if (!artistsString) {
+      return res.status(500).json({ error: "No response from AI" });
+    }
+
+    const parsedData = JSON.parse(artistsString);
+    const artistsArray = Array.isArray(parsedData)
+      ? parsedData
+      : (parsedData.artists || parsedData.list || []);
+
+    if (!Array.isArray(artistsArray)) {
+      console.error("AI did not return an array. Data received:", parsedData);
+      return res.status(500).json({ error: "AI returned invalid data format" });
+    }
+
+    const formattedArtists = artistsArray.map((artist: string) => ({
+      value: artist,
+      label: artist
+    }));
+
+    res.status(200).json({ artists: formattedArtists });
+
+  } catch (error) {
+    console.error("Detailed Error in getArtistsForSongHandler:", error);
+    const errorMessage =
+      error instanceof Error ? error.message : "Internal server error during artist retrieval";
+    res.status(500).json({ error: errorMessage });
   }
 });
