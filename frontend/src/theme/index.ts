@@ -1,3 +1,4 @@
+//frontend/src/theme/index.ts
 import { baseTheme, extendTheme } from "@chakra-ui/react";
 import buttonTheme from "./buttonTheme";
 import linkTheme from "./linkTheme";
@@ -23,6 +24,20 @@ const theme = extendTheme({
   components: {
     Button: buttonTheme,
     Link: linkTheme,
+  },
+  styles: {
+    global: {
+      "html, body, #root": {
+        backgroundColor: "#19202c", // Matches your dark theme and meta theme-color
+        // color: "white",
+        // minHeight: "100vh",
+        minHeight: "100dvh", // Dynamic viewport units for modern mobile devices
+        margin: 0,
+        padding: 0,
+        // Prevents content from colliding with the mobile gesture/navigation bar
+        paddingBottom: "env(safe-area-inset-bottom)",
+      },
+    },
   },
 });
 
