@@ -10,10 +10,10 @@ import connectToDatabase from "../src/config/db";
 import { APP_ORIGIN } from "../src/constants/env";
 import authenticate from "../src/middleware/authenticate";
 import errorHandler from "../src/middleware/errorHandler";
+import aiRoutes from "../src/routes/ai.route";
 import authRoutes from "../src/routes/auth.route";
 import eventRoutes from "../src/routes/events.route";
 import listRoutes from "../src/routes/list.route";
-import openaiRoutes from "../src/routes/openai.route";
 import sessionRoutes from "../src/routes/session.route";
 import userRoutes from "../src/routes/user.route";
 
@@ -46,7 +46,7 @@ app.use("/user", authenticate, userRoutes)
 app.use("/sessions", authenticate, sessionRoutes)
 app.use("/list", authenticate, listRoutes)
 app.use("/events", authenticate, eventRoutes)
-app.use("/openai", openaiRoutes)
+app.use("/ai", aiRoutes)
 
 // error handler
 app.use(errorHandler)

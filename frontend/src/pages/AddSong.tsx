@@ -1,23 +1,24 @@
-import { Box, Button, Center, Flex, FormControl, FormErrorMessage, FormLabel } from "@chakra-ui/react";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useQuery } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
-import CreatableSelect from "react-select/creatable";
-import * as uuid from "uuid";
-import { getArtistsDb } from "../api/api";
-import { AlertSuggestions } from "../components/AlertSuggestions";
-import { AddToggleButtonGroup } from "../components/buttonGroups/AddToggleButtonGroup";
-import CheckboxGroup from "../components/buttonGroups/CheckboxGroup";
-import PageHeader from "../components/buttonGroups/Header";
-import PageWrapper from "../components/PageWrapper";
-import { BaseSongFormData, baseSongFormSchema, Option } from "../config/formInterfaces";
-import { QUERIES } from "../constants/queries";
-import { useAddSong } from "../hooks/useAddSong";
-import { useFilteredSongOptions } from "../hooks/useFilteredSongOptions";
-import { useSongVerification } from "../hooks/useSongVerification";
-import { getArtistsSelectData, getSongsSelectData } from "../utils/artists";
-import { capitalizeText } from "../utils/strings";
+import { Box, Button, Center, Flex, FormControl, FormErrorMessage, FormLabel } from "@chakra-ui/react"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { useQuery } from "@tanstack/react-query"
+import { useEffect, useState } from "react"
+import { useForm } from "react-hook-form"
+import CreatableSelect from "react-select/creatable"
+import * as uuid from "uuid"
+import { getArtistsDb } from "../api/api"
+import { AlertSuggestions } from "../components/AlertSuggestions"
+import { AddToggleButtonGroup } from "../components/buttonGroups/AddToggleButtonGroup"
+import CheckboxGroup from "../components/buttonGroups/CheckboxGroup"
+import PageWrapper from "../components/PageWrapper"
+import { BaseSongFormData, baseSongFormSchema, Option } from "../config/formInterfaces"
+import { QUERIES } from "../constants/queries"
+import { useAddSong } from "../hooks/useAddSong"
+import useAppToast from "../hooks/useAppToast"
+import { useFilteredArtistOptions } from "../hooks/useFilteredArtistOptions"
+import { useFilteredSongOptions } from "../hooks/useFilteredSongOptions"
+import { isDataVerified } from "../services/externalApi"
+import { getArtistsSelectData, getSongsSelectData } from "../utils/artists"
+import { capitalizeText } from "../utils/strings"
 
 const defaultValues = {
   title: "",
@@ -30,29 +31,58 @@ const defaultValues = {
   plays: 0
 }
 
+const suggestionInitValue = { type: "", data: [] }
+
 const AddSong = () => {
-  const { register, handleSubmit, watch, setValue, formState: { errors } } = useForm<BaseSongFormData>({ resolver: zodResolver(baseSongFormSchema), defaultValues });
+  const { showErrorToast } = useAppToast()
+  const { register, handleSubmit, watch, setValue, formState: { errors } } = useForm<BaseSongFormData>({
+    resolver: zodResolver(baseSongFormSchema),
+    defaultValues,
+  })
 
-  const fav = watch("fav");
-  const blacklisted = watch("blacklisted");
-  const duet = watch("duet");
-  const inNextEventList = watch("inNextEventList");
-  const notAvailable = watch("notAvailable");
+  const fav = watch("fav")
+  const blacklisted = watch("blacklisted")
+  const duet = watch("duet")
+  const inNextEventList = watch("inNextEventList")
+  const notAvailable = watch("notAvailable")
 
-  //Select Options
-  const [artistOptions, setArtistOptions] = useState<Option[]>([]);
-  const [songOptions, setSongOptions] = useState<Option[]>([]);
-  const [artistOptionValue, setArtistOptionValue] = useState<Option | null>(null);
-  const [songOptionValue, setSongOptionValue] = useState<Option | null>();
+  const [isVerifying, setIsVerifying] = useState<boolean>(false)
+  const [typoSuggestions, setTypoSuggestions] = useState(suggestionInitValue)
 
-  const { data: artistsDb, isLoading, isError, error } = useQuery({
+  // Select Options
+  const [artistOptions, setArtistOptions] = useState<Option[]>([])
+  const [songOptions, setSongOptions] = useState<Option[]>([])
+  const [artistOptionValue, setArtistOptionValue] = useState<Option | null>(null)
+  const [songOptionValue, setSongOptionValue] = useState<Option | null>()
+
+  const { data: artistsDb } = useQuery({
     queryKey: [QUERIES.GET_ARTISTS_DB],
     queryFn: getArtistsDb,
-  });
+  })
 
-  const { options: filteredSongSelectOptions, isLoadingOpenAI } = useFilteredSongOptions({ songOptions: songOptions, artistOptionValue: artistOptionValue });
-  const { mutate: addSongMutation, isPending } = useAddSong("list");
-  const { isVerifying, typoSuggestions, verifyData } = useSongVerification();
+  const { options: filteredSongSelectOptions, isLoadingOpenAI: isLoadingSongAI, openAIError: songAIError } = useFilteredSongOptions({
+    songOptions: songOptions,
+    artistOptionValue: artistOptionValue,
+  })
+
+  const { options: filteredArtistSelectOptions, isLoadingOpenAI: isLoadingArtistAI, openAIError: artistAIError } = useFilteredArtistOptions({
+    artistOptions: artistOptions,
+    songOptionValue: songOptionValue,
+  })
+
+  const { mutate: addSongMutation, isPending } = useAddSong("list")
+
+  useEffect(() => {
+    if (songAIError) {
+      showErrorToast("AI Fetch Error", songAIError.message)
+    }
+  }, [songAIError, showErrorToast])
+
+  useEffect(() => {
+    if (artistAIError) {
+      showErrorToast("AI Fetch Error", artistAIError.message)
+    }
+  }, [artistAIError, showErrorToast])
 
   useEffect(() => {
     if (artistsDb?.data) {
@@ -64,40 +94,60 @@ const AddSong = () => {
     }
   }, [artistsDb])
 
-
   const onSubmit = async (data: BaseSongFormData) => {
-    const isValid = await verifyData(data.title, data.artist);
-    if (!isValid) return
+    setTypoSuggestions(suggestionInitValue)
+    setIsVerifying(true)
+    try {
+      const res = await isDataVerified(data.title, data.artist)
+      setIsVerifying(false)
+      if (res?.verified === false) {
+        if (res.type === "artist") {
+          setTypoSuggestions({ type: "artist", data: res.suggestions })
+          return
+        }
+        if (res.type === "song") {
+          setTypoSuggestions({ type: "song", data: res.suggestions })
+        }
+        return
+      }
+    } catch {
+      setIsVerifying(false)
+      showErrorToast("Verification failed.", "An unexpected error occurred during verification.")
+      return
+    }
 
+    const eventData = {
+      location: "",
+      eventDate: null,
+    }
     const capitalizedArtistName = capitalizeText(data.artist)
     const capitalizedSongName = capitalizeText(data.title)
 
     const songData = {
-      ...data,
       songId: uuid.v4(),
-      events: [{ location: "", eventDate: null }],
+      events: [eventData],
+      ...data,
       artist: capitalizedArtistName,
       title: capitalizedSongName,
-    };
-
-    console.log('%c AddSong.tsx - line: 107', 'color: white; background-color: #f58899;', songData, '<-songData')
-    addSongMutation(songData);
-  };
+    }
+    addSongMutation(songData)
+  }
 
   return (
     <PageWrapper>
-      {/* HEADER & TOGGLE BUTTON GROUP */}
-      <PageHeader title="Add Songs to List" tooltipLabel="Add NEW songs. Either ADD songs for a future reference (play count will be 0) or add SANG songs you've just sang directly to you current event (play count will be 1). If the song already exists, you must add a play using the LIST instead." />
-      <Center><AddToggleButtonGroup /></Center>
+      <Center>
+        <AddToggleButtonGroup />
+      </Center>
 
       <form onSubmit={handleSubmit(onSubmit)} noValidate>
         <Flex direction={{ base: "column", md: "row" }} gap={4} mb={4}>
           <FormControl isInvalid={!!errors.artist} isRequired>
             <FormLabel htmlFor="artist">Artist</FormLabel>
             <CreatableSelect
+              isLoading={isLoadingArtistAI}
               placeholder="Type or select an artist"
               isClearable
-              options={artistOptions}
+              options={filteredArtistSelectOptions}
               value={artistOptionValue}
               onCreateOption={(e) => {
                 setArtistOptions(state => [...state, { value: e, label: e }])
@@ -111,7 +161,7 @@ const AddSong = () => {
               styles={{
                 option: (base, state) => ({
                   ...base,
-                  color: state.isSelected ? 'inherit' : 'gray',
+                  color: state.isSelected ? "inherit" : "gray",
                 }),
               }}
             />
@@ -123,7 +173,7 @@ const AddSong = () => {
           <FormControl isInvalid={!!errors.title} isRequired>
             <FormLabel htmlFor="title">Song</FormLabel>
             <CreatableSelect
-              isLoading={isLoadingOpenAI}
+              isLoading={isLoadingSongAI}
               placeholder="Type or select a song"
               isClearable
               options={filteredSongSelectOptions}
@@ -140,7 +190,7 @@ const AddSong = () => {
               styles={{
                 option: (base, state) => ({
                   ...base,
-                  color: state.isSelected ? 'inherit' : 'gray',
+                  color: state.isSelected ? "inherit" : "gray",
                 }),
               }}
             />
@@ -159,7 +209,7 @@ const AddSong = () => {
           notAvailable={notAvailable}
           setValue={setValue}
         />
-        {typoSuggestions.data.length > 0 &&
+        {typoSuggestions.data.length > 0 && (
           <AlertSuggestions
             type={typoSuggestions.type as "artist" | "song"}
             suggestions={typoSuggestions.data}
@@ -167,9 +217,11 @@ const AddSong = () => {
             setArtistOptionValue={setArtistOptionValue}
             setSongOptionValue={setSongOptionValue}
           />
-        }
+        )}
         <Box display={"flex"} justifyContent={"center"} alignItems={"center"}>
-          <Button type="submit" colorScheme="blue"
+          <Button
+            type="submit"
+            colorScheme="blue"
             isLoading={isPending || isVerifying}
             isDisabled={isPending || isVerifying}
             width={"xl"}
@@ -178,8 +230,8 @@ const AddSong = () => {
           </Button>
         </Box>
       </form>
-    </PageWrapper >
-  );
-};
+    </PageWrapper>
+  )
+}
 
-export default AddSong;
+export default AddSong
